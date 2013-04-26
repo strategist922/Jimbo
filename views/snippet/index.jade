@@ -1,0 +1,248 @@
+!!! 5
+html
+  head
+    meta(http-equiv='Content-type', content='text/html; charset=utf-8')
+    title
+      | CollabCoding
+    link(rel='icon', href='img/icon.png')
+    link(rel='stylesheet', href='css/bootstrap.min.css', type='text/css', media='screen', charset='utf-8')
+    link(rel='stylesheet', href='css/jquery-ui-1.9.2.custom.css', type='text/css', media='screen', charset='utf-8')
+    link(rel='stylesheet', href='js/colorpicker/Color.Picker.Classic.css', type='text/css', media='screen', charset='utf-8')    
+    link(rel='stylesheet', href='js/codemirror/lib/codemirror.css', type='text/css', media='screen', charset='utf-8')
+    link(rel='stylesheet', href='js/codemirror/addon/hint/show-hint.css', type='text/css', media='screen', charset='utf-8')
+    link(rel='stylesheet', href='js/codemirror/addon/dialog/dialog.css', type='text/css', media='screen', charset='utf-8')    
+    link(rel='stylesheet', href='js/codemirror/theme/brackets.css', type='text/css', media='screen', charset='utf-8')
+    link(rel='stylesheet', href='js/codemirror/theme/night.css', type='text/css', media='screen', charset='utf-8')        
+    link(rel='stylesheet', href='css/DT_bootstrap.css', type='text/css', media='screen', charset='utf-8')
+    link(rel='stylesheet', href='css/autoSuggest.css', type='text/css', media='screen', charset='utf-8')
+    link(rel='stylesheet', href='css/site.css', type='text/css', media='screen', charset='utf-8')
+    link(rel='stylesheet', href='js/contextmenu/jquery.contextMenu.css', type='text/css', media='screen', charset='utf-8')      
+    script(type='text/javascript', charset='utf-8', src='js/jquery-1.7.2.min.js')
+    script(type='text/javascript', charset='utf-8', src='js/jquery-ui-1.9.2.custom.min.js')                   
+    script(type='text/javascript', charset='utf-8', src='js/bootstrap.min.js')    
+    script(type='text/javascript', charset='utf-8', src='js/jquery.jstree.js')  
+    script(type='text/javascript', charset='utf-8', src='js/jshint.js')
+    script(type='text/javascript', charset='utf-8', src='js/jquery.resize.js')
+    script(type='text/javascript', charset='utf-8', src='js/jquery.mention.js')
+    script(type='text/javascript', charset='utf-8', src='http://documentcloud.github.com/underscore/underscore-min.js')           
+  body(style='overflow: hidden;')
+    .container-fluid
+      // Info Bar 
+      .navbar
+        .navbar-inner
+          .container
+            a.brand(href='JavaScript:void(0);', muse_scanned='true')
+              img(src='img/osu_logo.png')
+            div#dialog.modal.hide.fade
+              //- form
+              div.modal-header
+              div.modal-body
+              div.modal-footer
+            div#idleDialog.modal.hide.fade
+              //- form
+              div.idle.modal-header
+              div.idle.modal-body
+              div.idle.modal-footer
+            div
+              ul.nav
+                li#menuFile.dropdown
+                  a.dropdown-toggle(data-toggle='dropdown', href='JavaScript:void(0);')
+                    | File
+                    b.caret
+                  ul.dropdown-menu
+                    li                    
+                      a(href='JavaScript:void(0);', data-action='editor-new-project')
+                        i.icon-list-alt
+                        | New Project
+                    li
+                      a(href='JavaScript:void(0);', data-action='editor-open-project')
+                        i.icon-list-alt
+                        | Open Project
+                    li.divider
+                    li
+                      a(href='JavaScript:void(0);', data-action='editor-close-project') Close Project                    
+                    li.divider
+                    li
+                      a(href='JavaScript:void(0);', data-action='editor-save-document') Save                                        
+                    li.divider
+                    li
+                      a(href='JavaScript:void(0);', data-action='editor-exit') Exit
+                li#menuEdit.dropdown
+                  a.dropdown-toggle(data-toggle='dropdown', href='#menuEidt')
+                    | Edit
+                    b.caret
+                  ul.dropdown-menu
+                    li
+                      a(href='JavaScript:void(0);', data-action='editor-cut-selected-code') Cut
+                    li
+                      a(href='JavaScript:void(0);', data-action='editor-copy-selected-code') Copy
+                    li
+                      a(href='JavaScript:void(0);', data-action='editor-paste-code') Paste
+                    li.divider
+                    li
+                      a(href='JavaScript:void(0);', data-action='editor-undo')
+                        i.icon-arrow-left
+                        | Undo
+                    li
+                      a(href='JavaScript:void(0);', data-action='editor-redo')
+                        i.icon-arrow-right
+                        | Redo
+                    li.divider
+                    li
+                      a(href='JavaScript:void(0);', data-action='editor-delete-selected')
+                        i.icon-remove
+                        | Delete
+                    li
+                      a(href='JavaScript:void(0);', data-action='editor-select-all') Select All
+                    li.divider
+                    li
+                      a(href='JavaScript:void(0);', data-action='editor-document-refresh')
+                        i.icon-refresh
+                        | Refresh
+                    li.divider
+                    li
+                      a(href='JavaScript:void(0);', data-action='editor-find')
+                        i.icon-search
+                        | Find
+                    li
+                      a(href='JavaScript:void(0);', data-action='editor-find-next') Find Next
+                    li
+                      a(href='JavaScript:void(0);', data-action='editor-find-previous') Find Previous
+                    li
+                      a(href='JavaScript:void(0);', data-action='editor-find-replace') Replace...                    
+                li#menuView.dropdown
+                  a.dropdown-toggle(data-toggle='dropdown', href='#menuView')
+                    | View
+                    b.caret
+                  ul.dropdown-menu
+                    li
+                      a(href='JavaScript:void(0);', data-action='editor-zoom-in')
+                        i.icon-zoom-in
+                        | Zoom In
+                    li
+                      a(href='JavaScript:void(0);', data-action='editor-zoom-out')
+                        i.icon-zoom-out
+                        | Zoom Out
+                    li
+                      a(href='JavaScript:void(0);', data-action='editor-zoom-out') Actual Size                        
+                    li.divider
+                    li
+                      a(href='JavaScript:void(0);', data-action="editor-enter-fullscreen")
+                        i.icon-fullscreen
+                        | Enter Full Screen
+                li#menuCode.dropdown
+                  a.dropdown-toggle(data-toggle='dropdown', href='#menuCode')
+                    | Code
+                    b.caret
+                  ul.dropdown-menu
+                    li
+                      a(href='JavaScript:void(0);', data-action='editor-comment-selected') Comment Selected
+                    li
+                      a(href='JavaScript:void(0);', data-action='editor-uncomment-selected') Uncomment Selected
+                    li
+                      a(href='JavaScript:void(0);', data-action='editor-format-selected-code')
+                        i.icon-th-list
+                        | Format
+                    li.divider
+                    li
+                      a(href='JavaScript:void(0);', data-action='editor-check-quality')
+                        i.icon-question-sign
+                        | Check Quality
+                    li.divider
+                    li
+                      a(href='JavaScript:void(0);', data-action='editor-share-code')
+                        i.icon-share
+                        | Share
+                li#menuChat.dropdown
+                  a.dropdown-toggle(data-toggle='dropdown', href='#menuChat')
+                    | Chat
+                    b.caret
+                  ul.dropdown-menu
+                    li
+                      a(href='JavaScript:void(0);', data-action='editor-videochat') Video Chat
+                li#menuHelp.dropdown
+                  a.dropdown-toggle(data-toggle='dropdown', href='#menuHelp')
+                    | Help
+                    b.caret
+                  ul.dropdown-menu
+                    li
+                      a(href='JavaScript:void(0);', data-action='editor-show-about')
+                        i.icon-info-sign
+                        | About
+              // right 
+              ul.nav.pull-right      
+                  button.btn.btn-mini.btn-primary.disabled(data-action='editor-livepreview-toggle', data-status='off', disabled='disabled')
+                    i.icon-eye-close.icon-white.disabled
+                  button.btn.btn-mini.btn-primary.btn-ntfc
+                    span.notification-count 0                    
+                    i.icon-bullhorn.icon-white                                      
+                  button.btn.btn-small.btn-primary.dropdown-toggle(data-toggle='dropdown', href='#menuProfile')
+                    i.icon-user.icon-white
+                    | Profile
+                    span.caret
+                  ul.dropdown-menu
+                    li
+                      a(href='JavaScript:void(0);') Account
+                    li.divider
+                    li.center
+                      button.btn-logout.btn.btn-primary 
+                        i.icon-lock.icon-white
+                        |   Logout
+
+                      
+      .row-fluid        
+        #editor-area.span8
+          ul.breadcrumb
+            li
+              a(href='#')            
+          textarea#home.tab-pane.fade(disabled='disabled')
+        #right-items.span2
+          #bookmarksArea.bookmarks      
+      div#video-chat.modal.hide.fade(data-backdrop="static")              
+              div.modal-header
+              div.modal-body
+              div.modal-footer
+      div#chatbox.chatbox
+      audio#chatAlert(src='/img/gtalk1.wav', style='display:none')                
+    script(type='text/javascript', charset='utf-8', src='js/colorpicker/Color.Picker.Classic.js')
+    script(type='text/javascript', charset='utf-8', src='js/colorpicker/Color.Space.js')               
+    script(type='text/javascript', charset='utf-8', src='js/contextmenu/jquery.contextMenu.js')    
+    script(type='text/javascript', charset='utf-8', src='js/jquery.idletimer.js')
+    script(type='text/javascript', charset='utf-8', src='js/jquery.idletimeout.js')    
+    script(type='text/javascript', charset='utf-8', src='js/codemirror/lib/codemirror.js')
+    script(type='text/javascript', charset='utf-8', src='js/zen-coding/zen_codemirror.min.js')
+    script(type='text/javascript', charset='utf-8', src='js/codemirror/addon/format/formatting.js')
+    script(type='text/javascript', charset='utf-8', src='js/codemirror/addon/edit/closetag.js')
+    script(type='text/javascript', charset='utf-8', src='js/codemirror/addon/edit/matchbrackets.js')
+    script(type='text/javascript', charset='utf-8', src='js/codemirror/addon/hint/show-hint.js')
+    script(type='text/javascript', charset='utf-8', src='js/codemirror/addon/hint/javascript-hint.js')
+    script(type='text/javascript', charset='utf-8', src='js/codemirror/addon/hint/html-hint.js')
+    script(type='text/javascript', charset='utf-8', src='js/codemirror/addon/dialog/dialog.js')
+    script(type='text/javascript', charset='utf-8', src='js/codemirror/addon/search/searchcursor.js')
+    script(type='text/javascript', charset='utf-8', src='js/codemirror/addon/search/search.js')    
+    script(type='text/javascript', charset='utf-8', src='js/codemirror/addon/edit/closebrackets.js')    
+    script(type='text/javascript', charset='utf-8', src='js/codemirror/mode/xml/xml.js')
+    script(type='text/javascript', charset='utf-8', src='js/codemirror/mode/javascript/javascript.js')
+    script(type='text/javascript', charset='utf-8', src='js/codemirror/mode/css/css.js')
+    script(type='text/javascript', charset='utf-8', src='js/codemirror/mode/htmlmixed/htmlmixed.js')
+    script(type='text/javascript', charset='utf-8', src='js/codemirror/inlet.js')
+    script(type='text/javascript', charset='utf-8', src='js/noty/jquery.noty.js')
+    script(type='text/javascript', charset='utf-8', src='js/noty/layouts/top.js')
+    script(type='text/javascript', charset='utf-8', src='js/noty/layouts/bottomLeft.js')
+    script(type='text/javascript', charset='utf-8', src='js/noty/themes/default.js')
+    script(type='text/javascript', charset='utf-8', src='http://static.opentok.com/webrtc/v2.0/js/TB.min.js')
+    script(type='text/javascript', src='/channel/bcsocket.js')
+    script(type='text/javascript', src='/share/share.js')    
+    script(type='text/javascript', src='/share/cm.js')
+    script(type='text/javascript', src='js/jquery.dataTables.js')
+    script(type='text/javascript', src='js/jquery.hotkeys.js')
+    script(type='text/javascript', src='js/DT_bootstrap.js')
+    script(type='text/javascript', src='js/jquery.autoSuggest.js')
+    script(type='text/javascript', src='js/esprima.js')
+    script(type='text/javascript', src='/nowjs/now.js')    
+    script(type='text/javascript', src='js/chat.js')
+    script(type='text/javascript', src='js/uuid/uuid.js')
+    script(type='text/javascript', src='js/site.js')
+    script(type='text/javascript', src='js/synchdivscroll.js')   
+    script(type='text/javascript', src='js/notification.js')
+
