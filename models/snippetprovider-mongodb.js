@@ -8,7 +8,7 @@ var snippetProvider = undefined;
 
 logger.debugLevel = 'info';
 
-snippetProvider = function(host, port) { 
+SnippetProvider = function(host, port) { 
   if (process.env.MONGOHQ_URL) { // connect to mongoHQ
     this.db = Db.connect(process.env.MONGOHQ_URL, {db: {auto_reconnect: true}, noOpen: true, uri_decode_auth: true});
     this.db.open(function(err, db) {
@@ -35,14 +35,14 @@ snippetProvider = function(host, port) {
   }
 };        
 
-snippetProvider.prototype.getCollection= function(callback) {
+SnippetProvider.prototype.getCollection= function(callback) {
   this.db.collection('snippets', function(error, snippet_collection) {
     if( error ) callback(error);
     else callback(null, snippet_collection);
   });
 };
 
-snippetProvider.prototype.findAll = function(user, callback) {
+SnippetProvider.prototype.findAll = function(user, callback) {
     this.getCollection(function(error, snippet_collection) {
       if( error ) callback(error)
       else {
@@ -72,7 +72,7 @@ snippetProvider.prototype.findAll = function(user, callback) {
     });
 };
 
-snippetProvider.prototype.findById = function(id, callback) {
+SnippetProvider.prototype.findById = function(id, callback) {
     this.getCollection(function(error, snippet_collection) {
       if( error ) callback(error)
       else {
@@ -84,7 +84,7 @@ snippetProvider.prototype.findById = function(id, callback) {
     });
 };
         
-snippetProvider.prototype.findByName = function(name, callback) {
+SnippetProvider.prototype.findByName = function(name, callback) {
     this.getCollection(function(error, snippet_collection) {
       if( error ) callback(error)
       else {
@@ -96,7 +96,7 @@ snippetProvider.prototype.findByName = function(name, callback) {
     });
 };
     
-snippetProvider.prototype.new = function(name, data, callback) {
+SnippetProvider.prototype.new = function(name, data, callback) {
   this.getCollection(function(error, snippet_collection) {
     if (error) callback(error);
     else {                               
@@ -148,7 +148,7 @@ snippetProvider.prototype.new = function(name, data, callback) {
   });
 };                           
                   
-snippetProvider.prototype.delete = function(name, data, callback) {
+SnippetProvider.prototype.delete = function(name, data, callback) {
   this.getCollection(function(err, snippet_collection) {
     if (err) callback(err)
     else {
@@ -200,7 +200,7 @@ snippetProvider.prototype.delete = function(name, data, callback) {
  * @param {function} [callback] The customized function to handle error
  */
 
-snippetProvider.prototype.update = function(name, data, callback) {
+SnippetProvider.prototype.update = function(name, data, callback) {
    // db.snippets.update({name: 'test', 'root.html.name': 'index.html'}, {$set:{'root.html.$.name': 'test.html'}})
   this.getCollection(function(error, snippet_collection) {
      if (error) callback(error);
@@ -224,7 +224,7 @@ snippetProvider.prototype.update = function(name, data, callback) {
   });
 };
 
-snippetProvider.prototype.save = function(snippets, callback) {
+SnippetProvider.prototype.save = function(snippets, callback) {
     this.getCollection(function(error, snippet_collection) {
       if( error ) callback(error);
       else {
@@ -247,11 +247,11 @@ snippetProvider.prototype.save = function(snippets, callback) {
     });
 };
 
-snippetProvider.factory = function(){
+SnippetProvider.factory = function(){
   if (!snippetProvider) {
-    snippetProvider = new snippetProvider('localhost', 27017);  
+    snippetProvider = new SnippetProvider('localhost', 27017);  
   }
    return snippetProvider;  
 };
 
-exports.snippetProvider = snippetProvider;
+exports.SnippetProvider = SnippetProvider;

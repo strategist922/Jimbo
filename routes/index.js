@@ -23,6 +23,7 @@ module.exports = function(app) {
   app.all('/login', account.login);                         
   app.get('/logout', account.logout);
   app.all('/signup', account.signup);
+  app.get('/project', project.show);
   app.get('/user', account.user);
   app.get('/users/list', account.list);  
 }         

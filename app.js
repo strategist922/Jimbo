@@ -46,8 +46,7 @@ sharejs.attach(app, options);
 var server;
 exec('mongod &', function(err, stdout, stderr) {
   server = app.listen(2727);
-  console.log('Server running at http://127.0.0.1:9001/');
-  chatServer.start(server);
+  console.log('Server running at http://127.0.0.1:2727/');  
 });
 
 
