@@ -9,7 +9,8 @@ html
     link(rel='stylesheet', href='thirdparty/Bootstrap/Themes/charisma/css/bootstrap-spacelab.css', type='text/css', media='screen', charset='utf-8')                
     link(rel='stylesheet', href='thirdparty/CodeMirrorEditor/lib/codemirror.css', type='text/css', media='screen', charset='utf-8')
     link(rel='stylesheet', href='thirdparty/CodeMirrorEditor/addon/hint/show-hint.css', type='text/css', media='screen', charset='utf-8')
-    link(rel='stylesheet', href='thirdparty/CodeMirrorEditor/addon/dialog/dialog.css', type='text/css', media='screen', charset='utf-8')    
+    link(rel='stylesheet', href='thirdparty/CodeMirrorEditor/addon/dialog/dialog.css', type='text/css', media='screen', charset='utf-8')
+    link(rel='stylesheet', href='thirdparty/CodeMirrorEditor/theme/solarized.css', type='text/css', media='screen', charset='utf-8')    
     //link(rel='stylesheet', href='thirdparty/CodeMirrorEditor/theme/brackets.css', type='text/css', media='screen', charset='utf-8')           
     link(rel='stylesheet', href='thirdparty/Bootstrap/addon/DataTable/DT_bootstrap.css', type='text/css', media='screen', charset='utf-8')    
     link(rel='stylesheet', href='css/snippetStyle.css', type='text/css', media='screen', charset='utf-8')         
@@ -26,11 +27,24 @@ html
           #previewArea.span6
           #editorArea.span6
             .tabbable
-              ul.nav.nav-tabs                                  
+              ul.nav.nav-tabs#editorTabs
+                li.active(data-id='htmlTab')
+                  a(href='#htmlContent', data-toggle='tab') HTML                  
                 li(data-id='jsTab')
-                  a(href='#', data-toggle='tab') JS                                                                
-              #jsContent.tab-content
-                textarea#jsEditor(disabled)
+                  a(href='#jsContent', data-toggle='tab') JS
+                li(data-id='cssTab')
+                  a(href='#cssContent', data-toggle='tab') CSS
+                li(data-id='jsonTab')
+                  a(href='#jsonContent', data-toggle='tab') JSON                  
+              .tab-content
+                #htmlContent.tab-pane.active
+                  textarea#htmlEditor(disabled)
+                #jsContent.tab-pane
+                  textarea#jsEditor(disabled)
+                #cssContent.tab-pane
+                  textarea#cssEditor(disabled)
+                #jsonContent.tab-pane
+                  textarea#jsonEditor(disabled)
     script(type='text/javascript', charset='utf-8', src='http://nornagon.github.com/thistle/thistle.js')                              
     script(type='text/javascript', charset='utf-8', src='thirdparty/CodeMirrorEditor/lib/codemirror.js')
     script(type='text/javascript', charset='utf-8', src='thirdparty/Emmet/emmet.min.js')    
