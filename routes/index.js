@@ -1,5 +1,5 @@
 var account = require('./account'),
-    project = require('./snippet');    
+    snippet = require('./snippet');    
 
 
 
@@ -13,8 +13,8 @@ module.exports = function(app) {
     }
   };
 
-  app.all('/snippet/*', requireAuthentication);
-  app.all('/snippet', requireAuthentication);
+  // app.all('/snippet/*', requireAuthentication);
+  // app.all('/snippet', requireAuthentication);
   
   app.get('/', function(req, res){
     res.render('index', { title: 'Jimbo' });
@@ -23,7 +23,7 @@ module.exports = function(app) {
   app.all('/login', account.login);                         
   app.get('/logout', account.logout);
   app.all('/signup', account.signup);
-  app.get('/project', project.show);
+  app.get('/snippet', snippet.createOrLoad);
   app.get('/user', account.user);
   app.get('/users/list', account.list);  
 }         

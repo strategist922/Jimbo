@@ -13,7 +13,7 @@ exports.login = function(req, res) {
             AM.autoLogin(req.cookies.user, req.cookies.pass, function(o) {
                 if (o != null) {
                     req.session.user = o;
-                    res.redirect('/project');
+                    res.redirect('/snippet');
                 } else {
                     res.render('account/login', {
                         title : 'Login - Access Your Snippets'
@@ -51,7 +51,7 @@ exports.login = function(req, res) {
                             maxAge : 900000
                         });
                     }
-                    res.redirect('/project');
+                    res.redirect('/snippet');
                 }
             });
         }

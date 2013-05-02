@@ -12,10 +12,9 @@ block content
           input(type="text", name="user", id='user-tf').span4.required
           label Password
           input(type="password", name="pass", id='pass-tf').span4.required
-          button(type="submit")#btn-login.btn.btn-primary
-              i.icon-lock.icon-white
+          button(type="submit")#btn-login.btn.btn-primary              
               | Sign in
-          label#remember-me.checkbox Remember Me
+          label#remember-me.checkbox Remember Me              
               input(type="checkbox", checked='checked')
           div.clear-fix
           hr
@@ -26,9 +25,9 @@ block content
 include modals/alert
 include modals/lost-password
 
-script(src='/js/jquery-1.7.2.min.js')
+script(src='http://code.jquery.com/jquery-2.0.0.min.js')
+script(src='/thirdparty/Bootstrap/js/bootstrap.min.js')
 script(src='/js/jquery.form.js')
-script(src='/js/bootstrap.min.js')
 script(src='/js/views/login.js')
 script(src='/js/controllers/loginController.js')
 script(src='/js/form-validators/loginValidator.js')

@@ -30,7 +30,7 @@ SnippetProvider = function(host, port) {
       }
     });
   } else {
-    this.db= new Db('ArianDb', new Server(host, port, {auto_reconnect: true}, {}));
+    this.db= new Db('JimboDb', new Server(host, port, {auto_reconnect: true}, {}));
     this.db.open(function(){});     
   }
 };        
@@ -84,11 +84,13 @@ SnippetProvider.prototype.findById = function(id, callback) {
     });
 };
         
-SnippetProvider.prototype.findByName = function(name, callback) {
+SnippetProvider.prototype.findBySID = function(sid, callback) {
     this.getCollection(function(error, snippet_collection) {
-      if( error ) callback(error)
+      if(error) callback(error)
       else {
-        snippet_collection.findOne({name: name}, function(error, result) {
+        snippet_collection.findOne({snippetId: sid}, function(error, result) {
+            console.log("inner");
+            console.log(result);
           if( error ) callback(error)
           else callback(null, result)
         });
@@ -232,10 +234,7 @@ SnippetProvider.prototype.save = function(snippets, callback) {
           snippets = [snippets];
 
         for( var i =0;i< snippets.length;i++ ) {
-          snippet = snippets[i]; 
-          if (!snippet.name || !snippet.creator || typeof(snippet.users)=="undefined") { 
-            callback(error);
-          }
+          snippet = snippets[i];           
           snippet.created_on = new Date();
           snippet.last_modified_on = new Date();
         }

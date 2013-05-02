@@ -35,8 +35,8 @@ app.configure('production', function(){
 
 require('./routes/index')(app)
 
-var options = {db: {type: 'none'}}; // See docs for options. {type: 'redis'} to enable persistance.
-  options.db = {type: 'mongo'};
+var options = {db: {type: 'redis'}}; // See docs for options. {type: 'redis'} to enable persistance.
+  //options.db = {type: 'mongo'};
   options.auth = function(agent, action) {  
   action.accept();
 };
