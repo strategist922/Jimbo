@@ -35,8 +35,8 @@ app.configure('production', function(){
 
 require('./routes/index')(app)
 
-var options = {db: {type: 'redis'}}; // See docs for options. {type: 'redis'} to enable persistance.
-  //options.db = {type: 'mongo'};
+var options = {/*db: {type: 'redis'}*/}; // See docs for options. {type: 'redis'} to enable persistance.
+  options.db = {type: 'redis'};
   options.auth = function(agent, action) {  
   action.accept();
 };
@@ -44,7 +44,7 @@ var options = {db: {type: 'redis'}}; // See docs for options. {type: 'redis'} to
 // Attach the sharejs REST and Socket.io interfaces to the server
 sharejs.attach(app, options);
 var server;
-exec('mongod &', function(err, stdout, stderr) {
+exec('mongod --dbpath ~/Desktop/data/&', function(err, stdout, stderr) {
   server = app.listen(2727);
   console.log('Server running at http://127.0.0.1:2727/');  
 });

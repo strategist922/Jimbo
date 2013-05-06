@@ -7,11 +7,11 @@ html
     link(rel='icon', href='img/icon.png')
     link(rel='stylesheet', href='thirdparty/Bootstrap/css/bootstrap.min.css', type='text/css', media='screen', charset='utf-8')
     link(rel='stylesheet', href='thirdparty/Bootstrap/Themes/charisma/css/bootstrap-spacelab.css', type='text/css', media='screen', charset='utf-8')                
+    link(rel='stylesheet', href='thirdparty/Bootstrap/Themes/charisma/css/opa-icons.css', type='text/css', media='screen', charset='utf-8')    
     link(rel='stylesheet', href='thirdparty/CodeMirrorEditor/lib/codemirror.css', type='text/css', media='screen', charset='utf-8')
     link(rel='stylesheet', href='thirdparty/CodeMirrorEditor/addon/hint/show-hint.css', type='text/css', media='screen', charset='utf-8')
     link(rel='stylesheet', href='thirdparty/CodeMirrorEditor/addon/dialog/dialog.css', type='text/css', media='screen', charset='utf-8')
-    link(rel='stylesheet', href='thirdparty/CodeMirrorEditor/theme/solarized.css', type='text/css', media='screen', charset='utf-8')    
-    //link(rel='stylesheet', href='thirdparty/CodeMirrorEditor/theme/brackets.css', type='text/css', media='screen', charset='utf-8')           
+    link(rel='stylesheet', href='thirdparty/CodeMirrorEditor/theme/solarized.css', type='text/css', media='screen', charset='utf-8')                   
     link(rel='stylesheet', href='thirdparty/Bootstrap/addon/DataTable/DT_bootstrap.css', type='text/css', media='screen', charset='utf-8')    
     link(rel='stylesheet', href='css/snippetStyle.css', type='text/css', media='screen', charset='utf-8')         
     script(type='text/javascript', charset='utf-8', src='http://code.jquery.com/jquery-2.0.0.min.js')              
@@ -20,11 +20,18 @@ html
   body(style='overflow: hidden;')
     .container-fluid
       .navbar
-        .navbar-inner
-          .container-fluid
+        .navbar-inner          
+          #dialog.modal.hide.fade          
+              div.modal-header
+              div.modal-body
+              div.modal-footer                                      
+          .nav.pull-right                      
+            button.btn.btn-small.btn-warning#shareButton
+              i.icon-share                          
       .row-fluid        
         .span12                          
           #previewArea.span6
+            .box
           #editorArea.span6
             .tabbable
               ul.nav.nav-tabs#editorTabs
@@ -66,7 +73,7 @@ html
     script(type='text/javascript', charset='utf-8', src='thirdparty/Noty/layouts/bottomLeft.js')
     script(type='text/javascript', charset='utf-8', src='thirdparty/Noty/themes/default.js')    
     script(type='text/javascript', src='/channel/bcsocket.js')
-    script(type='text/javascript', src='/share/share.js')    
+    script(type='text/javascript', src='/share/share.uncompressed.js')    
     script(type='text/javascript', src='/share/cm.js')
     script(type='text/javascript', src='thirdparty/Bootstrap/addon/DataTable/jquery.dataTables.js')
     script(type='text/javascript', src='thirdparty/Bootstrap/addon/DataTable/DT_bootstrap.js')        

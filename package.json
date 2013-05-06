@@ -2,10 +2,6 @@
   "name": "JIMBO",
   "version": "1.0",
   "description": "COLLABORATIVE D3 CODE EDITOR WITH LIVE PREVIEW",
-  "main": "app.js",
-  "scripts": {
-    "test": "nodeunit tests.coffee"
-  },
   "repository": {
     "type": "git",
     "url": "https://github.com/hatpick/Jimbo.git"
@@ -17,6 +13,8 @@
   "license": "MIT",
   "dependencies": {
     "share": "*",    
+    "esprima": "*",
+    "escodegen": "*",
     "connect": "~1",
     "express": "3.x",
     "jade": "*",

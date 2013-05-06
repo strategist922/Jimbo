@@ -78,7 +78,18 @@ var editorInit = function(id, mode, type) {
 }
 var initApp = function(id, mode) {
     changeEditorMode(id, mode, "html");
+    
+    $("#shareButton").mouseover(function(){
+        $(this).css("opacity", 1);              
+    }).mouseleave(function(){
+        $(this).css("opacity", 0.5);
+    }).tooltip({placement:"bottom", title:"Share your snippet!"});
+    
+    //TODO:Ask for name
 }
+
+var doc = null;
+
 var changeEditorMode = function(id, mode, type) {
     var codemirror = editorInit(id, mode, type);    
         
@@ -88,13 +99,13 @@ var changeEditorMode = function(id, mode, type) {
     sessionStorage.setItem("snippetId", snippetId);        
     var docName = snippetId + "-" + type;
     
-    window.editor = codemirror;
-    //ShareJS
-    var connection = sharejs.open(docName, "text", function(error, newDoc) {
-        // if (doc !== null) {
-            // doc.close();
-            // doc.detach_cm();
-        // }
+    window.myCodeMirror = codemirror;
+    //ShareJS    
+    var connection = sharejs.open(docName, "text", function(error, newDoc) {               
+        if (doc !== null) {
+            doc.close();
+            doc.detach_cm();
+        }
 
         doc = newDoc;
         console.log(doc.name)
@@ -103,9 +114,9 @@ var changeEditorMode = function(id, mode, type) {
             console.error(error);
             return;
         }
-        doc.attach_cm(codemirror);
-        codemirror.setOption("readOnly", false);                        
-    });
+        doc.attach_cm(myCodeMirror);
+        myCodeMirror.setOption("readOnly", false);                        
+    });                                
     
     /*if ($(".CodeMirror.CodeMirror-wrap").size() > 1) {
         $($(".CodeMirror.CodeMirror-wrap")).remove();
@@ -132,7 +143,7 @@ $(document).ready(function() {
             case 'htmlTab':
                 var _id = document.getElementById("htmlEditor");
                 var _mode = "text/html";
-                changeEditorMode(_id, _mode, "html");                
+                changeEditorMode(_id, _mode, "html");                                
                 break;
             case 'jsTab':
                 var _id = document.getElementById("jsEditor");
