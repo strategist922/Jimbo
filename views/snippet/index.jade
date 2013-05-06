@@ -32,11 +32,16 @@ html
                 span.caret                   
               ul.dropdown-menu
                 li
-                  a(href='JavaScript:void(0);') D3
+                  a(data-libName='d3', href='#') D3
+                li                  
+                  a(data-libName='raphael', href='#') Raphael
                 li
-                  a(href='JavaScript:void(0);') Raphael
+                  a(data-libName='gchart', href='#') Google Charts
+                li.divider
                 li
-                  a(href='JavaScript:void(0);') Jquery                                                                                                                                                                
+                  a(data-libName='jquery', href='#') Jquery
+                li
+                  a(data-libName='underscore', href='#') Underscore                                                                                                                                                                            
           .nav.pull-right
             button.btn.btn-small.btn-warning#editUsernameButton
               i.icon-user

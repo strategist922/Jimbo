@@ -1,5 +1,5 @@
 var layout = function() {
-    var _height = document.documentElement.clientHeight - $(".navbar").height() - 50;
+    var _height = document.documentElement.clientHeight - $(".navbar").height() - 90;
     $("#mainView").height(_height);
     $("#editorArea").height(_height);
     $("#previewArea").height(_height);

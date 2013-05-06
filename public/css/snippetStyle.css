@@ -1,4 +1,7 @@
 html,body{width:100%;height:100%;padding-left:0;padding-right:0;-webkit-user-select:none;-moz-user-select:none;background-image:url("../img/splash.jpg") repeat}
+.span12{padding:20px;background-image:url("../../img/cover.jpg");background-repeat:no-repeat;background-size:cover;-webkit-box-shadow:5px 10px 25px #000}
+.libIcon{height:14px;width:14px;display:inline-block}
+.raphael{background-image:url("../img/Raphael.png") no-repeat !important}
 a:hover{text-decoration:none}
 .nav.nav-tabs{margin-bottom:0}
 .navbar{border-bottom:none}
@@ -7,6 +10,5 @@ a:hover{text-decoration:none}
 #editorArea{position:relative;background-color:#fff;-webkit-box-shadow:0 0 4px rgba(0,0,0,0.2),inset 0 0 50px rgba(0,0,0,0.1);-moz-box-shadow:0 0 4px rgba(0,0,0,0.2),inset 0 0 50px rgba(0,0,0,0.1);box-shadow:0 0 5px rgba(0,0,0,0.2),inset 0 0 50px rgba(0,0,0,0.1)}
 #previewArea:before,#previewArea:after{background:transparent;-webkit-transform:skew(-5deg) rotate(-5deg);-moz-transform:skew(-5deg) rotate(-5deg);-ms-transform:skew(-5deg) rotate(-5deg);-o-transform:skew(-5deg) rotate(-5deg);transform:skew(-5deg) rotate(-5deg);-webkit-box-shadow:0 6px 12px rgba(0,0,0,0.3);-moz-box-shadow:0 6px 12px rgba(0,0,0,0.3);box-shadow:0 6px 12px rgba(0,0,0,0.3);z-index:-1}
 #previewArea:after{-webkit-transform:skew(5deg) rotate(5deg);-moz-transform:skew(5deg) rotate(5deg);-ms-transform:skew(5deg) rotate(5deg);-o-transform:skew(5deg) rotate(5deg);transform:skew(5deg) rotate(5deg)}
-#editorArea.span6{border-bottom:1px solid #ddd}
 li.active>a{background:transparent !important;border:none !important;color:#ffd119 !important}
 #mainView{margin:100px auto;width:100%;text-align:center}
