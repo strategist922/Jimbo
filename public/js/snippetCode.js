@@ -79,11 +79,9 @@ var editorInit = function(id, mode, type) {
 var initApp = function(id, mode) {
     changeEditorMode(id, mode, "html");
     
-    $("#shareButton").mouseover(function(){
-        $(this).css("opacity", 1);              
-    }).mouseleave(function(){
-        $(this).css("opacity", 0.5);
-    }).tooltip({placement:"bottom", title:"Share your snippet!"});
+    $("#shareButton").tooltip({placement:"bottom", title:"Share your snippet!"});
+    $("#editNameButton").tooltip({placement:"bottom", title:"Edit your snippet name!"});
+    $("#editUsernameButton").tooltip({placement:"bottom", title:"Edit you name!"});
     
     //TODO:Ask for name
 }

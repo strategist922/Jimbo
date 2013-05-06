@@ -24,8 +24,24 @@ html
           #dialog.modal.hide.fade          
               div.modal-header
               div.modal-body
-              div.modal-footer                                      
-          .nav.pull-right                      
+              div.modal-footer  
+          .nav
+            .btn-group              
+              button.btn.btn-warning Libraries
+              button.btn.btn-warning.dropdown-toggle(data-toggle='dropdown', data-href='#addLibraries')  
+                span.caret                   
+              ul.dropdown-menu
+                li
+                  a(href='JavaScript:void(0);') D3
+                li
+                  a(href='JavaScript:void(0);') Raphael
+                li
+                  a(href='JavaScript:void(0);') Jquery                                                                                                                                                                
+          .nav.pull-right
+            button.btn.btn-small.btn-warning#editUsernameButton
+              i.icon-user
+            button.btn.btn-small.btn-warning#editNameButton
+              i.icon-edit  
             button.btn.btn-small.btn-warning#shareButton
               i.icon-share                          
       .row-fluid        
