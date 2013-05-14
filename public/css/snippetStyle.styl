@@ -12,12 +12,20 @@ html, body
   background-image:url(../../img/cover.jpg)
   background-repeat: no-repeat
   background-size: cover
-  -webkit-box-shadow: 5px 10px 25px black
+  -webkit-box-shadow: 0 0 15px 5px black
+  -moz-box-shadow: 0 0 15px 5px black
+  box-shadow: 0 0 15px 5px black
 
 .libIcon
   height: 14px
   width: 14px
   display: inline-block
+  
+/*.btn-warning, .btn-warning:hover 
+  color: #000*/
+.inlet_slider
+  width: 200px
+  outline: none !important
   
 .raphael
   background-image:url(../img/Raphael.png) no-repeat !important
@@ -30,10 +38,17 @@ a:hover
 
 .navbar
   border-bottom: none
-
+  
+.inlet_slider
+  z-index: 200
+  
 .nav>li
   width:70px
-  text-align:center  
+  text-align:center
+  
+img.icon
+  height:24px
+  width: 24px  
   
 #previewArea
   position: relative    

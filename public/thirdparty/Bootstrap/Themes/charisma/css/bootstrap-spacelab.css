@@ -3678,14 +3678,14 @@ input[type="submit"].btn.btn-mini {
   border-bottom: 5px solid transparent;
   border-right: 5px solid #000000;
 }
-.popover.bottom .arrow {
+/*.popover.bottom .arrow {
   top: 0;
   left: 50%;
   margin-left: -5px;
   border-left: 5px solid transparent;
   border-right: 5px solid transparent;
   border-bottom: 5px solid #000000;
-}
+}*/
 .popover.left .arrow {
   top: 50%;
   right: 0;

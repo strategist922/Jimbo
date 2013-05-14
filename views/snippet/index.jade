@@ -5,22 +5,30 @@ html
     title
       | Jimbo
     link(rel='icon', href='img/icon.png')
-    link(rel='stylesheet', href='thirdparty/Bootstrap/css/bootstrap.min.css', type='text/css', media='screen', charset='utf-8')
-    link(rel='stylesheet', href='thirdparty/Bootstrap/Themes/charisma/css/bootstrap-spacelab.css', type='text/css', media='screen', charset='utf-8')                
-    link(rel='stylesheet', href='thirdparty/Bootstrap/Themes/charisma/css/opa-icons.css', type='text/css', media='screen', charset='utf-8')    
+    link(rel='stylesheet', href='http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css', type='text/css', media='screen', charset='utf-8')
+    link(rel='stylesheet', href='thirdparty/Bootstrap/css/bootstrap.min.css', type='text/css', media='screen', charset='utf-8')       
+    link(rel='stylesheet', href='thirdparty/Bootstrap/Themes/charisma/css/bootstrap-spacelab.css', type='text/css', media='screen', charset='utf-8')                    
+    link(rel='stylesheet', href='thirdparty/Bootstrap/Themes/charisma/css/opa-icons.css', type='text/css', media='screen', charset='utf-8')
+    link(rel='stylesheet', href='thirdparty/colorpicker/Color.Picker.Classic.css', type='text/css', media='screen', charset='utf-8')    
     link(rel='stylesheet', href='thirdparty/CodeMirrorEditor/lib/codemirror.css', type='text/css', media='screen', charset='utf-8')
     link(rel='stylesheet', href='thirdparty/CodeMirrorEditor/addon/hint/show-hint.css', type='text/css', media='screen', charset='utf-8')
     link(rel='stylesheet', href='thirdparty/CodeMirrorEditor/addon/dialog/dialog.css', type='text/css', media='screen', charset='utf-8')
-    link(rel='stylesheet', href='thirdparty/CodeMirrorEditor/theme/solarized.css', type='text/css', media='screen', charset='utf-8')                   
-    link(rel='stylesheet', href='thirdparty/Bootstrap/addon/DataTable/DT_bootstrap.css', type='text/css', media='screen', charset='utf-8')    
+    link(rel='stylesheet', href='thirdparty/CodeMirrorEditor/theme/solarized.css', type='text/css', media='screen', charset='utf-8')                       
+    link(rel='stylesheet', href='thirdparty/Bootstrap/addon/DataTable/DT_bootstrap.css', type='text/css', media='screen', charset='utf-8')            
     link(rel='stylesheet', href='css/snippetStyle.css', type='text/css', media='screen', charset='utf-8')         
-    script(type='text/javascript', charset='utf-8', src='http://code.jquery.com/jquery-2.0.0.min.js')              
-    script(type='text/javascript', charset='utf-8', src='thirdparty/Bootstrap/js/bootstrap.min.js')           
-    script(type='text/javascript', charset='utf-8', src='http://documentcloud.github.com/underscore/underscore-min.js')           
+    script(type='text/javascript', charset='utf-8', src='http://code.jquery.com/jquery-2.0.0.min.js')
+    script(type='text/javascript', charset='utf-8', src='http://code.jquery.com/ui/1.10.3/jquery-ui.js')                  
+    script(type='text/javascript', charset='utf-8', src='thirdparty/Bootstrap/js/bootstrap.min.js')               
+    script(type='text/javascript', charset='utf-8', src='http://documentcloud.github.com/underscore/underscore-min.js')
+    link(rel='stylesheet', href='thirdparty/Bootstrap/Addon/Editable/css/bootstrap-editable.css', type='text/css', media='screen', charset='utf-8')
+    script(type='text/javascript', charset='utf-8', src='thirdparty/Bootstrap/Addon/Editable/js/bootstrap-editable.min.js')                   
   body(style='overflow: hidden;')
     .container-fluid
       .navbar
-        .navbar-inner          
+        .navbar-inner
+          a.brand(href='JavaScript:void(0);', muse_scanned='true')
+            img(src='../img/icon.png', style='width:20px; height:20px;')
+            |      Jimbo
           #dialog.modal.hide.fade          
               div.modal-header
               div.modal-body
@@ -28,7 +36,7 @@ html
           .nav
             .btn-group              
               button.btn.btn-warning Libraries
-              button.btn.btn-warning.dropdown-toggle(data-toggle='dropdown', data-href='#addLibraries')  
+              button.btn.btn-warning.dropdown-toggle(data-toggle='dropdown', data-action='#addLibraries')  
                 span.caret                   
               ul.dropdown-menu
                 li
@@ -43,11 +51,9 @@ html
                 li
                   a(data-libName='underscore', href='#') Underscore                                                                                                                                                                            
           .nav.pull-right
-            button.btn.btn-small.btn-warning#editUsernameButton
-              i.icon-user
-            button.btn.btn-small.btn-warning#editNameButton
-              i.icon-edit  
-            button.btn.btn-small.btn-warning#shareButton
+            a.label#usernameBadge(data-original-title="Edit your username") Anonymous              
+            a.label.label-info#snippetnameBadge(data-original-title="Edit your snippet name", style="margin-left: 5px") Not assigned                
+            a.btn.btn-small.btn-warning#shareButton(data-action='shareButton')
               i.icon-share                          
       .row-fluid        
         .span12                          
@@ -72,8 +78,9 @@ html
                 #cssContent.tab-pane
                   textarea#cssEditor(disabled)
                 #jsonContent.tab-pane
-                  textarea#jsonEditor(disabled)
-    script(type='text/javascript', charset='utf-8', src='http://nornagon.github.com/thistle/thistle.js')                              
+                  textarea#jsonEditor(disabled)    
+    script(type='text/javascript', charset='utf-8', src='thirdparty/colorpicker/Color.Picker.Classic.js')
+    script(type='text/javascript', charset='utf-8', src='thirdparty/colorpicker/Color.Space.js')                                 
     script(type='text/javascript', charset='utf-8', src='thirdparty/CodeMirrorEditor/lib/codemirror.js')
     script(type='text/javascript', charset='utf-8', src='thirdparty/Emmet/emmet.min.js')    
     script(type='text/javascript', charset='utf-8', src='thirdparty/CodeMirrorEditor/addon/edit/closetag.js')
@@ -88,9 +95,9 @@ html
     script(type='text/javascript', charset='utf-8', src='thirdparty/CodeMirrorEditor/mode/xml/xml.js')        
     script(type='text/javascript', charset='utf-8', src='thirdparty/CodeMirrorEditor/mode/javascript/javascript.js')
     script(type='text/javascript', charset='utf-8', src='thirdparty/CodeMirrorEditor/mode/css/css.js')
-    script(type='text/javascript', charset='utf-8', src='thirdparty/CodeMirrorEditor/mode/htmlmixed/htmlmixed.js')    
-    script(type='text/javascript', charset='utf-8', src='thirdparty/Noty/jquery.noty.js')
-    script(type='text/javascript', charset='utf-8', src='thirdparty/Noty/layouts/top.js')
+    script(type='text/javascript', charset='utf-8', src='thirdparty/CodeMirrorEditor/mode/htmlmixed/htmlmixed.js')
+    script(type='text/javascript', charset='utf-8', src='thirdparty/CodeMirrorEditor/inlet.js')    
+    script(type='text/javascript', charset='utf-8', src='thirdparty/Noty/jquery.noty.js')    
     script(type='text/javascript', charset='utf-8', src='thirdparty/Noty/layouts/bottomLeft.js')
     script(type='text/javascript', charset='utf-8', src='thirdparty/Noty/themes/default.js')    
     script(type='text/javascript', src='/channel/bcsocket.js')
