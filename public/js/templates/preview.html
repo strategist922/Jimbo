@@ -1,0 +1,44 @@
+<!doctype html>
+<html>
+	<head>
+		<title>Jimbo Preview</title>
+		<meta http-equiv='Content-type' content='text/html; charset=utf-8' />
+		<script type='text/javascript' charset='utf-8' src='http://code.jquery.com/jquery-2.0.0.min.js'></script>
+		<script type='text/javascript' charset='utf-8' src='http://d3js.org/d3.v3.min.js'></script>		
+		<script>
+			var Jimbo = (function () {
+				return {
+					json: null,									
+					workingCode: null,
+					renderCode: function(code) {
+	
+						var erroredOut = false;
+						
+						try { eval(code); }
+						catch (error) {
+							erroredOut = true;
+							console.error(error);
+						}
+						finally {
+							if (erroredOut) {
+								try { this.workingCode && eval(this.workingCode); }
+								catch (error) { console.error(error); }
+							} else {
+								this.workingCode = code;
+							}
+						}
+	
+					}
+				}
+		}());		
+		</script>
+		<style id="Jimbo-style">
+			
+		</style>
+	</head>
+	<body style='overflow: hidden;'>
+		<div id='Jimbo-main'>
+
+		</div>				
+	</body>
+</html>

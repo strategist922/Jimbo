@@ -12,7 +12,8 @@
   "author": "hatpick <hatpick@gmail.com>",
   "license": "MIT",
   "dependencies": {
-    "share": "*",    
+    "share": "*",
+    "request" : "*",    
     "esprima": "*",
     "escodegen": "*",
     "connect": "~1",

@@ -21,7 +21,7 @@ html
     script(type='text/javascript', charset='utf-8', src='thirdparty/Bootstrap/js/bootstrap.min.js')               
     script(type='text/javascript', charset='utf-8', src='http://documentcloud.github.com/underscore/underscore-min.js')
     link(rel='stylesheet', href='thirdparty/Bootstrap/Addon/Editable/css/bootstrap-editable.css', type='text/css', media='screen', charset='utf-8')
-    script(type='text/javascript', charset='utf-8', src='thirdparty/Bootstrap/Addon/Editable/js/bootstrap-editable.min.js')                   
+    script(type='text/javascript', charset='utf-8', src='thirdparty/Bootstrap/Addon/Editable/js/bootstrap-editable.min.js')                      
   body(style='overflow: hidden;')
     .container-fluid
       .navbar
@@ -59,6 +59,7 @@ html
         .span12                          
           #previewArea.span6
             .box
+              iframe#previewFrame(src='js/templates/preview.html')
           #editorArea.span6
             .tabbable
               ul.nav.nav-tabs#editorTabs
@@ -80,7 +81,7 @@ html
                 #jsonContent.tab-pane
                   textarea#jsonEditor(disabled)    
     script(type='text/javascript', charset='utf-8', src='thirdparty/colorpicker/Color.Picker.Classic.js')
-    script(type='text/javascript', charset='utf-8', src='thirdparty/colorpicker/Color.Space.js')                                 
+    script(type='text/javascript', charset='utf-8', src='thirdparty/colorpicker/Color.Space.js')                                          
     script(type='text/javascript', charset='utf-8', src='thirdparty/CodeMirrorEditor/lib/codemirror.js')
     script(type='text/javascript', charset='utf-8', src='thirdparty/Emmet/emmet.min.js')    
     script(type='text/javascript', charset='utf-8', src='thirdparty/CodeMirrorEditor/addon/edit/closetag.js')

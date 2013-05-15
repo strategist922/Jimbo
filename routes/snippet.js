@@ -1,7 +1,8 @@
 var hat = require("hat");
-var mongoose = require("mongoose");
+var request = require("request");
+var SP = require('../models/snippetProvider-redis');
 
-exports.createOrLoad = function(req, res) {
+exports.newSnippet = function(req, res) {
     res.render("snippet/index");
     /*snippetProvider = SnippetProvider.factory();
 
@@ -15,37 +16,18 @@ exports.createOrLoad = function(req, res) {
     }*/
 };
 
-function contains(value, array) {
-    for (var i = 0; i < array.length; i++) {
-        if (array[i] === value)
-            return i;
-    }
-    return -1;
-}
-
-
-exports.new = function(req, res) {
-    /*var sid = req.params["id"];
-    snippetProvider = snippetProvider.factory();
-    snippetProvider.findBySID(sid, function(error, snippet) {
-        if (snippet) {
-            console.log("error: duplicated");
-            res.render("snippet/index", {
-                error : "Duplicated Name"
-            });
-        } else {
-            snippetProvider.save({
-                snippetId : sid,
-                created_on : new Date,
-                last_modified_on : new Date
-            }, function(error, snippet) {
-                res.render("snippet/index");
-            });
-            res.render("snippet/index");
-        }
-    });*/
-   res.render("snippet/index");
+exports.loadSnippet = function(req, res) {        
+    var sId = req.body.snippetId;
+    var type = "html";
+    request(
+        {
+            uri: "/doc/" + sId + "-" + type,
+            method: "GET"
+        },
+        function(err, response, body){
+            console.log(response);        
+        }        
+    );
+        
 };
 
-exports.share = function(req, res, next) {
-}; 

@@ -13,6 +13,24 @@ $(window).resize(function() {
         myCodeMirror.refresh();
 });
 
+var libraries = {
+    d3 : {
+        src : "http://d3js.org/d3.v3.min.js"
+    },
+    jquery : {
+        src : "http://code.jquery.com/jquery-2.0.0.min.js"
+    },
+    raphael : {
+        src : "https://raw.github.com/DmitryBaranovskiy/raphael/master/raphael.js"
+    }
+}
+
+var addLibScriptTag = function(libs) {
+    for (var i = 0; i < libs.length; i++) {
+
+    }
+};
+
 var editors = {};
 var createEditor = function(id, mode) {
     CodeMirror.commands.autocomplete = function(cm) {
@@ -34,13 +52,12 @@ var createEditor = function(id, mode) {
         autoCloseBrackets : true,
         theme : "solarized light"
     });
-    
+
     Inlet(_editor);
     $(".slider").css('display', 'none');
     $(".picker").css('display', 'none');
-    
+
     _editor.setOption("readOnly", "nocursor");
-    
 
     return _editor;
 }
@@ -49,6 +66,7 @@ var editorInit = function(id, mode, type) {
     if (type === 'html') {
         if (!editors.html) {
             _editor = createEditor(id, mode);
+            
             editors.html = _editor;
         } else {
             _editor = editors.html;
@@ -62,14 +80,14 @@ var editorInit = function(id, mode, type) {
         }
     } else if (type === 'css') {
         if (!editors.css) {
-            _editor = createEditor(id, mode);
+            _editor = createEditor(id, mode);            
             editors.css = _editor;
         } else {
             _editor = editors.css;
         }
     } else {
         if (!editors.json) {
-            _editor = createEditor(id, mode);
+            _editor = createEditor(id, mode);            
             editors.json = _editor;
         } else {
             _editor = editors.json;
@@ -113,6 +131,89 @@ function shoutHandler(cmd, msg) {
     });
 }
 
+window.SnippetCode = null;
+
+
+
+window.pIframe = document.getElementById('previewFrame').contentWindow;
+
+var loadSnippet = function(snippetId) {
+    var snippetCodeObj = {};
+    var url = "/doc/" + snippetId + "-";
+    var iter = 0;
+    var modes = ["html", "js", "css", "json"];
+    var req = [];
+
+    req[0] = $.get(url + "html", function(data) {
+        if (data.search('404') === -1)
+            snippetCodeObj.html = data;
+        else
+            snippetCodeObj.modes[iter] = null;
+    });
+    req[1] = $.get(url + "js", function(data) {
+        if (data.search('404') === -1)
+            snippetCodeObj.js = data;
+        else
+            snippetCodeObj.js = null;
+    });
+    req[2] = $.get(url + "css", function(data) {
+        if (data.search('404') === -1)
+            snippetCodeObj.css = data;
+        else
+            snippetCodeObj.css = null;
+    });
+    req[3] = $.get(url + "json", function(data) {
+        if (data.search('404') === -1)
+            snippetCodeObj.json = data;
+        else
+            snippetCodeObj.json = null;
+    });
+
+    $.when(req[0], req[1], req[2], req[3]).done(function() {
+        SnippetCode = snippetCodeObj;        
+
+        for (property in SnippetCode) {
+            var code = SnippetCode[property];
+            if (code === null) {
+                if (SnippetCode.js !== null)
+                    iframe.Jimbo.renderCode(SnippetCode.js);
+                continue;
+            }
+            switch(property) {
+                case 'html':
+                    $('body #Jimbo-main', $('iframe').contents()).html(code);
+                    pIframe.Jimbo.renderCode(SnippetCode.js);
+                    break;
+                case 'js':
+                    $('body #Jimbo-main', $('iframe').contents()).html(SnippetCode.html);
+                    pIframe.Jimbo.renderCode(code);
+                    break;
+                case 'css':
+                    $('#Jimbo-style', $('iframe').contents()).get(0).textContent = code;
+                    $('body #Jimbo-main', $('iframe').contents()).html(SnippetCode.html);
+                    pIframe.Jimbo.renderCode(SnippetCode.js);
+                    break;
+                case 'json':
+                    try {
+                        pIframe.Jimbo.json = JSON.parse(code);
+                        $('body #Jimbo-main', $('iframe').contents()).html(SnippetCode.html);
+                        pIframe.Jimbo.renderCode(SnippetCode.js);
+                    } catch(err) {
+                        console.log(err);
+                    } finally {
+
+                    }
+                    break;
+            }
+        }
+    });
+};
+
+var initializePreview = function() {
+    var snippetId = sessionStorage["snippetId"];
+    loadSnippet(snippetId);
+};
+
 function initCommunication() {
     var snippetId = sessionStorage["snippetId"];
     var connection = sharejs.open(snippetId, "text", function(error, comDoc) {
@@ -145,10 +246,10 @@ function initCommunication() {
             });
         });
     };
-    
+
     $("#snippetnameBadge").tooltip({
         placement : "bottom",
-        title : "Snippet Name"        
+        title : "Snippet Name"
     });
 
     register('ok', 'success', 'Online');
@@ -162,6 +263,7 @@ var initApp = function(id, mode) {
     var currentUser = null;
     window.currentUser = currentUser;
 
+    //Initialize Editors
     changeEditorMode(id, mode, "html");
     initCommunication();
 
@@ -178,7 +280,9 @@ var initApp = function(id, mode) {
         title : "Edit you name!"
     });
 
-    //TODO:Ask for name
+    //Initialize Preview
+    initializePreview();
+
 }
 var doc = null;
 var communicationDoc = null;
@@ -193,6 +297,7 @@ var changeEditorMode = function(id, mode, type) {
     var docName = snippetId + "-" + type;
 
     window.myCodeMirror = codemirror;
+    myCodeMirror.jimboType = type;
     //ShareJS
     var connection = sharejs.open(docName, "text", function(error, newDoc) {
         if (doc !== null) {
@@ -208,6 +313,47 @@ var changeEditorMode = function(id, mode, type) {
         }
         doc.attach_cm(myCodeMirror);
         myCodeMirror.setOption("readOnly", false);
+               
+        switch(myCodeMirror.jimboType){
+            case 'html':
+            myCodeMirror.on("change",function(cm, cObj){   
+                var code = cm.getValue();
+                $('body #Jimbo-main', $('iframe').contents()).html(code);
+                pIframe.Jimbo.renderCode(editors.js.getValue());
+            });
+            break;
+            case 'js':
+            myCodeMirror.on("change", function(cm, cObj){
+                var code = cm.getValue();
+                $('body #Jimbo-main', $('iframe').contents()).html(editors.html.getValue());
+                pIframe.Jimbo.renderCode(code);
+            });
+            break;
+            case 'css':            
+            myCodeMirror.on("change", function(cm, cObj){
+                var code = cm.getValue();              
+                $('#Jimbo-style', $('iframe').contents()).get(0).textContent = code;
+                $('body #Jimbo-main', $('iframe').contents()).html(editors.html.getValue());
+                if (editors.js)
+                    pIframe.Jimbo.renderCode(editors.js.getValue());
+            });
+            break;
+            case 'json':
+            myCodeMirror.on("change", function(cm, cObj){
+                var code = cm.getValue();
+                try {
+                    pIframe.Jimbo.json = JSON.parse(code);
+                    $('body #Jimbo-main', $('iframe').contents()).html(editors.html.getValue());
+                    if (editors.js)
+                        pIframe.Jimbo.renderCode(editors.js.getValue());
+                } catch(err) {
+                    console.log(err);
+                } finally {
+            
+                }                
+            });
+            break;
+        }        
     });
 
     /*if ($(".CodeMirror.CodeMirror-wrap").size() > 1) {
@@ -282,22 +428,22 @@ $(document).ready(function() {
 
         $("#dialog").modal("show");
     }
-    
+
     $("#usernameBadge").editable({
-        type : 'text',                
-        name: "usernameBadge",
-        placement: 'bottom',
-        value : $("#usernameBadge").val()        
-    });    
-    
+        type : 'text',
+        name : "usernameBadge",
+        placement : 'bottom',
+        value : $("#usernameBadge").val()
+    });
+
     $("#snippetnameBadge").editable({
-        type : 'text',        
-        autotext : "never",         
-        name: "usernameBadge",
-        placement: 'bottom',
-        value : $("#snippetnameBadge").val()               
-    });    
-   
+        type : 'text',
+        autotext : "never",
+        name : "usernameBadge",
+        placement : 'bottom',
+        value : $("#snippetnameBadge").val()
+    });
+
     //Share snippet via email
     $("a[data-action=shareButton]").click(function() {
         shareSnippet();
