@@ -368,7 +368,7 @@ window.onload = function() {
     initApp(elem, "text/html");
 }
 
-window.onunload = function() {
+window.onbeforeunload = function() {
     if (communicationDoc !== null) {
         var message = (currentUser === null) ? "Someone just left your snippet!" : currentUser + " just left your snippet!";
         shoutOut("off$" + message);
