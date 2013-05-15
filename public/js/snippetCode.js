@@ -141,7 +141,7 @@ var loadSnippet = function(snippetId) {
     var snippetCodeObj = {};
     var url = "/doc/" + snippetId + "-";
     var iter = 0;
-    var modes = ["html", "js", "css", "json"];
+    var modes = ["json", "js", "html", "css"];
     var req = [];
 
     req[0] = $.get(url + "html", function(data) {
@@ -172,14 +172,15 @@ var loadSnippet = function(snippetId) {
     $.when(req[0], req[1], req[2], req[3]).done(function() {
         SnippetCode = snippetCodeObj;        
 
-        for (property in SnippetCode) {
-            var code = SnippetCode[property];
+        for (var p = 0; p < modes.length; p++) {
+            var prop = modes[p];
+            var code = SnippetCode[prop];
             if (code === null) {
                 if (SnippetCode.js !== null)
                     iframe.Jimbo.renderCode(SnippetCode.js);
                 continue;
             }
-            switch(property) {
+            switch(prop) {
                 case 'html':
                     $('body #Jimbo-main', $('iframe').contents()).html(code);
                     pIframe.Jimbo.renderCode(SnippetCode.js);
