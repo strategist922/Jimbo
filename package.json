@@ -13,9 +13,6 @@
   "license": "MIT",
   "dependencies": {
     "share": "*",
-    "request" : "*",    
-    "esprima": "*",
-    "escodegen": "*",
     "connect": "~1",
     "express": "3.x",
     "jade": "*",

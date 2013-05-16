@@ -320,7 +320,8 @@ var changeEditorMode = function(id, mode, type) {
             myCodeMirror.on("change",function(cm, cObj){   
                 var code = cm.getValue();
                 $('body #Jimbo-main', $('iframe').contents()).html(code);
-                pIframe.Jimbo.renderCode(editors.js.getValue());
+                if(editors.js)
+                    pIframe.Jimbo.renderCode(editors.js.getValue());
             });
             break;
             case 'js':
