@@ -32,7 +32,7 @@ var addLibScriptTag = function(libs) {
 };
 
 var editors = {};
-var createEditor = function(id, mode) {
+var createEditor = function(id, mode, type) {
     CodeMirror.commands.autocomplete = function(cm) {
         if (mode === "text/html")
             CodeMirror.showHint(cm, CodeMirror.htmlHint);
@@ -52,8 +52,9 @@ var createEditor = function(id, mode) {
         autoCloseBrackets : true,
         theme : "solarized light"
     });
-
-    Inlet(_editor);
+    _editor.jimboType = type;
+    if(type != 'json')
+        Inlet(_editor);
     $(".slider").css('display', 'none');
     $(".picker").css('display', 'none');
 
@@ -65,14 +66,14 @@ var editorInit = function(id, mode, type) {
     var _editor;
     if (type === 'html') {
         if (!editors.html) {
-            _editor = createEditor(id, mode);            
+            _editor = createEditor(id, mode, type);            
             editors.html = _editor;
         } else {
             _editor = editors.html;
         }
     } else if (type === 'js') {
         if (!editors.js) {
-            _editor = createEditor(id, mode);
+            _editor = createEditor(id, mode, type);
             //_editor.setOption("lintWith", CodeMirror.javascriptValidator);
             _editor.setOption("gutters", [/*"CodeMirror-lint-markers",*/ "CodeMirror-remote-change"]);
             editors.js = _editor;
@@ -81,14 +82,14 @@ var editorInit = function(id, mode, type) {
         }
     } else if (type === 'css') {
         if (!editors.css) {
-            _editor = createEditor(id, mode);            
+            _editor = createEditor(id, mode, type);            
             editors.css = _editor;
         } else {
             _editor = editors.css;
         }
     } else {
         if (!editors.json) {
-            _editor = createEditor(id, mode);
+            _editor = createEditor(id, mode, type);
             //_editor.setOption("lintWith", CodeMirror.jsonValidator);
             //_editor.setOption("gutters", ["CodeMirror-lint-markers"]);            
             editors.json = _editor;
@@ -386,7 +387,7 @@ var changeEditorMode = function(id, mode, type) {
     var docName = snippetId + "-" + type;
 
     window.myCodeMirror = codemirror;
-    myCodeMirror.jimboType = type;
+    
     //ShareJS
     var connection = sharejs.open(docName, "text", function(error, newDoc) {
         if (doc !== null) {

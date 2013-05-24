@@ -224,6 +224,8 @@ var Inlet = (function() {
 
         var wrapper = editor.getWrapperElement();
         $(wrapper).on("mousedown", onClick);
+        var parent = $(editor.getWrapperElement()).parents()[0];
+        var _id = editor.jimboType;
 
         if ($(".inlet_slider").size() === 0) {
             var slider_node = document.createElement("div");
@@ -236,14 +238,10 @@ var Inlet = (function() {
             slider = $(".inlet_slider");
             slider.css('visibility', 'hidden');
         }
-
-        if ($("#colorPicker").size() !== 0) {
-            $("#colorPicker").remove();
-
-        }
+        
         picker = new thistle.Picker('rgb(128,128,128)');
-        $(picker.el).attr("id", "colorPicker").css("display", "none");
-        $("#editorArea").append(picker.el);
+        $(picker.el).attr("id", _id + "_colorPicker").css("display", "none");
+        $(parent).append(picker.el);
         picker.on('changed', function(inp1, inp2) {
             var hslColor = picker.getCSS();            
             var newcolor = hslToHex(hslColor).substring(1);
@@ -335,15 +333,15 @@ var Inlet = (function() {
 
                     var top = cursorOffset.top - 100;
                     var left = cursorOffset.left - 150;
-                    $("#colorPicker").css('position', "absolute");
-                    $("#colorPicker").css('top', top);
-                    $("#colorPicker").css('z-index', 100);
-                    $("#colorPicker").css('left', left);
-                    $("#colorPicker").show(100);                    
+                    $("#" + _id + "_colorPicker").css('position', "absolute");
+                    $("#" + _id + "_colorPicker").css('top', top);
+                    $("#" + _id + "_colorPicker").css('z-index', 100);
+                    $("#" + _id + "_colorPicker").css('left', left);
+                    $("#" + _id + "_colorPicker").show(100);                    
                     
                     isWidgetOpen = true;
                 } else {
-                    $("#colorPicker").css("display", "none");
+                    $("#" + _id + "_colorPicker").css("display", "none");
                     isWidgetOpen = false;
                 }
                 slider.css('visibility', 'hidden');
