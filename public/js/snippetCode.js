@@ -65,8 +65,7 @@ var editorInit = function(id, mode, type) {
     var _editor;
     if (type === 'html') {
         if (!editors.html) {
-            _editor = createEditor(id, mode);
-            
+            _editor = createEditor(id, mode);            
             editors.html = _editor;
         } else {
             _editor = editors.html;
@@ -74,6 +73,8 @@ var editorInit = function(id, mode, type) {
     } else if (type === 'js') {
         if (!editors.js) {
             _editor = createEditor(id, mode);
+            //_editor.setOption("lintWith", CodeMirror.javascriptValidator);
+            _editor.setOption("gutters", [/*"CodeMirror-lint-markers",*/ "CodeMirror-remote-change"]);
             editors.js = _editor;
         } else {
             _editor = editors.js;
@@ -87,7 +88,9 @@ var editorInit = function(id, mode, type) {
         }
     } else {
         if (!editors.json) {
-            _editor = createEditor(id, mode);            
+            _editor = createEditor(id, mode);
+            //_editor.setOption("lintWith", CodeMirror.jsonValidator);
+            //_editor.setOption("gutters", ["CodeMirror-lint-markers"]);            
             editors.json = _editor;
         } else {
             _editor = editors.json;
@@ -100,35 +103,105 @@ function shoutOut(cmd, msg) {
     communicationDoc.shout(s);
 }
 
-function shoutHandler(cmd, msg) {
+function shoutHandler(cmd, msg, isPush) {
     var type;
-    switch(cmd) {
-        case 'on':
-            type = 'success';
-            break;
-        case 'eu':
-            type = 'information';
-            break;
-        case 'es':
-            type = 'warning';
-            break;
-        case 'off':
-            type = 'error';
-            break;
-        default:
-            type = "alert";
-            break
+    if(isPush) {
+        switch(cmd) {
+            case 'on':
+                type = 'success';
+                break;
+            case 'eu':
+                type = 'information';
+                break;
+            case 'es':
+                type = 'warning';
+                break;
+            case 'off':
+                type = 'error';
+                break;
+            case 'lock':
+                type = 'information';
+                break;            
+            break;    
+            default:
+                type = "alert";
+                break
+        }
+        noty({
+            text : msg,
+            template : '<div class="noty_message"><span class="noty_text"></span><div class="noty_close"></div></div>',
+            type : type,
+            dismissQueue : true,
+            layout : 'bottomLeft',
+            timeout : 2000,
+            closeWith : ['button'],
+            buttons : false
+        });
     }
-    noty({
-        text : msg,
-        template : '<div class="noty_message"><span class="noty_text"></span><div class="noty_close"></div></div>',
-        type : type,
-        dismissQueue : true,
-        layout : 'bottomLeft',
-        timeout : 2000,
-        closeWith : ['button'],
-        buttons : false
-    });
+    else {
+        switch(cmd) {
+            case 'change':
+            if(!needAwareness) return;            
+            var line = parseInt(msg.split(".")[0]);
+            var cType = msg.split(".")[1];
+            if(cType != 'js' && !isWidgetOpen) break;
+            var cViewPort = {};
+            var scrollInfo = myCodeMirror.getScrollInfo();
+            cViewPort.from = myCodeMirror.coordsChar({top:0, left:0},"local").line;
+            cViewPort.to = myCodeMirror.coordsChar({top:scrollInfo.clientHeight, left:0},"local").line;
+            //console.log(cViewPort);
+            var sameTab = (currentTabGlobal.substring(0, currentTabGlobal.length - 3) === cType);
+            if(sameTab) {
+                if(cViewPort.from <= line && cViewPort.to >= line) {
+                    //In editor                   
+                    var from = {line: line, ch: 0};
+                    var to = {line: line, ch: myCodeMirror.doc.getLine(line).length};                             
+                    var cMarker = myCodeMirror.markText(from, to, {className: "remoteChange-line"});
+                    var cGutterMarker = $("<div>").addClass('gutterIcon');
+                    myCodeMirror.setGutterMarker(line, "CodeMirror-remote-change", cGutterMarker.get(0));
+                    //In gutter                
+                    setTimeout(function(){
+                        cMarker.clear();           
+                        myCodeMirror.clearGutter("CodeMirror-remote-change");                         
+                    }, 1500);
+                    
+                                
+                } else if (cViewPort.from > line) {
+                    var cUp = setInterval(function(){
+                        $(".gutterIconUp").toggle();                       
+                    }, 200);
+                    
+                    setTimeout(function(){
+                        clearInterval(cUp);
+                        $(".gutterIconUp").hide();
+                    }, 1500);                    
+                } else {
+                    var cDown = setInterval(function(){
+                        $(".gutterIconDown").toggle();                       
+                    }, 200);
+                    
+                    setTimeout(function(){
+                        clearInterval(cDown);
+                        $(".gutterIconDown").hide();
+                    }, 3000);
+                }
+            } else {
+                cTab = cType + "Tab";
+                var cTabObj = $("ul#editorTabs>li[data-id='" + cTab + "']>a");
+                cTabObj.css("background-image", "-webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(230,240,163,1)), color-stop(50%,rgba(210,230,56,1)), color-stop(51%,rgba(195,216,37,1)), color-stop(100%,rgba(219,240,67,1)))");
+                setTimeout(function(){
+                    cTabObj.css("background", "none");                    
+                }, 1200);                                
+            }
+            break;
+            case 'chat':
+            
+            break;
+            case 'buzz':
+            
+            break;
+        }        
+    }
 }
 
 window.SnippetCode = null;
@@ -141,7 +214,7 @@ var loadSnippet = function(snippetId) {
     var snippetCodeObj = {};
     var url = "/doc/" + snippetId + "-";
     var iter = 0;
-    var modes = ["json", "js", "html", "css"];
+    var modes = ["html", "css", "json", "js"];
     var req = [];
 
     req[0] = $.get(url + "html", function(data) {
@@ -216,6 +289,7 @@ var initializePreview = function() {
 };
 
 function initCommunication() {
+    window.needAwareness = true;
     var snippetId = sessionStorage["snippetId"];
     var connection = sharejs.open(snippetId, "text", function(error, comDoc) {
         if (error) {
@@ -226,13 +300,15 @@ function initCommunication() {
         communicationDoc = comDoc;
 
         communicationDoc.on('shout', function(s) {
-            var cmd = s.split("$")[0];
-            var msg = s.split("$")[1];
+            var s1 = s.split("$");
+            var cmd = s1[0];
+            var msg = s1[1];
+            var isPush = (s1[2] === "0") ? true: false;
 
-            shoutHandler(cmd, msg);
+            shoutHandler(cmd, msg, isPush);
         });
 
-        var message = (currentUser === null) ? "Someone just joined your snippet!" : currentUser + " just joined your snippet!";
+        var message = (currentUser === null) ? "Someone just joined your snippet!" : currentUser + " just joined your snippet!$0";
         shoutOut("on$" + message);
     });
 
@@ -285,6 +361,18 @@ var initApp = function(id, mode) {
     initializePreview();
 
 }
+
+//TODO: Initializing user awareness
+var awareOthers = function(cObj) {       
+    var command = "change";
+    
+    var cursor = myCodeMirror.getCursor(true);    
+                                
+    var where = cObj.from.line;
+    var msg = where + "." + cObj.cType + "$1";
+    shoutOut(command, msg);                                          
+}
+
 var doc = null;
 var communicationDoc = null;
 
@@ -317,21 +405,33 @@ var changeEditorMode = function(id, mode, type) {
                
         switch(myCodeMirror.jimboType){
             case 'html':
+            myCodeMirror.on("beforeChange", function(cm, cObj){
+                cObj.cType = "html";
+                awareOthers(cObj);
+            });
             myCodeMirror.on("change",function(cm, cObj){   
                 var code = cm.getValue();
                 $('body #Jimbo-main', $('iframe').contents()).html(code);
                 if(editors.js)
-                    pIframe.Jimbo.renderCode(editors.js.getValue());
+                    pIframe.Jimbo.renderCode(editors.js.getValue());                                
             });
             break;
             case 'js':
+            myCodeMirror.on("beforeChange", function(cm, cObj){
+                cObj.cType = "js";
+                awareOthers(cObj);
+            });                        
             myCodeMirror.on("change", function(cm, cObj){
                 var code = cm.getValue();
                 $('body #Jimbo-main', $('iframe').contents()).html(editors.html.getValue());
-                pIframe.Jimbo.renderCode(code);
-            });
+                pIframe.Jimbo.renderCode(code);                                
+            });            
             break;
-            case 'css':            
+            case 'css': 
+            myCodeMirror.on("beforeChange", function(cm, cObj){
+                cObj.cType = "css";
+                awareOthers(cObj);
+            });           
             myCodeMirror.on("change", function(cm, cObj){
                 var code = cm.getValue();              
                 $('#Jimbo-style', $('iframe').contents()).get(0).textContent = code;
@@ -341,6 +441,10 @@ var changeEditorMode = function(id, mode, type) {
             });
             break;
             case 'json':
+            myCodeMirror.on("beforeChange", function(cm, cObj){
+                cObj.cType = "json";
+                awareOthers(cObj);
+            });
             myCodeMirror.on("change", function(cm, cObj){
                 var code = cm.getValue();
                 try {
@@ -371,7 +475,7 @@ window.onload = function() {
 
 window.onbeforeunload = function() {
     if (communicationDoc !== null) {
-        var message = (currentUser === null) ? "Someone just left your snippet!" : currentUser + " just left your snippet!";
+        var message = (currentUser === null) ? "Someone just left your snippet!" : currentUser + " just left your snippet!$0";
         shoutOut("off$" + message);
         //communicationDoc.close();
     }
@@ -381,6 +485,7 @@ var currentTabGlobal = "";
 $(document).ready(function() {
 
     $(".nav-tabs>li").on('click', function(e) {
+        //TODO: *****super important***** to generate the editors at the beginning not on demand
         var currentEditor = e.currentTarget.dataset["id"];
         if (currentTabGlobal === currentEditor) {
             return;
@@ -414,7 +519,18 @@ $(document).ready(function() {
                 break;
         }
     });
-
+    
+    $("#chatHide").click(function(){
+        $(".chatBox").animate({bottom:'toggle', opacity: '0'},"slow");                
+    });
+    
+    setInterval(function(){
+        var direction = ["up", "left", "right", "down"];
+        var gRand = Math.random() * 113;
+        var rand = Math.round(gRand % 4);        
+        $(".notification.badge.badge-warning").effect("shake", {distance: 10, times: 3, direction: direction[rand]});
+    }, 5000);
+        
     var shareSnippet = function() {
         var dialogHeader = "<button type='button' class='close' data-dismiss='modal'>×</button><p class='center'><i class='icon icon-user icon-orange'></i> Share Snippet via Email</p>";
         var dialogContent = '<input type="email" id="email" placeholder="Enter a valid email!" width="100%" required/>';

@@ -7,14 +7,15 @@ html
     link(rel='icon', href='img/icon.png')
     link(rel='stylesheet', href='http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css', type='text/css', media='screen', charset='utf-8')
     link(rel='stylesheet', href='thirdparty/Bootstrap/css/bootstrap.min.css', type='text/css', media='screen', charset='utf-8')       
-    link(rel='stylesheet', href='thirdparty/Bootstrap/Themes/charisma/css/bootstrap-spacelab.css', type='text/css', media='screen', charset='utf-8')                    
+    link(rel='stylesheet', href='thirdparty/Bootstrap/Themes/charisma/css/bootstrap-spacelab.css', type='text/css', media='screen', charset='utf-8')                        
     link(rel='stylesheet', href='thirdparty/Bootstrap/Themes/charisma/css/opa-icons.css', type='text/css', media='screen', charset='utf-8')
     link(rel='stylesheet', href='//cdnjs.cloudflare.com/ajax/libs/x-editable/1.4.4/bootstrap-editable/css/bootstrap-editable.css', type='text/css', media='screen', charset='utf-8')
     link(rel='stylesheet', href='thirdparty/colorpicker/Color.Picker.Classic.css', type='text/css', media='screen', charset='utf-8')    
     link(rel='stylesheet', href='thirdparty/CodeMirrorEditor/lib/codemirror.css', type='text/css', media='screen', charset='utf-8')
     link(rel='stylesheet', href='thirdparty/CodeMirrorEditor/addon/hint/show-hint.css', type='text/css', media='screen', charset='utf-8')
     link(rel='stylesheet', href='thirdparty/CodeMirrorEditor/addon/dialog/dialog.css', type='text/css', media='screen', charset='utf-8')
-    link(rel='stylesheet', href='thirdparty/CodeMirrorEditor/theme/solarized.css', type='text/css', media='screen', charset='utf-8')                       
+    link(rel='stylesheet', href='thirdparty/CodeMirrorEditor/theme/solarized.css', type='text/css', media='screen', charset='utf-8')
+    link(rel='stylesheet', href='thirdparty/CodeMirrorEditor/addon/lint/lint.css', type='text/css', media='screen', charset='utf-8')                       
     link(rel='stylesheet', href='thirdparty/Bootstrap/addon/DataTable/DT_bootstrap.css', type='text/css', media='screen', charset='utf-8')            
     link(rel='stylesheet', href='css/snippetStyle.css', type='text/css', media='screen', charset='utf-8')         
     script(type='text/javascript', charset='utf-8', src='http://code.jquery.com/jquery-2.0.0.min.js')
@@ -60,6 +61,13 @@ html
           #previewArea.span6
             .box
               iframe#previewFrame(src='js/templates/preview.html')
+            .chatIcon.icon32.icon-green.icon-messages
+              .notification.badge.badge-warning 6
+            .chatBox
+              a#chatHide.close &times
+              .chatMessages
+              .chatInput
+                input(type='text')
           #editorArea.span6
             .tabbable
               ul.nav.nav-tabs#editorTabs
@@ -79,9 +87,14 @@ html
                 #cssContent.tab-pane
                   textarea#cssEditor(disabled)
                 #jsonContent.tab-pane
-                  textarea#jsonEditor(disabled)    
-    script(type='text/javascript', charset='utf-8', src='thirdparty/colorpicker/Color.Picker.Classic.js')
-    script(type='text/javascript', charset='utf-8', src='thirdparty/colorpicker/Color.Space.js')                                          
+                  textarea#jsonEditor(disabled)
+                .gutterIconUp
+                  img(src="../img/userIcon.png", style="margin-left:1px;")
+                .gutterIconDown
+                  img(src="../img/userIcon.png", style="margin-left:1px;")    
+    //script(type='text/javascript', charset='utf-8', src='thirdparty/colorpicker/Color.Picker.Classic.js')
+    //script(type='text/javascript', charset='utf-8', src='thirdparty/colorpicker/Color.Space.js')
+    script(type='text/javascript', charset='utf-8', src='http://nornagon.github.com/thistle/thistle.js')                                              
     script(type='text/javascript', charset='utf-8', src='thirdparty/CodeMirrorEditor/lib/codemirror.js')
     script(type='text/javascript', charset='utf-8', src='thirdparty/Emmet/emmet.min.js')    
     script(type='text/javascript', charset='utf-8', src='thirdparty/CodeMirrorEditor/addon/edit/closetag.js')
@@ -97,7 +110,12 @@ html
     script(type='text/javascript', charset='utf-8', src='thirdparty/CodeMirrorEditor/mode/javascript/javascript.js')
     script(type='text/javascript', charset='utf-8', src='thirdparty/CodeMirrorEditor/mode/css/css.js')
     script(type='text/javascript', charset='utf-8', src='thirdparty/CodeMirrorEditor/mode/htmlmixed/htmlmixed.js')
-    script(type='text/javascript', charset='utf-8', src='thirdparty/CodeMirrorEditor/inlet.js')    
+    script(type='text/javascript', charset='utf-8', src='thirdparty/CodeMirrorEditor/inlet.js')
+    script(type='text/javascript', charset='utf-8', src='http://ajax.aspnetcdn.com/ajax/jshint/r07/jshint.js')
+    script(type='text/javascript', charset='utf-8', src='https://raw.github.com/zaach/jsonlint/79b553fb65c192add9066da64043458981b3972b/lib/jsonlint.js')
+    script(type='text/javascript', charset='utf-8', src='thirdparty/CodeMirrorEditor/addon/lint/lint.js')
+    script(type='text/javascript', charset='utf-8', src='thirdparty/CodeMirrorEditor/addon/lint/javascript-lint.js')
+    script(type='text/javascript', charset='utf-8', src='thirdparty/CodeMirrorEditor/addon/lint/json-lint.js')            
     script(type='text/javascript', charset='utf-8', src='thirdparty/Noty/jquery.noty.js')    
     script(type='text/javascript', charset='utf-8', src='thirdparty/Noty/layouts/bottomLeft.js')
     script(type='text/javascript', charset='utf-8', src='thirdparty/Noty/themes/default.js')    

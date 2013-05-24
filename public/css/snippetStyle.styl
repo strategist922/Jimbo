@@ -5,7 +5,7 @@ html, body
   padding-right: 0
   -webkit-user-select: none
   -moz-user-select: none  
-  background-image:url(../img/splash.jpg) repeat
+  background-image:url(../img/splash-bg.jpg) repeat
 
 .span12
   padding: 20px
@@ -23,6 +23,44 @@ html, body
   
 /*.btn-warning, .btn-warning:hover 
   color: #000*/
+
+.notification
+  position: absolute  
+  top: -5px
+  right: -10px  
+
+.chatIcon
+  float: left    
+  bottom: 40px
+  left: 5px  
+  position: relative
+  
+.chatBox
+  background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(0,0,0,0.65)), color-stop(69%,rgba(0,0,0,0.41)), color-stop(100%,rgba(0,0,0,0)))  
+  border: 0
+  height:200px
+  bottom:205px
+  position: relative
+  z-index:5000
+  display: none
+    
+.chatInput>input
+  height:20px    
+  border: 0
+  outline: 0
+  background: none
+  width: 98%     
+
+.chatInput>input:focus
+  outline: 0 !important
+  border: 0  
+
+.chatBox>a.close
+  margin-right:5px  
+  
+.chatMessages
+  height: 165px
+  
 .inlet_slider
   width: 200px
   outline: none !important
@@ -41,6 +79,45 @@ a:hover
   
 .inlet_slider
   z-index: 200
+
+.CodeMirror-remote-change
+  width: 16px
+
+.gutterIcon
+  background-image: url("../img/userIcon.png")
+  background-repeat: no-repeat
+  background-position: center    
+  outline: none      
+  height: 16px
+  width: 16px
+  
+.gutterIconUp
+  position: absolute
+  background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#e6f0a3), color-stop(50%,#d2e638), color-stop(51%,#c3d825), color-stop(100%,#dbf043))
+  border: 1px solid #248F24
+  border-radius: 20px
+  height: 20px
+  width: 20px
+  top: 20px
+  right: 0px
+  z-index: 2000
+  display: none
+      
+.gutterIconDown
+  position: absolute
+  background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#e6f0a3), color-stop(50%,#d2e638), color-stop(51%,#c3d825), color-stop(100%,#dbf043))
+  border: 1px solid #248F24
+  border-radius: 20px
+  height: 20px
+  width: 20px
+  bottom: 0px
+  right: 0px
+  z-index: 2000
+  display: none
+  
+.remoteChange-line
+  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#f8ffe8), color-stop(33%,#e3f5ab), color-stop(100%,#b7df2d))
+  background: -webkit-linear-gradient(top,  #f8ffe8 0%,#e3f5ab 33%,#b7df2d 100%)
   
 iframe
   width: 100%

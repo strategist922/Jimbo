@@ -124,7 +124,8 @@ http://ethanschoonover.com/solarized/img/solarized-palette.png
 }
 
 .cm-s-solarized.cm-s-light .CodeMirror-selected {
-  background: #FFE478;
+  background: #D97914;
+  opacity: 0.3;
 }
 
 
