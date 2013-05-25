@@ -31,8 +31,8 @@ var addLibScriptTag = function(libs) {
     }
 };
 
-var editors = {};
-var createEditor = function(id, mode, type) {
+window.editors = {};
+var createEditor = function(elem, mode, type) {
     CodeMirror.commands.autocomplete = function(cm) {
         if (mode === "text/html")
             CodeMirror.showHint(cm, CodeMirror.htmlHint);
@@ -40,7 +40,7 @@ var createEditor = function(id, mode, type) {
             CodeMirror.showHint(cm, CodeMirror.javascriptHint);
     };
 
-    var _editor = CodeMirror.fromTextArea(id, {
+    var _editor = CodeMirror.fromTextArea(elem, {
         mode : mode,
         lineNumbers : true,
         lineWrapping : true,
@@ -57,23 +57,23 @@ var createEditor = function(id, mode, type) {
         Inlet(_editor);
     $(".slider").css('display', 'none');
     $(".picker").css('display', 'none');
-
-    _editor.setOption("readOnly", "nocursor");
-
+    $(_editor.getWrapperElement()).attr("data-jimboType", type);
+    _editor.setOption("readOnly", "nocursor");                
+                   
     return _editor;
 }
-var editorInit = function(id, mode, type) {
+var editorInit = function(elem, mode, type) {
     var _editor;
     if (type === 'html') {
         if (!editors.html) {
-            _editor = createEditor(id, mode, type);            
+            _editor = createEditor(elem, mode, type);            
             editors.html = _editor;
         } else {
             _editor = editors.html;
         }
     } else if (type === 'js') {
         if (!editors.js) {
-            _editor = createEditor(id, mode, type);
+            _editor = createEditor(elem, mode, type);
             //_editor.setOption("lintWith", CodeMirror.javascriptValidator);
             _editor.setOption("gutters", [/*"CodeMirror-lint-markers",*/ "CodeMirror-remote-change"]);
             editors.js = _editor;
@@ -82,14 +82,14 @@ var editorInit = function(id, mode, type) {
         }
     } else if (type === 'css') {
         if (!editors.css) {
-            _editor = createEditor(id, mode, type);            
+            _editor = createEditor(elem, mode, type);            
             editors.css = _editor;
         } else {
             _editor = editors.css;
         }
     } else {
         if (!editors.json) {
-            _editor = createEditor(id, mode, type);
+            _editor = createEditor(elem, mode, type);
             //_editor.setOption("lintWith", CodeMirror.jsonValidator);
             //_editor.setOption("gutters", ["CodeMirror-lint-markers"]);            
             editors.json = _editor;
@@ -215,7 +215,7 @@ var loadSnippet = function(snippetId) {
     var snippetCodeObj = {};
     var url = "/doc/" + snippetId + "-";
     var iter = 0;
-    var modes = ["html", "css", "json", "js"];
+    var modes = ["html", "json", "css", "js"];
     var req = [];
 
     req[0] = $.get(url + "html", function(data) {
@@ -289,6 +289,59 @@ var initializePreview = function() {
     loadSnippet(snippetId);
 };
 
+var setupLivePreview = function() {
+    //Html
+    editors.html.on("beforeChange", function(cm, cObj){
+        cObj.cType = "html";
+        awareOthers(editors.html, cObj);
+    });
+    editors.html.on("change",function(cm, cObj){   
+        var code = cm.getValue();
+        $('body #Jimbo-main', $('iframe').contents()).html(code);
+        if(editors.js)
+            pIframe.Jimbo.renderCode(editors.js.getValue());                                
+    });
+    
+    //Javascript
+    editors.js.on("beforeChange", function(cm, cObj){
+        cObj.cType = "js";
+        awareOthers(editors.js, cObj);
+    });                        
+    editors.js.on("change", function(cm, cObj){
+        var code = cm.getValue();
+        $('body #Jimbo-main', $('iframe').contents()).html(editors.html.getValue());
+        pIframe.Jimbo.renderCode(code);                                
+    });
+    
+    //Css
+    editors.css.on("beforeChange", function(cm, cObj){
+        cObj.cType = "css";
+        awareOthers(editors.css, cObj);
+    });           
+    editors.css.on("change", function(cm, cObj){
+        var code = cm.getValue();              
+        $('#Jimbo-style', $('iframe').contents()).get(0).textContent = code;
+        $('body #Jimbo-main', $('iframe').contents()).html(editors.html.getValue());
+        if (editors.js)
+            pIframe.Jimbo.renderCode(editors.js.getValue());
+    });
+    
+    //Json
+    editors.json.on("change", function(cm, cObj){
+        var code = cm.getValue();
+        try {
+            pIframe.Jimbo.json = JSON.parse(code);
+            $('body #Jimbo-main', $('iframe').contents()).html(editors.html.getValue());
+            if (editors.js)
+                pIframe.Jimbo.renderCode(editors.js.getValue());
+        } catch(err) {
+            console.log(err);
+        } finally {
+    
+        }                
+    });
+}
+
 function initCommunication() {
     window.needAwareness = true;
     var snippetId = sessionStorage["snippetId"];
@@ -337,13 +390,25 @@ function initCommunication() {
 
 }
 
-var initApp = function(id, mode) {
-    var currentUser = null;
-    window.currentUser = currentUser;
-
+var initApp = function() {    
+    window.currentUser = null;
+    
+    var snippetId = window.location.hash.substring(1);
+    sessionStorage.setItem("snippetId", snippetId);
+        
     //Initialize Editors
-    changeEditorMode(id, mode, "html");
-    initCommunication();
+    var elem = document.getElementById("htmlEditor");
+    createEditorMode(elem, "text/html", "html");    
+    elem = document.getElementById("jsEditor");
+    createEditorMode(elem, "text/javascript", "js");
+    elem = document.getElementById("cssEditor");
+    createEditorMode(elem, "text/css", "css");
+    elem = document.getElementById("jsonEditor");
+    var _mode = {
+        name : "javascript",
+        json : true
+    };    
+    createEditorMode(elem, _mode, "json");        
 
     $("#shareButton").tooltip({
         placement : "bottom",
@@ -356,122 +421,99 @@ var initApp = function(id, mode) {
     $("#editUsernameButton").tooltip({
         placement : "bottom",
         title : "Edit you name!"
-    });
-
-    //Initialize Preview
-    initializePreview();
-
+    });    
+    window.myCodeMirror = editors["html"];
 }
 
 //TODO: Initializing user awareness
-var awareOthers = function(cObj) {       
+var awareOthers = function(cm, cObj) {       
     var command = "change";
     
-    var cursor = myCodeMirror.getCursor(true);    
+    var cursor = cm.getCursor(true);    
                                 
     var where = cObj.from.line;
     var msg = where + "." + cObj.cType + "$1";
     shoutOut(command, msg);                                          
 }
 
-var doc = null;
+var docs = {"html":null, "js":null, "css":null, "json":null};
+var currentDoc = null;
+
 var communicationDoc = null;
-
-var changeEditorMode = function(id, mode, type) {
-    var codemirror = editorInit(id, mode, type);
-
-    $(".CodeMirror-wrap").height($("#editorArea").height() - $(".nav.nav-tabs").height() - 1);
-
-    var snippetId = window.location.hash.substring(1);
-    sessionStorage.setItem("snippetId", snippetId);
+var createEditorMode = function(elem, mode, type) {
+    var codemirror = editorInit(elem, mode, type);    
+    $(".CodeMirror-wrap[data-jimboType='" + type +"']").height($("#editorArea").height() - $(".nav.nav-tabs").height() - 1);
+    var snippetId = sessionStorage.getItem("snippetId");
     var docName = snippetId + "-" + type;
-
-    window.myCodeMirror = codemirror;
     
-    //ShareJS
     var connection = sharejs.open(docName, "text", function(error, newDoc) {
-        if (doc !== null) {
-            doc.close();
-            doc.detach_cm();
+        var idx = newDoc.name.split("-");        
+        var jType = idx[idx.length - 1];
+        var _edtr = editors[jType];        
+                
+        if (currentDoc !== null) {
+            currentDoc.close();
+            currentDoc.detach_cm();
         }
 
-        doc = newDoc;
+        currentDoc = newDoc;
+        docs[jType] = newDoc;
 
         if (error) {
             console.error(error);
             return;
         }
-        doc.attach_cm(myCodeMirror);
-        myCodeMirror.setOption("readOnly", false);
-               
-        switch(myCodeMirror.jimboType){
-            case 'html':
-            myCodeMirror.on("beforeChange", function(cm, cObj){
-                cObj.cType = "html";
-                awareOthers(cObj);
-            });
-            myCodeMirror.on("change",function(cm, cObj){   
-                var code = cm.getValue();
-                $('body #Jimbo-main', $('iframe').contents()).html(code);
-                if(editors.js)
-                    pIframe.Jimbo.renderCode(editors.js.getValue());                                
-            });
-            break;
-            case 'js':
-            myCodeMirror.on("beforeChange", function(cm, cObj){
-                cObj.cType = "js";
-                awareOthers(cObj);
-            });                        
-            myCodeMirror.on("change", function(cm, cObj){
-                var code = cm.getValue();
-                $('body #Jimbo-main', $('iframe').contents()).html(editors.html.getValue());
-                pIframe.Jimbo.renderCode(code);                                
-            });            
-            break;
-            case 'css': 
-            myCodeMirror.on("beforeChange", function(cm, cObj){
-                cObj.cType = "css";
-                awareOthers(cObj);
-            });           
-            myCodeMirror.on("change", function(cm, cObj){
-                var code = cm.getValue();              
-                $('#Jimbo-style', $('iframe').contents()).get(0).textContent = code;
-                $('body #Jimbo-main', $('iframe').contents()).html(editors.html.getValue());
-                if (editors.js)
-                    pIframe.Jimbo.renderCode(editors.js.getValue());
-            });
-            break;
-            case 'json':
-            myCodeMirror.on("beforeChange", function(cm, cObj){
-                cObj.cType = "json";
-                awareOthers(cObj);
-            });
-            myCodeMirror.on("change", function(cm, cObj){
-                var code = cm.getValue();
-                try {
-                    pIframe.Jimbo.json = JSON.parse(code);
-                    $('body #Jimbo-main', $('iframe').contents()).html(editors.html.getValue());
-                    if (editors.js)
-                        pIframe.Jimbo.renderCode(editors.js.getValue());
-                } catch(err) {
-                    console.log(err);
-                } finally {
-            
-                }                
-            });
-            break;
-        }        
-    });
+        
+        currentDoc.attach_cm(_edtr);        
+        _edtr.setOption("readOnly", false); 
+        
+        if(_isReady()){
+            initCommunication();
+            //Initialize Preview
+            initializePreview();
+            setupLivePreview();
+        }               
+    });        
+}
 
-    /*if ($(".CodeMirror.CodeMirror-wrap").size() > 1) {
-     $($(".CodeMirror.CodeMirror-wrap")).remove();
-     }*/
+var _isReady = function() {    
+    if(docs.html !== null && docs.js !== null && docs.css !== null && docs.json !== null)
+        return true;
+    return false;          
+}
+
+var changeEditorMode = function(type) {        
+    var snippetId = sessionStorage.getItem("snippetId");
+    var docName = snippetId + "-" + type;
+
+    window.myCodeMirror = editors[type];
+    myCodeMirror.setOption("readOnly", "nocursor");
+    
+    //ShareJS
+    var connection = sharejs.open(docName, "text", function(error, newDoc) {
+        var idx = newDoc.name.split("-");        
+        var jType = idx[idx.length - 1];
+        var _edtr = editors[jType];
+        
+        if (currentDoc !== null) {
+            currentDoc.close();
+            currentDoc.detach_cm();
+        }
+
+        currentDoc = newDoc;        
+
+        if (error) {
+            console.error(error);
+            return;
+        }
+        currentDoc.attach_cm(myCodeMirror);
+        myCodeMirror.setOption("readOnly", false);                              
+    });    
 }
 
 window.onload = function() {
-    layout();
-    var elem = document.getElementById("htmlEditor");
-    initApp(elem, "text/html");
+    layout();    
+    initApp();
 }
 
 window.onbeforeunload = function() {
@@ -492,33 +534,7 @@ $(document).ready(function() {
             return;
         }
         currentTabGlobal = currentEditor;
-        switch(currentEditor) {
-            case 'htmlTab':
-                var _id = document.getElementById("htmlEditor");
-                var _mode = "text/html";
-                changeEditorMode(_id, _mode, "html");
-                break;
-            case 'jsTab':
-                var _id = document.getElementById("jsEditor");
-                var _mode = "text/javascript";
-                changeEditorMode(_id, _mode, "js");
-                break;
-            case 'cssTab':
-                var _id = document.getElementById("cssEditor");
-                var _mode = "text/css";
-                changeEditorMode(_id, _mode, "css");
-                break;
-            case 'jsonTab':
-                var _id = document.getElementById("jsonEditor");
-                var _mode = {
-                    name : "javascript",
-                    json : true
-                };
-                changeEditorMode(_id, _mode, "json");
-                break;
-            default:
-                break;
-        }
+        changeEditorMode(currentEditor.substring(0, currentEditor.length - 3));        
     });
     
     $("#chatHide").click(function(){
