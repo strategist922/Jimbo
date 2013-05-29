@@ -259,7 +259,8 @@ var Inlet = (function() {
                 "ch" : token.end
             };
             start.ch = start.ch + token.string.indexOf("#");
-            end.ch = start.ch + 7;
+                        
+            end.ch = (token.string.indexOf('"') != -1)? (start.ch + token.string.length - 2) : (start.ch + token.string.length);
 
             editor.replaceRange('#' + newcolor.toUpperCase(), start, end);
         });

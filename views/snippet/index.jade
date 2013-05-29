@@ -72,13 +72,17 @@ html
             .tabbable
               ul.nav.nav-tabs#editorTabs
                 li.active(data-id='htmlTab')
-                  a(href='#htmlContent', data-toggle='tab') HTML                  
+                  a(href='#htmlContent', data-toggle='tab') HTML
+                    .notifTab.badge.badge-warning 0
                 li(data-id='jsTab')
                   a(href='#jsContent', data-toggle='tab') JS
+                    .notifTab.badge.badge-warning 0
                 li(data-id='cssTab')
                   a(href='#cssContent', data-toggle='tab') CSS
+                    .notifTab.badge.badge-warning 0
                 li(data-id='jsonTab')
-                  a(href='#jsonContent', data-toggle='tab') JSON                  
+                  a(href='#jsonContent', data-toggle='tab') JSON
+                    .notifTab.badge.badge-warning 0
               .tab-content
                 #htmlContent.tab-pane.active
                   textarea#htmlEditor(disabled)

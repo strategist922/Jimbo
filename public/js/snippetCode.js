@@ -5,6 +5,8 @@ var layout = function() {
     $("#previewArea").height(_height);
     $("#mainView").css("width", document.documentElement.clientWidth);
     $(".CodeMirror-wrap").height($("#editorArea").height() - $(".nav.nav-tabs").height() - 1);
+    var _tabWidth = $(".tab-content").width() / 4;
+    $(".nav>li").width(_tabWidth);
 }
 
 $(window).resize(function() {
@@ -32,6 +34,19 @@ var addLibScriptTag = function(libs) {
 };
 
 window.editors = {};
+window.collaborators = {"htmlTab":0, "jsTab":0, "cssTab": 0, "jsonTab": 0};
+
+var syncCollaborators = function(curTab, prevTab) {
+    if(curTab != "no") {
+        collaborators[curTab] = collaborators[curTab] + 1;
+        $("li[data-id='" + curTab + "']>a>div.notifTab").text(collaborators[curTab]);
+    }     
+    if(prevTab != "no"){
+        collaborators[prevTab] = collaborators[prevTab] - 1;
+        $("li[data-id='" + prevTab + "']>a>div.notifTab").text(collaborators[prevTab]);
+    }                     
+}
+
 var createEditor = function(elem, mode, type) {
     CodeMirror.commands.autocomplete = function(cm) {
         if (mode === "text/html")
@@ -101,7 +116,13 @@ var editorInit = function(elem, mode, type) {
 }
 function shoutOut(cmd, msg) {
     var s = cmd + "$" + msg;
-    communicationDoc.shout(s);
+    if(cmd == "chTab") {        
+        var _msg = msg.split("$")[0];
+        syncCollaborators(_msg.split(".")[0], _msg.split(".")[1]);
+        communicationDoc.del(0, communicationDoc.getText().length);
+        communicationDoc.insert(0, collaborators["htmlTab"] + "," + collaborators["jsTab"] + "," + collaborators["cssTab"] + "," + collaborators["jsonTab"]);                
+    }
+    communicationDoc.shout(s);        
 }
 
 function shoutHandler(cmd, msg, isPush) {
@@ -200,6 +221,12 @@ function shoutHandler(cmd, msg, isPush) {
             break;
             case 'buzz':
             
+            break;
+            case 'chTab':
+                curEditor = msg.split(".")[0];
+                preEditor = msg.split(".")[1];
+                                
+                syncCollaborators(curEditor, preEditor);                     
             break;
         }        
     }
@@ -352,6 +379,23 @@ function initCommunication() {
         }
 
         communicationDoc = comDoc;
+        
+        var _collaborators = communicationDoc.getText();
+        communicationDoc.del(0, communicationDoc.getText().length);
+        
+        if(_collaborators.length == 0){ 
+            //First time access                        
+            communicationDoc.insert(0, 1 + "," + collaborators["jsTab"] + "," + collaborators["cssTab"] + "," + collaborators["jsonTab"]);
+        }
+        else {            
+            //Joined an existing snippet
+            collaborators["htmlTab"] = parseInt(_collaborators.split(",")[0]);
+            collaborators["jsTab"] = parseInt(_collaborators.split(",")[1]);
+            collaborators["cssTab"] = parseInt(_collaborators.split(",")[2]);
+            collaborators["jsonTab"] = parseInt(_collaborators.split(",")[3]);            
+        }            
+        
+        
 
         communicationDoc.on('shout', function(s) {
             var s1 = s.split("$");
@@ -361,9 +405,13 @@ function initCommunication() {
 
             shoutHandler(cmd, msg, isPush);
         });
-
+        
         var message = (currentUser === null) ? "Someone just joined your snippet!" : currentUser + " just joined your snippet!$0";
         shoutOut("on$" + message);
+        
+        var msg =  currentTabGlobal + ".no$1";
+        shoutOut("chTab", msg);
+        
     });
 
     var status = $("#usernameBadge").get(0);
@@ -423,6 +471,12 @@ var initApp = function() {
         title : "Edit you name!"
     });    
     window.myCodeMirror = editors["html"];
+           
+    currentTabGlobal = "htmlTab";    
+    
+    var _num = $("li[data-id='" + currentTabGlobal + "']>a>div.notifTab").text();
+    var _incNum = parseInt(_num, 10) + 1;
+    $("li[data-id='" + currentTabGlobal + "']>a>div.notifTab").text(_incNum);
 }
 
 //TODO: Initializing user awareness
@@ -446,7 +500,7 @@ var createEditorMode = function(elem, mode, type) {
     var snippetId = sessionStorage.getItem("snippetId");
     var docName = snippetId + "-" + type;
     
-    var connection = sharejs.open(docName, "text", function(error, newDoc) {
+    sharejs.open(docName, "text", function(error, newDoc) {
         var idx = newDoc.name.split("-");        
         var jType = idx[idx.length - 1];
         var _edtr = editors[jType];        
@@ -490,7 +544,7 @@ var changeEditorMode = function(type) {
     myCodeMirror.setOption("readOnly", "nocursor");
     
     //ShareJS
-    var connection = sharejs.open(docName, "text", function(error, newDoc) {
+    sharejs.open(docName, "text", function(error, newDoc) {
         var idx = newDoc.name.split("-");        
         var jType = idx[idx.length - 1];
         var _edtr = editors[jType];
@@ -522,17 +576,22 @@ window.onbeforeunload = function() {
         shoutOut("off$" + message);
         //communicationDoc.close();
     }
+        
+    var msg = "no." + currentTabGlobal + "$1";    
+    shoutOut("chTab", msg);                
 }
 var currentTabGlobal = "";
 
 $(document).ready(function() {
 
-    $(".nav-tabs>li").on('click', function(e) {
-        //TODO: *****super important***** to generate the editors at the beginning not on demand
+    $(".nav-tabs>li").on('click', function(e) {                
         var currentEditor = e.currentTarget.dataset["id"];
         if (currentTabGlobal === currentEditor) {
             return;
         }
+        
+        var msg = currentEditor + "." + currentTabGlobal + "$1";
+        shoutOut("chTab", msg);
         currentTabGlobal = currentEditor;
         changeEditorMode(currentEditor.substring(0, currentEditor.length - 3));        
     });
@@ -546,7 +605,7 @@ $(document).ready(function() {
         var gRand = Math.random() * 113;
         var rand = Math.round(gRand % 4);        
         $(".notification.badge.badge-warning").effect("shake", {distance: 10, times: 3, direction: direction[rand]});
-    }, 5000);
+    }, 5000);    
         
     var shareSnippet = function() {
         var dialogHeader = "<button type='button' class='close' data-dismiss='modal'>×</button><p class='center'><i class='icon icon-user icon-orange'></i> Share Snippet via Email</p>";
