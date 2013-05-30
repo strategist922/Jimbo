@@ -266,8 +266,7 @@ var Inlet = (function() {
         });
 
         picker.on('closed', function() {
-            isWidgetOpen = false;
-            console.log("closed W");
+            isWidgetOpen = false;            
         });
 
         function onClick(ev) {
