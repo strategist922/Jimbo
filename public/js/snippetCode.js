@@ -10,6 +10,15 @@ var layout = function() {
     $(".chatInput>input").width($(".chatInput").width() - 10);
 }
 
+var _randomColor = function() {
+    var h = Math.floor(Math.random()*360);      
+    var s = Math.random() * 0.4 + 0.5;
+    var l = Math.random() * 0.6 + 0.3;
+    var c = 'hsl(' + h + ', ' + Math.round(s * 100) + '%, ' + Math.round(l * 100) + '%)';
+    
+    return c;
+}
+
 $(window).resize(function() {
     layout();
     if ( typeof myCodeMirror !== 'undefined')
@@ -119,45 +128,90 @@ var editorInit = function(elem, mode, type) {
     }
     return _editor;
 }
-function shoutOut(cmd, msg) {
-    var s = cmd + "$" + msg;
-    if (cmd == "chTab") {
-        var _msg = msg.split("$")[0];
-        syncCollaborators(_msg.split(".")[0], _msg.split(".")[1]);
-        communicationDoc.del(0, communicationDoc.getText().length);
+function shoutOut(cmdMsg) {
+    //var s = cmd + "$" + msg;
+    if(cmdMsg.cmd == "on") {
+        var _content = communicationDoc.getText().split("$");
+        var _square;
+        for(var i = 1; i < _content.length - 1; i++) {
+            var u = _content[i].split(".")[0];
+            var c = _content[i].split(".")[1];
+            _square = $("<div>").addClass("userSquare").css("background-color", c).attr("data-username", u).tooltip({
+                placement : "bottom",
+                title : u
+            });
+            $(".nav.pull-right").prepend(_square);
+        }                            
+    } else if (cmdMsg.cmd == "chTab") {        
+        syncCollaborators(cmdMsg.curTab, cmdMsg.prevTab);
+        var _cols = communicationDoc.getText();
+        var _here = _cols.indexOf("$");
+        communicationDoc.del(0, _here);
         communicationDoc.insert(0, collaborators["htmlTab"] + "," + collaborators["jsTab"] + "," + collaborators["cssTab"] + "," + collaborators["jsonTab"]);
-    } else if (cmd == "chat") {
-        //Add chat messages localy on left
-    }
-    communicationDoc.shout(s);
+    } else if (cmdMsg.cmd == "chat") {
+        //Add chat messages localy on left        
+        var message = $("<div>").append($("<div>").addClass("chatSender").css("color", cmdMsg.color).html(cmdMsg.username))
+                        .append($("<div>").addClass("chatMsg").css("background-color", cmdMsg.color).html(cmdMsg.message));        
+        $(".chatMessages").append(message);        
+    } else if(cmdMsg.cmd == "off") {
+        //Remove user from file
+        //break;
+        var _cols = communicationDoc.getText();
+        communicationDoc.del(0, communicationDoc.getText().length);        
+        var _u = cmdMsg.username;
+        var _c = cmdMsg.color;
+        var _u_c = _u + "." + _c + "$";
+        var _newCols = _cols.replace(_u_c, "");
+        communicationDoc.insert(0, _newCols);
+        $(".userSquare[data-username='" + _u + "']").remove();
+    }        
+    communicationDoc.shout(cmdMsg);
 }
 
-function shoutHandler(cmd, msg, isPush) {
+function shoutHandler(cmdMsg) {
+    var cmd = cmdMsg.cmd;
+    var isPush = cmdMsg.isPush;    
     var type;
     if (isPush) {
         switch(cmd) {
             case 'on':
-                type = 'success';
+                var _msg = cmdMsg.msg;
+                var color = cmdMsg.color;
+                var username = cmdMsg.username;
+                
+                var _square = $("<div>").addClass("userSquare").css("background-color", color).attr("data-username", username).tooltip({
+                    placement : "bottom",
+                    title : username
+                });                                
+                $(".nav.pull-right").prepend(_square);
+                type = 'success';                
                 break;
             case 'eu':
+                var _msg = msg;
                 type = 'information';
                 break;
             case 'es':
+                var _msg = msg;
                 type = 'warning';
                 break;
             case 'off':
+                var _msg = cmdMsg.msg;
+                var color = cmdMsg.color;
+                var username = cmdMsg.username;
+                
+                $(".userSquare[data-username='" + username + "']").remove();
                 type = 'error';
                 break;
-            case 'lock':
+            case 'lock':                
                 type = 'information';
                 break;
                 break;
-            default:
+            default:                
                 type = "alert";
                 break
         }
         noty({
-            text : msg,
+            text : cmdMsg.msg,
             template : '<div class="noty_message"><span class="noty_text"></span><div class="noty_close"></div></div>',
             type : type,
             dismissQueue : true,
@@ -172,8 +226,8 @@ function shoutHandler(cmd, msg, isPush) {
                 var isAnimatingUp = false, isAnimatingDown = false;
                 if (!needAwareness)
                     return;
-                var line = parseInt(msg.split(".")[0]);
-                var cType = msg.split(".")[1];
+                var line = cmdMsg.where;
+                var cType = cmdMsg.type;
                 if (cType != 'js' && !isWidgetOpen)
                     break;
                 var cViewPort = {};
@@ -237,17 +291,25 @@ function shoutHandler(cmd, msg, isPush) {
                 }
                 break;
             case 'chat':
-                var _username = msg.split(".")[0];
-                var _msg = msg.split(".")[1];
-                //Add chat messages on the right
-                //Check if chat is open to show the number
+                var _username = cmdMsg.username;
+                var _msg = cmdMsg.message;
+                var _color = cmdMsg.color;
+                
+                var message = $("<div>").append($("<div>").addClass("chatSender").css("color", _color).html(_username))
+                        .append($("<div>").addClass("chatMsg").css("background-color", _color).html(_msg));                        
+                
+                $(".chatMessages").append(message);
+                if($(".chatBox").css("display") == "none") {
+                    var unreadMsgs = parseInt($(".notification.badge.badge-warning").html());
+                    $(".notification.badge.badge-warning").text(unreadMsgs + 1);
+                }
                 break;
             case 'buzz':
 
                 break;
             case 'chTab':
-                curEditor = msg.split(".")[0];
-                preEditor = msg.split(".")[1];
+                curEditor = cmdMsg.curTab;
+                preEditor = cmdMsg.prevTab;
 
                 syncCollaborators(curEditor, preEditor);
                 break;
@@ -401,33 +463,31 @@ function initCommunication() {
         communicationDoc = comDoc;
 
         var _collaborators = communicationDoc.getText();
-        communicationDoc.del(0, communicationDoc.getText().length);
+        var _here = _collaborators.indexOf("$");
+        communicationDoc.del(0, _here);
+        communicationDoc.insert(communicationDoc.getText().length, currentUser.username + "." + currentUser.color + "$");
 
         if (_collaborators.length == 0) {
             //First time access
-            communicationDoc.insert(0, 1 + "," + collaborators["jsTab"] + "," + collaborators["cssTab"] + "," + collaborators["jsonTab"]);
+            communicationDoc.insert(0, 1 + "," + collaborators["jsTab"] + "," + collaborators["cssTab"] + "," + collaborators["jsonTab"] + "$");            
         } else {
             //Joined an existing snippet
-            collaborators["htmlTab"] = parseInt(_collaborators.split(",")[0]);
-            collaborators["jsTab"] = parseInt(_collaborators.split(",")[1]);
-            collaborators["cssTab"] = parseInt(_collaborators.split(",")[2]);
-            collaborators["jsonTab"] = parseInt(_collaborators.split(",")[3]);
+            var _numC = _collaborators.split("$")[0];
+            collaborators["htmlTab"] = parseInt(_numC.split(",")[0]);
+            collaborators["jsTab"] = parseInt(_numC.split(",")[1]);
+            collaborators["cssTab"] = parseInt(_numC.split(",")[2]);
+            collaborators["jsonTab"] = parseInt(_numC.split(",")[3]);
         }
 
-        communicationDoc.on('shout', function(s) {
-            var s1 = s.split("$");
-            var cmd = s1[0];
-            var msg = s1[1];
-            var isPush = (s1[2] === "0") ? true : false;
-
-            shoutHandler(cmd, msg, isPush);
+        communicationDoc.on('shout', function(s) {            
+            shoutHandler(s);
         });
 
-        var message = (currentUser === null) ? "Someone just joined your snippet!" : currentUser + " just joined your snippet!$0";
-        shoutOut("on$" + message);
+        var cmdMsg = {cmd: "on", msg:"Someone just joined your snippet!", username: currentUser.username, color: currentUser.color, isPush: true};         
+        shoutOut(cmdMsg);
 
-        var msg = currentTabGlobal + ".no$1";
-        shoutOut("chTab", msg);
+        cmdMsg = {cmd: "chTab", curTab: currentTabGlobal, prevTab: "no", isPush: false};
+        shoutOut(cmdMsg);
 
     });
 
@@ -455,9 +515,16 @@ function initCommunication() {
 
 }
 
+var _randomUsername = function() {
+    return "Anonymous" + Math.floor(Math.random() * 10000001);
+}
+
 var initApp = function() {
-    window.currentUser = null;
-    //Add colored square to the top indicating users
+    window.currentUser = {};    
+    currentUser.color = _randomColor();
+    currentUser.username = _randomUsername();
+    
+    $("#usernameBadge").html(currentUser.username);
 
     var snippetId = window.location.hash.substring(1);
     sessionStorage.setItem("snippetId", snippetId);
@@ -497,14 +564,9 @@ var initApp = function() {
     $("li[data-id='" + currentTabGlobal + "']>a>div.notifTab").text(_incNum);
 }
 //TODO: Initializing user awareness
-var awareOthers = function(cm, cObj) {
-    var command = "change";
-
-    var cursor = cm.getCursor(true);
-
-    var where = cObj.from.line;
-    var msg = where + "." + cObj.cType + "$1";
-    shoutOut(command, msg);
+var awareOthers = function(cm, cObj) {    
+    var cmdMsg = {cmd: "change", where: cObj.from.line, type: cObj.cType, isPush: false};    
+    shoutOut(cmdMsg);
 }
 var docs = {
     "html" : null,
@@ -590,14 +652,16 @@ window.onload = function() {
 }
 
 window.onbeforeunload = function() {
+    var cmdMsg;
     if (communicationDoc !== null) {
-        var message = (currentUser === null) ? "Someone just left your snippet!" : currentUser + " just left your snippet!$0";
-        shoutOut("off$" + message);
+        cmdMsg = {cmd: "off", msg: "Someone just left your snippet!", username: currentUser.username, color: currentUser.color, isPush: true};        
+        shoutOut(cmdMsg);
         //communicationDoc.close();
     }
-
-    var msg = "no." + currentTabGlobal + "$1";
-    shoutOut("chTab", msg);
+    
+    cmdMsg = {cmd:"chTab", curTab:"no", prevTab: currentTabGlobal, isPush: false};
+    shoutOut(cmdMsg);
+    setTimeout(function(), 1000);
 }
 var currentTabGlobal = "";
 
@@ -608,9 +672,8 @@ $(document).ready(function() {
         if (currentTabGlobal === currentEditor) {
             return;
         }
-
-        var msg = currentEditor + "." + currentTabGlobal + "$1";
-        shoutOut("chTab", msg);
+        var cmdMsg = {cmd:"chTab", curTab:currentEditor, prevTab: currentTabGlobal, isPush: false};
+        shoutOut(cmdMsg);
         currentTabGlobal = currentEditor;
         changeEditorMode(currentEditor.substring(0, currentEditor.length - 3));
     });
@@ -627,7 +690,7 @@ $(document).ready(function() {
 
     var chatShake;
 
-    setTimeout(function() {
+    setInterval(function() {
         var _numMsgs = parseInt($(".notification.badge.badge-warning").text());
         if (_numMsgs == 0)
             clearInterval(chatShake);
@@ -641,7 +704,7 @@ $(document).ready(function() {
                     times : 3,
                     direction : direction[rand]
                 });
-            }, 5000);
+            }, 2000);
         }
     }, 1000);
 
@@ -658,11 +721,11 @@ $(document).ready(function() {
     });
 
     $(".chatInput>input").keyup(function(e) {
-        if (e.which == 13 && !e.shiftKey) {
-            var username = $("#usernameBadge").text();
-            var msg = username + "." + $(this).val() + "$1";
-            shoutOut("chat", msg);
+        if (e.which == 13 && !e.shiftKey) {            
+            var msg = $(this).val();
             $(this).val('');
+            var cmdMsg = {cmd: "chat", username: currentUser.username, color: currentUser.color, message: msg, isPush: false};
+            shoutOut(cmdMsg);            
         }
     })
     var shareSnippet = function() {

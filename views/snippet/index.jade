@@ -51,7 +51,7 @@ html
                   a(data-libName='jquery', href='#') Jquery
                 li
                   a(data-libName='underscore', href='#') Underscore                                                                                                                                                                            
-          .nav.pull-right
+          .nav.pull-right            
             a.label#usernameBadge(data-original-title="Edit your username") Anonymous              
             a.label.label-info#snippetnameBadge(data-original-title="Edit your snippet name", style="margin-left: 5px") Not assigned                
             a.btn.btn-small.btn-warning#shareButton(data-action='shareButton')
@@ -63,11 +63,11 @@ html
               iframe#previewFrame(src='js/templates/preview.html')
             .chatIcon.icon32.icon-green.icon-messages
               .notification.badge.badge-warning 0
-            .chatBox
+            .chatBox              
               a#chatHide.close &times
               .chatMessages
               .chatInput
-                input(type='text')
+                input(type='text', placeholder='Type your messages here')
           #editorArea.span6
             .tabbable
               ul.nav.nav-tabs#editorTabs

@@ -27,6 +27,22 @@ html, body
 /*.btn-warning, .btn-warning:hover 
   color: #000*/
 
+.userSquare
+  display: inline-block
+  margin: 2px;
+  width: 1.5em
+  height: 1.5em
+  border: 1px solid rgba(20, 20, 20, 0.3)
+  vertical-align: middle
+  
+.chatMsg
+  width: 200px
+  text-align: justify
+  -webkit-box-shadow: 3px 3px 10px rgba(0, 0, 0, 0.6)
+  border-radius: 7 px
+  border: 1px solid rgba(230, 230, 230, 0.7)
+  padding: 5px 10px 5px 10px  
+
 .notification
   position: absolute  
   top: -5px
@@ -57,18 +73,33 @@ html, body
   outline: 0
   color: black
   font-family: MS Sans Serif, Geneva, sans-serif
-  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(224,243,250,1)), color-stop(50%,rgba(216,240,252,1)), color-stop(51%,rgba(184,226,246,1)), color-stop(100%,rgba(182,223,253,1)))       
+  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(255,255,255,1)), color-stop(50%,rgba(243,243,243,1)), color-stop(51%,rgba(237,237,237,1)), color-stop(100%,rgba(255,255,255,1)))
+  opacity: 0.2
+  font-size: 12px    
   
 
 .chatInput>input:focus
   outline: 0 !important
-  border: 0  
+  opacity: 0.8    
 
 .chatBox>a.close
   margin-right:5px  
+ 
+ .chatSender
+   font-weight: bold
+   margin-right: 2px
+ 
+ .chatSender:after
+   content: ": "
+   font-weight: bold
   
 .chatMessages
-  height: 165px
+  padding: 10px 10px 0 10px
+  height: 155px
+  overflow-y: auto
+  overflow-x: hidden 
+  font-family: MS Sans Serif, Geneva, sans-serif
+  font-size: 12px  
   
 .inlet_slider
   width: 200px
