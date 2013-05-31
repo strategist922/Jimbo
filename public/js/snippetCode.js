@@ -661,7 +661,7 @@ window.onbeforeunload = function() {
     
     cmdMsg = {cmd:"chTab", curTab:"no", prevTab: currentTabGlobal, isPush: false};
     shoutOut(cmdMsg);
-    setTimeout(function(), 1000);
+    setTimeout(function() {}, 1000);
 }
 var currentTabGlobal = "";
 
