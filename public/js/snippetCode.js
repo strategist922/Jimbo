@@ -8,6 +8,7 @@ var layout = function() {
     var _tabWidth = $(".tab-content").width() / 4;
     $(".nav>li").width(_tabWidth);
     $(".chatInput>input").width($(".chatInput").width() - 10);
+    $(".chatMessages").width($(".chatBox").width() - 20);
 }
 
 var _randomColor = function() {
@@ -136,11 +137,13 @@ function shoutOut(cmdMsg) {
         for(var i = 1; i < _content.length - 1; i++) {
             var u = _content[i].split(".")[0];
             var c = _content[i].split(".")[1];
+            var z = _content[i].split(".")[2];
+            
             _square = $("<div>").addClass("userSquare").css("background-color", c).attr("data-username", u).tooltip({
                 placement : "bottom",
                 title : u
-            });
-            $(".nav.pull-right").prepend(_square);
+            }).append($("<img>").attr("src", "../img/zodiac/" + z + ".png"));
+            $(".nav.pull-right").prepend(_square);                   
         }                            
     } else if (cmdMsg.cmd == "chTab") {        
         syncCollaborators(cmdMsg.curTab, cmdMsg.prevTab);
@@ -149,10 +152,20 @@ function shoutOut(cmdMsg) {
         communicationDoc.del(0, _here);
         communicationDoc.insert(0, collaborators["htmlTab"] + "," + collaborators["jsTab"] + "," + collaborators["cssTab"] + "," + collaborators["jsonTab"]);
     } else if (cmdMsg.cmd == "chat") {
-        //Add chat messages localy on left        
-        var message = $("<div>").append($("<div>").addClass("chatSender").css("color", cmdMsg.color).html(cmdMsg.username))
-                        .append($("<div>").addClass("chatMsg").css("background-color", cmdMsg.color).html(cmdMsg.message));        
-        $(".chatMessages").append(message);        
+        //Add chat messages localy on left
+        var lastChatUser = $(".chatMessages div.chatMessage:last-child").attr("data-uid");
+        if(lastChatUser == cmdMsg.username) {
+            var _body = $(".chatMessages div.chatMessage:last-child .chatMsg").html();
+            _body = _body + "</br>" + cmdMsg.message;                                
+            $(".chatMessages div.chatMessage:last-child .chatMsg").html(_body);
+        } else {        
+            var message = $("<div>").addClass("chatMessage").attr("data-uid", cmdMsg.username).append($("<div>").addClass("chatSender").css({"background-color": cmdMsg.color})
+                            .tooltip({title: cmdMsg.username, placement: "right"}).html($("<img>").attr("src", "../img/zodiac/" + cmdMsg.zodiac + ".png")))
+                            .append($("<div>").addClass("chatMsg").html(cmdMsg.message));
+            var separator = $("<div>").addClass("chatSeparator");
+            $(".chatMessages").append(separator);                      
+            $(".chatMessages").append(message);
+        }        
     } else if(cmdMsg.cmd == "off") {
         //Remove user from file
         //break;
@@ -160,8 +173,9 @@ function shoutOut(cmdMsg) {
         communicationDoc.del(0, communicationDoc.getText().length);        
         var _u = cmdMsg.username;
         var _c = cmdMsg.color;
-        var _u_c = _u + "." + _c + "$";
-        var _newCols = _cols.replace(_u_c, "");
+        var _z = cmdMsg.zodiac;
+        var _u_c_z = _u + "." + _c + "." + _z + "$";
+        var _newCols = _cols.replace(_u_c_z, "");
         communicationDoc.insert(0, _newCols);
         $(".userSquare[data-username='" + _u + "']").remove();
     }        
@@ -223,6 +237,7 @@ function shoutHandler(cmdMsg) {
     } else {
         switch(cmd) {
             case 'change':
+                var _user = cmdMsg.user; 
                 var isAnimatingUp = false, isAnimatingDown = false;
                 if (!needAwareness)
                     return;
@@ -245,6 +260,7 @@ function shoutHandler(cmdMsg) {
                 if (sameTab) {
                     if (cViewPort.from <= line && cViewPort.to >= line) {
                         //In editor
+                        $("<style type='text/css'> .remoteChange-line-" + _user.username + "{ background:" + _user.color + "; opacity: 0.8;} </style>").appendTo("head");
                         var from = {
                             line : line,
                             ch : 0
@@ -254,9 +270,10 @@ function shoutHandler(cmdMsg) {
                             ch : myCodeMirror.doc.getLine(line).length
                         };
                         var cMarker = myCodeMirror.markText(from, to, {
-                            className : "remoteChange-line"
+                            className : "remoteChange-line-" + _user.username
                         });
-                        var cGutterMarker = $("<div>").addClass('gutterIcon');
+                        var cGutterMarker = $("<div>").addClass('gutterIcon').css("background-color", _user.color)
+                            .append($("<img>").attr("src", "../img/zodiac/" + _user.zodiac + ".png"));
                         myCodeMirror.setGutterMarker(line, "CodeMirror-remote-change", cGutterMarker.get(0));
                         //In gutter
                         setTimeout(function() {
@@ -294,11 +311,22 @@ function shoutHandler(cmdMsg) {
                 var _username = cmdMsg.username;
                 var _msg = cmdMsg.message;
                 var _color = cmdMsg.color;
+                var _zodiac = cmdMsg.zodiac;
                 
-                var message = $("<div>").append($("<div>").addClass("chatSender").css("color", _color).html(_username))
-                        .append($("<div>").addClass("chatMsg").css("background-color", _color).html(_msg));                        
                 
-                $(".chatMessages").append(message);
+                var lastChatUser = $(".chatMessages div.chatMessage:last-child").attr("data-uid");
+                if(lastChatUser == cmdMsg.username) {
+                    var _body = $(".chatMessages div.chatMessage:last-child .chatMsg").html();
+                    _body = _body + "</br>" + cmdMsg.message;                                
+                    $(".chatMessages div.chatMessage:last-child .chatMsg").html(_body);
+                } else {        
+                    var message = $("<div>").addClass("chatMessage").attr("data-uid", _username).append($("<div>").addClass("chatSender").css({"background-color": _color})
+                                    .tooltip({title: _username, placement: "right"}).html($("<img>").attr("src", "../img/zodiac/" + _zodiac + ".png")))
+                                    .append($("<div>").addClass("chatMsg").html(_msg));
+                    var separator = $("<div>").addClass("chatSeparator");
+                    $(".chatMessages").append(separator);                      
+                    $(".chatMessages").append(message);
+                }                                
                 if($(".chatBox").css("display") == "none") {
                     var unreadMsgs = parseInt($(".notification.badge.badge-warning").html());
                     $(".notification.badge.badge-warning").text(unreadMsgs + 1);
@@ -451,6 +479,9 @@ var setupLivePreview = function() {
         }
     });
 }
+
+var con;
+
 function initCommunication() {
     window.needAwareness = true;
     var snippetId = sessionStorage["snippetId"];
@@ -465,7 +496,7 @@ function initCommunication() {
         var _collaborators = communicationDoc.getText();
         var _here = _collaborators.indexOf("$");
         communicationDoc.del(0, _here);
-        communicationDoc.insert(communicationDoc.getText().length, currentUser.username + "." + currentUser.color + "$");
+        communicationDoc.insert(communicationDoc.getText().length, currentUser.username + "." + currentUser.color + "." + currentUser.zodiac + "$");
 
         if (_collaborators.length == 0) {
             //First time access
@@ -483,46 +514,46 @@ function initCommunication() {
             shoutHandler(s);
         });
 
-        var cmdMsg = {cmd: "on", msg:"Someone just joined your snippet!", username: currentUser.username, color: currentUser.color, isPush: true};         
+        var cmdMsg = {cmd: "on", msg:"Someone just joined your snippet!", zodiac: currentUser.zodiac, username: currentUser.username, color: currentUser.color, isPush: true};         
         shoutOut(cmdMsg);
 
         cmdMsg = {cmd: "chTab", curTab: currentTabGlobal, prevTab: "no", isPush: false};
         shoutOut(cmdMsg);
 
-    });
-
-    var status = $("#usernameBadge").get(0);
-
+    });                
+    
+    var status = document.getElementById("usernameBadge");
+    
     var register = function(state, klass, text) {
-        connection.on(state, function() {
-            status.className = 'label label-' + klass;
-            $(status).tooltip({
-                placement : "bottom",
-                title : text
-            });
+        connection.on(state, function() {            
+            status.className = 'label label-' + klass;            
         });
     };
-
+    register('ok', 'success', 'Online');    
+    register('disconnected', 'important', 'Offline');
+    register('stopped', 'important', 'Error');
+    
     $("#snippetnameBadge").tooltip({
         placement : "bottom",
         title : "Snippet Name"
-    });
-
-    register('ok', 'success', 'Online');
-    register('connecting', 'warning', 'Connecting...');
-    register('disconnected', 'important', 'Offline');
-    register('stopped', 'default', 'Error');
-
+    });    
 }
 
 var _randomUsername = function() {
     return "Anonymous" + Math.floor(Math.random() * 10001);
 }
 
+var _zodiacSigns = ["Aquarius", "Aries", "Cancer", "Capricorn", "Gemini", "Libra", "Lion", "Pisces", "Sagittarius", "Scorpio", "Taurus", "Virgo"];
+var _randomZodiac = function() {
+    var index = Math.floor((Math.random() * 1719) % 12);
+    return _zodiacSigns[index];    
+}
+
 var initApp = function() {
     window.currentUser = {};    
     currentUser.color = _randomColor();
     currentUser.username = _randomUsername();
+    currentUser.zodiac = _randomZodiac();
     
     $("#usernameBadge").html(currentUser.username);
 
@@ -565,7 +596,7 @@ var initApp = function() {
 }
 //TODO: Initializing user awareness
 var awareOthers = function(cm, cObj) {    
-    var cmdMsg = {cmd: "change", where: cObj.from.line, type: cObj.cType, isPush: false};    
+    var cmdMsg = {cmd: "change", where: cObj.from.line, type: cObj.cType, user: currentUser, isPush: false};    
     shoutOut(cmdMsg);
 }
 var docs = {
@@ -608,7 +639,7 @@ var createEditorMode = function(elem, mode, type) {
             initCommunication();
             //Initialize Preview
             initializePreview();
-            setupLivePreview();
+            setupLivePreview();                        
         }
     });
 }
@@ -654,7 +685,7 @@ window.onload = function() {
 window.onbeforeunload = function() {
     var cmdMsg;
     if (communicationDoc !== null) {
-        cmdMsg = {cmd: "off", msg: "Someone just left your snippet!", username: currentUser.username, color: currentUser.color, isPush: true};        
+        cmdMsg = {cmd: "off", msg: "Someone just left your snippet!", zodiac: currentUser.zodiac, username: currentUser.username, color: currentUser.color, isPush: true};        
         shoutOut(cmdMsg);
         //communicationDoc.close();
     }
@@ -717,6 +748,7 @@ $(document).ready(function() {
             opacity : 1
         }, "slow");
         $(".chatInput>input").width($(".chatInput").width() - 10);
+        $(".chatMessages").width($(".chatBox").width() - 20);
 
         $(this).fadeOut("slow");
     });
@@ -725,7 +757,7 @@ $(document).ready(function() {
         if (e.which == 13 && !e.shiftKey) {            
             var msg = $(this).val();
             $(this).val('');
-            var cmdMsg = {cmd: "chat", username: currentUser.username, color: currentUser.color, message: msg, isPush: false};
+            var cmdMsg = {cmd: "chat", zodiac: currentUser.zodiac, username: currentUser.username, color: currentUser.color, message: msg, isPush: false};
             shoutOut(cmdMsg);            
         }
     })
