@@ -3,7 +3,7 @@ html,body{width:100%;height:100%;padding-left:0;padding-right:0;-webkit-user-sel
 .box{height:100%}
 .libIcon{height:14px;width:14px;display:inline-block}
 .userSquare{display:inline-block;margin:2px;width:1.5em;height:1.5em;border:1px solid rgba(20,20,20,0.3);vertical-align:middle}
-.chatMsg{width:200px;text-align:justify;-webkit-box-shadow:3px 3px 10px rgba(0,0,0,0.6);border-radius:7px;border:1px solid rgba(230,230,230,0.7);padding:5px 10px 5px 10px}
+.chatMsg{width:200px;text-align:left;-webkit-box-shadow:3px 3px 10px rgba(0,0,0,0.6);border-radius:3px;border:1px solid rgba(230,230,230,0.7);padding:5px 10px 5px 10px;margin-left:70px;margin-top:5px}
 .notification{position:absolute;top:-5px;right:-10px}
 .notifTab{position:absolute;top:-10px;margin-left:5px}
 .chatIcon{float:left;bottom:40px;left:5px;position:relative}

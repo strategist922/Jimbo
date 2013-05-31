@@ -516,7 +516,7 @@ function initCommunication() {
 }
 
 var _randomUsername = function() {
-    return "Anonymous" + Math.floor(Math.random() * 10000001);
+    return "Anonymous" + Math.floor(Math.random() * 10001);
 }
 
 var initApp = function() {
@@ -709,6 +709,7 @@ $(document).ready(function() {
     }, 1000);
 
     $(".chatIcon").click(function() {
+        $(".notification.badge.badge-warning").text(0);
         $(".chatInput>input").show();
         $(".chatBox").animate({
             display : 'toggle',
