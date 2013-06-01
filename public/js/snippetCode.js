@@ -539,8 +539,9 @@ function initCommunication() {
     });    
 }
 
-var _randomUsername = function() {
-    return "Anonymous" + Math.floor(Math.random() * 10001);
+var _randomUsername = function(userId) {
+    if(userId == undefined) userId = "Anonymous";
+    return userId + Math.floor(Math.random() * 10001);
 }
 
 var _zodiacSigns = ["Aquarius", "Aries", "Cancer", "Capricorn", "Gemini", "Libra", "Lion", "Pisces", "Sagittarius", "Scorpio", "Taurus", "Virgo"];
@@ -551,9 +552,9 @@ var _randomZodiac = function() {
 
 var initApp = function() {
     window.currentUser = {};    
-    currentUser.color = _randomColor();
-    currentUser.username = _randomUsername();
+    currentUser.color = _randomColor();    
     currentUser.zodiac = _randomZodiac();
+    currentUser.username = _randomUsername(currentUser.zodiac);
     
     $("#usernameBadge").html(currentUser.username);
 
@@ -635,7 +636,7 @@ var createEditorMode = function(elem, mode, type) {
         currentDoc.attach_cm(_edtr);
         _edtr.setOption("readOnly", false);
 
-        if (_isReady()) {
+        if (_isReady()) {            
             initCommunication();
             //Initialize Preview
             initializePreview();
@@ -688,10 +689,9 @@ window.onbeforeunload = function() {
         cmdMsg = {cmd: "off", msg: "Someone just left your snippet!", zodiac: currentUser.zodiac, username: currentUser.username, color: currentUser.color, isPush: true};        
         shoutOut(cmdMsg);
         //communicationDoc.close();
-    }
-    
-    cmdMsg = {cmd:"chTab", curTab:"no", prevTab: currentTabGlobal, isPush: false};
-    shoutOut(cmdMsg);
+        cmdMsg = {cmd:"chTab", curTab:"no", prevTab: currentTabGlobal, isPush: false};
+        shoutOut(cmdMsg);
+    }        
     setTimeout(function() {}, 1000);
 }
 var currentTabGlobal = "";
