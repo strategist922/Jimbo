@@ -6,6 +6,20 @@ window.isWidgetOpen = false;
 //////////////////////////////
 //////////////////////////////
 //////////////////////////////
+var getTopPosition = function (cm, line)
+{    
+    var lineHeight = cm.defaultTextHeight();
+    var scrollInfo = myCodeMirror.getScrollInfo();        
+    var from = cm.coordsChar({
+        top : scrollInfo.top,
+        left : 0
+    }, "local").line;    
+    
+    var topMargin = 45;
+    var top = (line - from) * lineHeight;
+    return top;
+}
+
 var isHex = function(hex, marker) {
     var color, match, _ref;
     if (marker == null) {
@@ -324,14 +338,16 @@ var Inlet = (function() {
                 $("#colorPicker").css("display", "none");
                 isWidgetOpen = true;
             } else {
+                //TODO: FIX THIS
                 var cursorOffset = editor.cursorCoords(true, "local");
+                
                 var match = token.string.match(/#+(([a-fA-F0-9]){3}){1,2}/);
                 if (match) {
                     var color = match[0];
                     //color = color.slice(1, color.length);                    
                     picker.setCSS(color);
 
-                    var top = cursorOffset.top - 100;
+                    var top = getTopPosition(editor, cursor.line);
                     var left = cursorOffset.left - 150;
                     $("#" + _id + "_colorPicker").css('position', "absolute");
                     $("#" + _id + "_colorPicker").css('top', top);

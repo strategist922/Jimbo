@@ -186,19 +186,23 @@ function shoutHandler(cmdMsg) {
     var cmd = cmdMsg.cmd;
     var isPush = cmdMsg.isPush;    
     var type;
+    var _template = '<div class="noty_message"><span class="noty_text"></span><div class="noty_close"></div></div>';
     if (isPush) {
         switch(cmd) {
             case 'on':
                 var _msg = cmdMsg.msg;
                 var color = cmdMsg.color;
                 var username = cmdMsg.username;
+                var zodiac = cmdMsg.zodiac;
                 
                 var _square = $("<div>").addClass("userSquare").css("background-color", color).attr("data-username", username).tooltip({
                     placement : "bottom",
                     title : username
-                });                                
+                }).append($("<img>").attr("src", "../img/zodiac/" + zodiac + ".png"));;      
+                                                        
                 $(".nav.pull-right").prepend(_square);
-                type = 'success';                
+                type = 'success';    
+                _template = '<div class="noty_message"><div class="noty_icon" style="background:' + cmdMsg.color + '"><img src="../img/zodiac/' + cmdMsg.zodiac + '.png"></img></div><span class="noty_text" style="margin-left: 5px"></span><div class="noty_close"></div></div>';            
                 break;
             case 'eu':
                 var _msg = msg;
@@ -212,7 +216,7 @@ function shoutHandler(cmdMsg) {
                 var _msg = cmdMsg.msg;
                 var color = cmdMsg.color;
                 var username = cmdMsg.username;
-                
+                _template = '<div class="noty_message"><div class="noty_icon" style="background:' + cmdMsg.color + '"><img src="../img/zodiac/' + cmdMsg.zodiac + '.png"></img></div><span class="noty_text" style="margin-left: 5px"></span><div class="noty_close"></div></div>';
                 $(".userSquare[data-username='" + username + "']").remove();
                 type = 'error';
                 break;
@@ -226,7 +230,7 @@ function shoutHandler(cmdMsg) {
         }
         noty({
             text : cmdMsg.msg,
-            template : '<div class="noty_message"><span class="noty_text"></span><div class="noty_close"></div></div>',
+            template : _template,
             type : type,
             dismissQueue : true,
             layout : 'bottomLeft',
@@ -248,7 +252,7 @@ function shoutHandler(cmdMsg) {
                 var cViewPort = {};
                 var scrollInfo = myCodeMirror.getScrollInfo();
                 cViewPort.from = myCodeMirror.coordsChar({
-                    top : 0,
+                    top : scrollInfo.top,
                     left : 0
                 }, "local").line;
                 cViewPort.to = myCodeMirror.coordsChar({
@@ -301,10 +305,11 @@ function shoutHandler(cmdMsg) {
                 } else {
                     cTab = cType + "Tab";
                     var cTabObj = $("ul#editorTabs>li[data-id='" + cTab + "']>a");
-                    cTabObj.css("background-image", "-webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(230,240,163,1)), color-stop(50%,rgba(210,230,56,1)), color-stop(51%,rgba(195,216,37,1)), color-stop(100%,rgba(219,240,67,1)))");
+                    cTabObj.animate({"background": cmdMsg.color}, 'slow');
+                                        
                     setTimeout(function() {
-                        cTabObj.css("background", "none");
-                    }, 1200);
+                        cTabObj.animate({"background": "none"}, 500);
+                    }, 3000);
                 }
                 break;
             case 'chat':
@@ -514,7 +519,7 @@ function initCommunication() {
             shoutHandler(s);
         });
 
-        var cmdMsg = {cmd: "on", msg:"Someone just joined your snippet!", zodiac: currentUser.zodiac, username: currentUser.username, color: currentUser.color, isPush: true};         
+        var cmdMsg = {cmd: "on", msg: currentUser.username + " just joined your snippet!", zodiac: currentUser.zodiac, username: currentUser.username, color: currentUser.color, isPush: true};         
         shoutOut(cmdMsg);
 
         cmdMsg = {cmd: "chTab", curTab: currentTabGlobal, prevTab: "no", isPush: false};
@@ -686,7 +691,7 @@ window.onload = function() {
 window.onbeforeunload = function() {
     var cmdMsg;
     if (communicationDoc !== null) {
-        cmdMsg = {cmd: "off", msg: "Someone just left your snippet!", zodiac: currentUser.zodiac, username: currentUser.username, color: currentUser.color, isPush: true};        
+        cmdMsg = {cmd: "off", msg: currentUser.username + " just left your snippet!", zodiac: currentUser.zodiac, username: currentUser.username, color: currentUser.color, isPush: true};        
         shoutOut(cmdMsg);
         //communicationDoc.close();
         cmdMsg = {cmd:"chTab", curTab:"no", prevTab: currentTabGlobal, isPush: false};
