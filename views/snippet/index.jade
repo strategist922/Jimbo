@@ -69,33 +69,34 @@ html
               .chatInput
                 input(type='text', placeholder='Type your messages here')
           #editorArea.span6
-            .tabbable
-              ul.nav.nav-tabs#editorTabs
-                li.active(data-id='htmlTab')
-                  a(href='#htmlContent', data-toggle='tab') HTML
-                    .notifTab.badge.badge-warning 0
-                li(data-id='jsTab')
-                  a(href='#jsContent', data-toggle='tab') JS
-                    .notifTab.badge.badge-warning 0
-                li(data-id='cssTab')
-                  a(href='#cssContent', data-toggle='tab') CSS
-                    .notifTab.badge.badge-warning 0
-                li(data-id='jsonTab')
-                  a(href='#jsonContent', data-toggle='tab') JSON
-                    .notifTab.badge.badge-warning 0
-              .tab-content
-                #htmlContent.tab-pane.active
-                  textarea#htmlEditor(disabled)
-                #jsContent.tab-pane
-                  textarea#jsEditor(disabled)
-                #cssContent.tab-pane
-                  textarea#cssEditor(disabled)
-                #jsonContent.tab-pane
-                  textarea#jsonEditor(disabled)
-                .gutterIconUp
-                  img(src="../img/userIcon.png", style="margin-left:1px;")
-                .gutterIconDown
-                  img(src="../img/userIcon.png", style="margin-left:1px;")    
+            .box
+              .tabbable
+                ul.nav.nav-tabs#editorTabs
+                  li.active(data-id='htmlTab')
+                    a(href='#htmlContent', data-toggle='tab') HTML
+                      .notifTab.badge.badge-warning 0
+                  li(data-id='jsTab')
+                    a(href='#jsContent', data-toggle='tab') JS
+                      .notifTab.badge.badge-warning 0
+                  li(data-id='cssTab')
+                    a(href='#cssContent', data-toggle='tab') CSS
+                      .notifTab.badge.badge-warning 0
+                  li(data-id='jsonTab')
+                    a(href='#jsonContent', data-toggle='tab') JSON
+                      .notifTab.badge.badge-warning 0
+                .tab-content
+                  #htmlContent.tab-pane.active
+                    textarea#htmlEditor(disabled)
+                  #jsContent.tab-pane
+                    textarea#jsEditor(disabled)
+                  #cssContent.tab-pane
+                    textarea#cssEditor(disabled)
+                  #jsonContent.tab-pane
+                    textarea#jsonEditor(disabled)
+                  .gutterIconUp
+                    img(src="../img/userIcon.png", style="margin-left:1px;")
+                  .gutterIconDown
+                    img(src="../img/userIcon.png", style="margin-left:1px;")    
     //script(type='text/javascript', charset='utf-8', src='thirdparty/colorpicker/Color.Picker.Classic.js')
     //script(type='text/javascript', charset='utf-8', src='thirdparty/colorpicker/Color.Space.js')
     script(type='text/javascript', charset='utf-8', src='http://nornagon.github.com/thistle/thistle.js')                                              

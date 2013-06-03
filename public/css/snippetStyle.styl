@@ -8,17 +8,42 @@ html, body
   background-image:url(../img/splash-bg.jpg) repeat
 
 .span12
-  padding: 20px
-  background-image:url(../../img/cover.jpg)
-  background-repeat: no-repeat
-  background-size: cover
-  -webkit-box-shadow: 0 0 15px 5px black
-  -moz-box-shadow: 0 0 15px 5px black
-  box-shadow: 0 0 15px 5px black
+  padding: 15px  
+
+.tabbable:after,.tabbable:before
+  background: #f9f9f9    
+  -webkit-box-shadow: 0 0 4px rgba(0, 0, 0, 0.2), inset 0 0 50px rgba(0, 0, 0, 0.1)
+  -moz-box-shadow: 0 0 4px rgba(0, 0, 0, 0.2), inset 0 0 50px rgba(0, 0, 0, 0.1)
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.2), inset 0 0 50px rgba(0, 0, 0, 0.1)  
+  //border: 1px solid #c4c6ca
+  content: ""
+  display: block
+  height: 100%
+  left: -1px
+  position: absolute
+  width: 100%
+
+.tabbable:after
+  -webkit-transform: rotate(2deg)
+  -moz-transform: rotate(2deg)
+  -ms-transform: rotate(2deg)
+  -o-transform: rotate(2deg)
+  transform: rotate(2deg)
+  top: 0
+  z-index: -1
+
+.tabbable:before
+  -webkit-transform: rotate(-3deg)
+  -moz-transform: rotate(-3deg)
+  -ms-transform: rotate(-3deg)
+  -o-transform: rotate(-3deg)
+  transform: rotate(-3deg)
+  top: 0
+  z-index: -2
 
 .noty_icon
   display: inline-block
-  margin: 2px;  
+  margin: 2px  
   border: 1px solid rgba(20, 20, 20, 0.3)
   vertical-align: middle
   width: 16px
@@ -41,7 +66,7 @@ html, body
 
 .userSquare
   display: inline-block
-  margin: 2px;
+  margin: 2px
   width: 1.5em
   height: 1.5em
   border: 1px solid rgba(20, 20, 20, 0.3)
@@ -79,6 +104,8 @@ html, body
 .chatBox
   background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(0,0,0,0.65)), color-stop(69%,rgba(0,0,0,0.41)), color-stop(100%,rgba(0,0,0,0)))  
   border: 0
+  border-top-left-radius: 10px
+  border-top-right-radius: 10px 
   height:200px  
   position: relative
   z-index:5000
@@ -194,23 +221,21 @@ img.icon
   height:24px
   width: 24px  
   
-#previewArea
+.box
   position: relative    
   background-color: #fff
   -webkit-box-shadow: 0 0 4px rgba(0, 0, 0, 0.2), inset 0 0 50px rgba(0, 0, 0, 0.1)
   -moz-box-shadow: 0 0 4px rgba(0, 0, 0, 0.2), inset 0 0 50px rgba(0, 0, 0, 0.1)
   box-shadow: 0 0 5px rgba(0, 0, 0, 0.2), inset 0 0 50px rgba(0, 0, 0, 0.1)
-  
-#editorArea
-  position: relative    
-  background-color: #fff
-  -webkit-box-shadow: 0 0 4px rgba(0, 0, 0, 0.2), inset 0 0 50px rgba(0, 0, 0, 0.1)
-  -moz-box-shadow: 0 0 4px rgba(0, 0, 0, 0.2), inset 0 0 50px rgba(0, 0, 0, 0.1)
-  box-shadow: 0 0 5px rgba(0, 0, 0, 0.2), inset 0 0 50px rgba(0, 0, 0, 0.1)
-
 	
-#previewArea:before, #previewArea:after  
+.box:before, .box:after  
   background: transparent
+  position: absolute
+  width: 40%
+  height: 10px
+  content: ' '
+  left: 12px
+  bottom: 12px  
   -webkit-transform: skew(-5deg) rotate(-5deg)
   -moz-transform: skew(-5deg) rotate(-5deg)
   -ms-transform: skew(-5deg) rotate(-5deg)
@@ -221,7 +246,9 @@ img.icon
   box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3)
   z-index: -1
 
-#previewArea:after
+.box:after
+  left: auto
+  right: 12px
   -webkit-transform: skew(5deg) rotate(5deg)
   -moz-transform: skew(5deg) rotate(5deg)
   -ms-transform: skew(5deg) rotate(5deg)
@@ -229,7 +256,7 @@ img.icon
   transform: skew(5deg) rotate(5deg)
 
 li.active>a
-  //background: transparent !important
+  background: transparent !important
   //border: none !important
   color: #FFD119 !important
 

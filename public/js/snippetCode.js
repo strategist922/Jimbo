@@ -5,7 +5,7 @@ var layout = function() {
     $("#previewArea").height(_height);
     $("#mainView").css("width", document.documentElement.clientWidth);
     $(".CodeMirror-wrap").height($("#editorArea").height() - $(".nav.nav-tabs").height() - 1);
-    var _tabWidth = $(".tab-content").width() / 4;
+    var _tabWidth = ($(".tab-content").width() - 10) / 4;
     $(".nav>li").width(_tabWidth);
     $(".chatInput>input").width($(".chatInput").width() - 10);
     $(".chatMessages").width($(".chatBox").width() - 20);
@@ -69,10 +69,15 @@ var createEditor = function(elem, mode, type) {
         else if (mode === "text/javascript")
             CodeMirror.showHint(cm, CodeMirror.javascriptHint);
     };
+    
+    var onDnD = false;
+    if(type === 'json')
+        onDnD = true;
 
     var _editor = CodeMirror.fromTextArea(elem, {
         mode : mode,
         lineNumbers : true,
+        dragDrop: onDnD,
         lineWrapping : true,
         extraKeys : {
             "Ctrl-Space" : "autocomplete"
@@ -83,12 +88,32 @@ var createEditor = function(elem, mode, type) {
         theme : "solarized light"
     });
     _editor.jimboType = type;
-    if (type != 'json')
+    if (type !== 'json')
         Inlet(_editor);
     $(".slider").css('display', 'none');
     $(".picker").css('display', 'none');
     $(_editor.getWrapperElement()).attr("data-jimboType", type);
     _editor.setOption("readOnly", "nocursor");
+    if(onDnD) {
+        _editor.setOption("onDragEvent", function(cm, e) {
+            switch(e.type){
+                case 'dragstart':
+                break;
+                case 'dragend':
+                break;
+                case 'dragover':
+                e.preventDefault();
+                break;
+                case 'dragenter':
+                break;
+                case 'dragleave':
+                break;
+                case 'drop':
+                e.preventDefault();
+                break;
+            }                      
+        });
+    }
 
     return _editor;
 }
