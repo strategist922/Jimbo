@@ -59,6 +59,7 @@ html
       .row-fluid        
         .span12                          
           #previewArea.span6
+            img.pin(src="../img/pin.png")
             .box
               iframe#previewFrame(src='js/templates/preview.html')
             .chatIcon.icon32.icon-green.icon-messages
@@ -68,7 +69,7 @@ html
               .chatMessages
               .chatInput
                 input(type='text', placeholder='Type your messages here')
-          #editorArea.span6
+          #editorArea.span6            
             .box
               .tabbable
                 ul.nav.nav-tabs#editorTabs

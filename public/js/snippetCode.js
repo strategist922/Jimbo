@@ -9,6 +9,7 @@ var layout = function() {
     $(".nav>li").width(_tabWidth);
     $(".chatInput>input").width($(".chatInput").width() - 10);
     $(".chatMessages").width($(".chatBox").width() - 20);
+    $(".pin").css("left", $(".span6").width()/2);        
 }
 
 var _randomColor = function() {
