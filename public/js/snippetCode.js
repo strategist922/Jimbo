@@ -411,8 +411,9 @@ function shoutHandler(cmdMsg) {
                     $(".chatMessages").append(separator);
                     $(".chatMessages").append(message);
                 }
-                if ($(".chatBox").css("display") == "none") {
-                    var unreadMsgs = parseInt($(".notification.badge.badge-warning").html());
+                
+                if ($(".chatBox").css("opacity") == 0 || $(".chatBox").css("display") == "none") {                    
+                    var unreadMsgs = parseInt($(".notification.badge.badge-warning").text());
                     $(".notification.badge.badge-warning").text(unreadMsgs + 1);
                 }
                 break;
@@ -893,8 +894,9 @@ var handleDrop = function(e) {
     }
 }
 
-$(document).ready(function() {
+var _isChatOpen = false;
 
+$(document).ready(function() {        
     $(".nav-tabs>li").on('click', function(e) {
         var currentEditor = e.currentTarget.dataset["id"];
         if (currentTabGlobal === currentEditor) {
@@ -926,23 +928,28 @@ $(document).ready(function() {
 
     setInterval(function() {
         var _numMsgs = parseInt($(".notification.badge.badge-warning").text());
-        if (_numMsgs == 0)
+        if (_numMsgs == 0) {
             clearInterval(chatShake);
+            _isChatOpen = false;
+        }
         else {
-            chatShake = setInterval(function() {
+            if(!_isChatOpen) {
+                _isChatOpen = true;
+                chatShake = setInterval(function() {
                 var direction = ["up", "left", "right", "down"];
-                var gRand = Math.random() * 113;
-                var rand = Math.round(gRand % 4);
-                $(".notification.badge.badge-warning").effect("shake", {
-                    distance : 10,
-                    times : 3,
-                    direction : direction[rand]
-                });
-            }, 2000);
+                    var gRand = Math.random() * 113;
+                    var rand = Math.round(gRand % 4);
+                    $(".notification.badge.badge-warning").effect("shake", {
+                        distance : 10,
+                        times : 3,
+                        direction : direction[rand]
+                    });
+                }, 1000);
+            }            
         }
     }, 1000);
 
-    $(".chatIcon").click(function() {
+    $(".chatIcon").click(function() {        
         $(".notification.badge.badge-warning").text(0);
         $(".chatInput>input").show();
         $(".chatBox").animate({
@@ -952,8 +959,9 @@ $(document).ready(function() {
         }, "slow");
         $(".chatInput>input").width($(".chatInput").width() - 10);
         $(".chatMessages").width($(".chatBox").width() - 20);
-
-        $(this).fadeOut("slow");
+        $(this).fadeOut("slow", function(){            
+        });
+        clearInterval(chatShake);
     });
 
     $(".chatInput>input").keyup(function(e) {
