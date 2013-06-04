@@ -9,15 +9,65 @@ var layout = function() {
     $(".nav>li").width(_tabWidth);
     $(".chatInput>input").width($(".chatInput").width() - 10);
     $(".chatMessages").width($(".chatBox").width() - 20);
-    $(".pin").css("left", $(".span6").width()/2);        
+    $(".pin").css("left", $(".span6").width() / 2);
+    var _penSize = $(".span6").width() * 0.8;
+    var _penLeft = ($(".span6").width() * 0.2) / 2;
+    $(".pen").width(_penSize).css("left", _penLeft);
+    //$('.dropZone').width($(".tab-content").width() - 10);
+    //$('.dropZone').height($(".tab-content").height() - 10);
+
+    if (pIframe) {
+        try {
+            var jsonCode = "", cssCode = "", jsCode = "", htmlCode = "";
+            if (editors.json)
+                jsonCode = editors.json.getValue();
+            if (editors.html)
+                htmlCode = editors.html.getValue();
+            if (editors.css)
+                cssCode = editors.css.getValue();
+            if (editors.js)
+                jsCode = editors.js.getValue();
+
+            $('body #Jimbo-main', $('iframe').contents()).html(htmlCode);
+            $('#Jimbo-style', $('iframe').contents()).get(0).textContent = cssCode;
+            pIframe.Jimbo.json = JSON.parse(jsonCode);
+            pIframe.Jimbo.renderCode(jsCode);
+        } catch(err) {
+            console.log(err);
+        } finally {
+
+        }
+    }
+}
+
+var csv2json = function(csv) {
+    var titles = csv[0];
+    var json = "{\n";
+    
+    for(var i = 1; i < csv.length; i++){
+        var rec = csv[i];
+        json += '  "data' + i + '": {'
+        for(var j = 0; j < rec.length; j++){
+            if(j != rec.length - 1)
+                json += '"' + titles[j] + '": "' + rec[j] + '", '
+            else
+                json += '"' + titles[j] + '": "' + rec[j] + '"';                            
+        }        
+        if(i != csv.length - 1)
+            json += "},\n";
+        else
+            json += "}";
+    }
+    json += "\n}";
+    return json;
 }
 
 var _randomColor = function() {
-    var h = Math.floor(Math.random()*360);      
+    var h = Math.floor(Math.random() * 360);
     var s = Math.random() * 0.4 + 0.5;
     var l = Math.random() * 0.6 + 0.3;
     var c = 'hsl(' + h + ', ' + Math.round(s * 100) + '%, ' + Math.round(l * 100) + '%)';
-    
+
     return c;
 }
 
@@ -70,15 +120,15 @@ var createEditor = function(elem, mode, type) {
         else if (mode === "text/javascript")
             CodeMirror.showHint(cm, CodeMirror.javascriptHint);
     };
-    
+
     var onDnD = false;
-    if(type === 'json')
+    if (type === 'json')
         onDnD = true;
 
     var _editor = CodeMirror.fromTextArea(elem, {
         mode : mode,
         lineNumbers : true,
-        dragDrop: onDnD,
+        dragDrop : onDnD,
         lineWrapping : true,
         extraKeys : {
             "Ctrl-Space" : "autocomplete"
@@ -95,29 +145,18 @@ var createEditor = function(elem, mode, type) {
     $(".picker").css('display', 'none');
     $(_editor.getWrapperElement()).attr("data-jimboType", type);
     _editor.setOption("readOnly", "nocursor");
+    
     if(onDnD) {
         _editor.setOption("onDragEvent", function(cm, e) {
-            switch(e.type){
-                case 'dragstart':
-                break;
-                case 'dragend':
-                break;
-                case 'dragover':
-                e.preventDefault();
-                break;
-                case 'dragenter':
-                break;
-                case 'dragleave':
-                break;
-                case 'drop':
-                e.preventDefault();
-                break;
-            }                      
+            return true;
         });
-    }
+    }   
 
     return _editor;
 }
+
+var dropZone;
+
 var editorInit = function(elem, mode, type) {
     var _editor;
     if (type === 'html') {
@@ -148,6 +187,11 @@ var editorInit = function(elem, mode, type) {
             _editor = createEditor(elem, mode, type);
             //_editor.setOption("lintWith", CodeMirror.jsonValidator);
             //_editor.setOption("gutters", ["CodeMirror-lint-markers"]);
+            dropZone = document.querySelectorAll(".CodeMirror[data-jimbotype='json']")[0];
+            dropZone.addEventListener('dragstart', handleDragStart, false);
+            dropZone.addEventListener('dragover', handleDragOver, false);
+            dropZone.addEventListener('dragleave', handleDragLeave, false);
+            dropZone.addEventListener('drop', handleDrop, false);
             editors.json = _editor;
         } else {
             _editor = editors.json;
@@ -157,21 +201,21 @@ var editorInit = function(elem, mode, type) {
 }
 function shoutOut(cmdMsg) {
     //var s = cmd + "$" + msg;
-    if(cmdMsg.cmd == "on") {
+    if (cmdMsg.cmd == "on") {
         var _content = communicationDoc.getText().split("$");
         var _square;
-        for(var i = 1; i < _content.length - 1; i++) {
+        for (var i = 1; i < _content.length - 1; i++) {
             var u = _content[i].split(".")[0];
             var c = _content[i].split(".")[1];
             var z = _content[i].split(".")[2];
-            
+
             _square = $("<div>").addClass("userSquare").css("background-color", c).attr("data-username", u).tooltip({
                 placement : "bottom",
                 title : u
             }).append($("<img>").attr("src", "../img/zodiac/" + z + ".png"));
-            $(".nav.pull-right").prepend(_square);                   
-        }                            
-    } else if (cmdMsg.cmd == "chTab") {        
+            $(".nav.pull-right").prepend(_square);
+        }
+    } else if (cmdMsg.cmd == "chTab") {
         syncCollaborators(cmdMsg.curTab, cmdMsg.prevTab);
         var _cols = communicationDoc.getText();
         var _here = _cols.indexOf("$");
@@ -180,23 +224,26 @@ function shoutOut(cmdMsg) {
     } else if (cmdMsg.cmd == "chat") {
         //Add chat messages localy on left
         var lastChatUser = $(".chatMessages div.chatMessage:last-child").attr("data-uid");
-        if(lastChatUser == cmdMsg.username) {
+        if (lastChatUser == cmdMsg.username) {
             var _body = $(".chatMessages div.chatMessage:last-child .chatMsg").html();
-            _body = _body + "</br>" + cmdMsg.message;                                
+            _body = _body + "</br>" + cmdMsg.message;
             $(".chatMessages div.chatMessage:last-child .chatMsg").html(_body);
-        } else {        
-            var message = $("<div>").addClass("chatMessage").attr("data-uid", cmdMsg.username).append($("<div>").addClass("chatSender").css({"background-color": cmdMsg.color})
-                            .tooltip({title: cmdMsg.username, placement: "right"}).html($("<img>").attr("src", "../img/zodiac/" + cmdMsg.zodiac + ".png")))
-                            .append($("<div>").addClass("chatMsg").html(cmdMsg.message));
+        } else {
+            var message = $("<div>").addClass("chatMessage").attr("data-uid", cmdMsg.username).append($("<div>").addClass("chatSender").css({
+                "background-color" : cmdMsg.color
+            }).tooltip({
+                title : cmdMsg.username,
+                placement : "right"
+            }).html($("<img>").attr("src", "../img/zodiac/" + cmdMsg.zodiac + ".png"))).append($("<div>").addClass("chatMsg").html(cmdMsg.message));
             var separator = $("<div>").addClass("chatSeparator");
-            $(".chatMessages").append(separator);                      
+            $(".chatMessages").append(separator);
             $(".chatMessages").append(message);
-        }        
-    } else if(cmdMsg.cmd == "off") {
+        }
+    } else if (cmdMsg.cmd == "off") {
         //Remove user from file
         //break;
         var _cols = communicationDoc.getText();
-        communicationDoc.del(0, communicationDoc.getText().length);        
+        communicationDoc.del(0, communicationDoc.getText().length);
         var _u = cmdMsg.username;
         var _c = cmdMsg.color;
         var _z = cmdMsg.zodiac;
@@ -204,13 +251,13 @@ function shoutOut(cmdMsg) {
         var _newCols = _cols.replace(_u_c_z, "");
         communicationDoc.insert(0, _newCols);
         $(".userSquare[data-username='" + _u + "']").remove();
-    }        
+    }
     communicationDoc.shout(cmdMsg);
 }
 
 function shoutHandler(cmdMsg) {
     var cmd = cmdMsg.cmd;
-    var isPush = cmdMsg.isPush;    
+    var isPush = cmdMsg.isPush;
     var type;
     var _template = '<div class="noty_message"><span class="noty_text"></span><div class="noty_close"></div></div>';
     if (isPush) {
@@ -220,15 +267,16 @@ function shoutHandler(cmdMsg) {
                 var color = cmdMsg.color;
                 var username = cmdMsg.username;
                 var zodiac = cmdMsg.zodiac;
-                
+
                 var _square = $("<div>").addClass("userSquare").css("background-color", color).attr("data-username", username).tooltip({
                     placement : "bottom",
                     title : username
-                }).append($("<img>").attr("src", "../img/zodiac/" + zodiac + ".png"));;      
-                                                        
+                }).append($("<img>").attr("src", "../img/zodiac/" + zodiac + ".png"));
+                ;
+
                 $(".nav.pull-right").prepend(_square);
-                type = 'success';    
-                _template = '<div class="noty_message"><div class="noty_icon" style="background:' + cmdMsg.color + '"><img src="../img/zodiac/' + cmdMsg.zodiac + '.png"></img></div><span class="noty_text" style="margin-left: 5px"></span><div class="noty_close"></div></div>';            
+                type = 'success';
+                _template = '<div class="noty_message"><div class="noty_icon" style="background:' + cmdMsg.color + '"><img src="../img/zodiac/' + cmdMsg.zodiac + '.png"></img></div><span class="noty_text" style="margin-left: 5px"></span><div class="noty_close"></div></div>';
                 break;
             case 'eu':
                 var _msg = msg;
@@ -246,11 +294,11 @@ function shoutHandler(cmdMsg) {
                 $(".userSquare[data-username='" + username + "']").remove();
                 type = 'error';
                 break;
-            case 'lock':                
+            case 'lock':
                 type = 'information';
                 break;
                 break;
-            default:                
+            default:
                 type = "alert";
                 break
         }
@@ -267,7 +315,7 @@ function shoutHandler(cmdMsg) {
     } else {
         switch(cmd) {
             case 'change':
-                var _user = cmdMsg.user; 
+                var _user = cmdMsg.user;
                 var isAnimatingUp = false, isAnimatingDown = false;
                 if (!needAwareness)
                     return;
@@ -302,8 +350,7 @@ function shoutHandler(cmdMsg) {
                         var cMarker = myCodeMirror.markText(from, to, {
                             className : "remoteChange-line-" + _user.username
                         });
-                        var cGutterMarker = $("<div>").addClass('gutterIcon').css("background-color", _user.color)
-                            .append($("<img>").attr("src", "../img/zodiac/" + _user.zodiac + ".png"));
+                        var cGutterMarker = $("<div>").addClass('gutterIcon').css("background-color", _user.color).append($("<img>").attr("src", "../img/zodiac/" + _user.zodiac + ".png"));
                         myCodeMirror.setGutterMarker(line, "CodeMirror-remote-change", cGutterMarker.get(0));
                         //In gutter
                         setTimeout(function() {
@@ -331,10 +378,14 @@ function shoutHandler(cmdMsg) {
                 } else {
                     cTab = cType + "Tab";
                     var cTabObj = $("ul#editorTabs>li[data-id='" + cTab + "']>a");
-                    cTabObj.animate({"background": cmdMsg.color}, 'slow');
-                                        
+                    cTabObj.animate({
+                        "background" : cmdMsg.color
+                    }, 'slow');
+
                     setTimeout(function() {
-                        cTabObj.animate({"background": "none"}, 500);
+                        cTabObj.animate({
+                            "background" : "none"
+                        }, 500);
                     }, 3000);
                 }
                 break;
@@ -343,22 +394,24 @@ function shoutHandler(cmdMsg) {
                 var _msg = cmdMsg.message;
                 var _color = cmdMsg.color;
                 var _zodiac = cmdMsg.zodiac;
-                
-                
+
                 var lastChatUser = $(".chatMessages div.chatMessage:last-child").attr("data-uid");
-                if(lastChatUser == cmdMsg.username) {
+                if (lastChatUser == cmdMsg.username) {
                     var _body = $(".chatMessages div.chatMessage:last-child .chatMsg").html();
-                    _body = _body + "</br>" + cmdMsg.message;                                
+                    _body = _body + "</br>" + cmdMsg.message;
                     $(".chatMessages div.chatMessage:last-child .chatMsg").html(_body);
-                } else {        
-                    var message = $("<div>").addClass("chatMessage").attr("data-uid", _username).append($("<div>").addClass("chatSender").css({"background-color": _color})
-                                    .tooltip({title: _username, placement: "right"}).html($("<img>").attr("src", "../img/zodiac/" + _zodiac + ".png")))
-                                    .append($("<div>").addClass("chatMsg").html(_msg));
+                } else {
+                    var message = $("<div>").addClass("chatMessage").attr("data-uid", _username).append($("<div>").addClass("chatSender").css({
+                        "background-color" : _color
+                    }).tooltip({
+                        title : _username,
+                        placement : "right"
+                    }).html($("<img>").attr("src", "../img/zodiac/" + _zodiac + ".png"))).append($("<div>").addClass("chatMsg").html(_msg));
                     var separator = $("<div>").addClass("chatSeparator");
-                    $(".chatMessages").append(separator);                      
+                    $(".chatMessages").append(separator);
                     $(".chatMessages").append(message);
-                }                                
-                if($(".chatBox").css("display") == "none") {
+                }
+                if ($(".chatBox").css("display") == "none") {
                     var unreadMsgs = parseInt($(".notification.badge.badge-warning").html());
                     $(".notification.badge.badge-warning").text(unreadMsgs + 1);
                 }
@@ -426,22 +479,21 @@ var loadSnippet = function(snippetId) {
             switch(prop) {
                 case 'html':
                     $('body #Jimbo-main', $('iframe').contents()).html(code);
-                    pIframe.Jimbo.renderCode(SnippetCode.js);
                     break;
                 case 'js':
-                    $('body #Jimbo-main', $('iframe').contents()).html(SnippetCode.html);
                     pIframe.Jimbo.renderCode(code);
                     break;
                 case 'css':
                     $('#Jimbo-style', $('iframe').contents()).get(0).textContent = code;
-                    $('body #Jimbo-main', $('iframe').contents()).html(SnippetCode.html);
-                    pIframe.Jimbo.renderCode(SnippetCode.js);
+                    //$('body #Jimbo-main', $('iframe').contents()).html(SnippetCode.html);
+                    //pIframe.Jimbo.renderCode(SnippetCode.js);
                     break;
                 case 'json':
                     try {
                         pIframe.Jimbo.json = JSON.parse(code);
-                        $('body #Jimbo-main', $('iframe').contents()).html(SnippetCode.html);
-                        pIframe.Jimbo.renderCode(SnippetCode.js);
+                        //$('body #Jimbo-main', $('iframe').contents()).html(SnippetCode.html);
+                        //$('#Jimbo-style', $('iframe').contents()).get(0).textContent = SnippetCode.css;
+                        //pIframe.Jimbo.renderCode(SnippetCode.js);
                     } catch(err) {
                         console.log(err);
                     } finally {
@@ -467,6 +519,15 @@ var setupLivePreview = function() {
     editors.html.on("change", function(cm, cObj) {
         var code = cm.getValue();
         $('body #Jimbo-main', $('iframe').contents()).html(code);
+        if (editors.css)
+            $('#Jimbo-style', $('iframe').contents()).get(0).textContent = editors.css.getValue();
+        if (editors.json && editors.json.getValue() != "")
+            try {
+                pIframe.Jimbo.json = JSON.parse(editors.json.getValue());
+            }
+            catch(e) {
+                
+            }            
         if (editors.js)
             pIframe.Jimbo.renderCode(editors.js.getValue());
     });
@@ -479,6 +540,15 @@ var setupLivePreview = function() {
     editors.js.on("change", function(cm, cObj) {
         var code = cm.getValue();
         $('body #Jimbo-main', $('iframe').contents()).html(editors.html.getValue());
+        if (editors.css)
+            $('#Jimbo-style', $('iframe').contents()).get(0).textContent = editors.css.getValue();
+        if (editors.json && editors.json.getValue() != "")
+            try {
+                pIframe.Jimbo.json = JSON.parse(editors.json.getValue());
+            }
+            catch(e) {
+                
+            }            
         pIframe.Jimbo.renderCode(code);
     });
 
@@ -489,8 +559,15 @@ var setupLivePreview = function() {
     });
     editors.css.on("change", function(cm, cObj) {
         var code = cm.getValue();
-        $('#Jimbo-style', $('iframe').contents()).get(0).textContent = code;
         $('body #Jimbo-main', $('iframe').contents()).html(editors.html.getValue());
+        $('#Jimbo-style', $('iframe').contents()).get(0).textContent = code;
+        if (editors.json && editors.json.getValue() != "")
+            try {
+                pIframe.Jimbo.json = JSON.parse(editors.json.getValue());
+            }
+            catch(e) {
+                
+            }            
         if (editors.js)
             pIframe.Jimbo.renderCode(editors.js.getValue());
     });
@@ -501,6 +578,8 @@ var setupLivePreview = function() {
         try {
             pIframe.Jimbo.json = JSON.parse(code);
             $('body #Jimbo-main', $('iframe').contents()).html(editors.html.getValue());
+            if (editors.css)
+                $('#Jimbo-style', $('iframe').contents()).get(0).textContent = editors.css.getValue();
             if (editors.js)
                 pIframe.Jimbo.renderCode(editors.js.getValue());
         } catch(err) {
@@ -508,7 +587,7 @@ var setupLivePreview = function() {
         } finally {
 
         }
-    });
+    });        
 }
 
 var con;
@@ -531,7 +610,7 @@ function initCommunication() {
 
         if (_collaborators.length == 0) {
             //First time access
-            communicationDoc.insert(0, 1 + "," + collaborators["jsTab"] + "," + collaborators["cssTab"] + "," + collaborators["jsonTab"] + "$");            
+            communicationDoc.insert(0, 1 + "," + collaborators["jsTab"] + "," + collaborators["cssTab"] + "," + collaborators["jsonTab"] + "$");
         } else {
             //Joined an existing snippet
             var _numC = _collaborators.split("$")[0];
@@ -541,61 +620,70 @@ function initCommunication() {
             collaborators["jsonTab"] = parseInt(_numC.split(",")[3]);
         }
 
-        communicationDoc.on('shout', function(s) {            
+        communicationDoc.on('shout', function(s) {
             shoutHandler(s);
         });
 
-        var cmdMsg = {cmd: "on", msg: currentUser.username + " just joined your snippet!", zodiac: currentUser.zodiac, username: currentUser.username, color: currentUser.color, isPush: true};         
+        var cmdMsg = {
+            cmd : "on",
+            msg : currentUser.username + " just joined your snippet!",
+            zodiac : currentUser.zodiac,
+            username : currentUser.username,
+            color : currentUser.color,
+            isPush : true
+        };
         shoutOut(cmdMsg);
 
-        cmdMsg = {cmd: "chTab", curTab: currentTabGlobal, prevTab: "no", isPush: false};
+        cmdMsg = {
+            cmd : "chTab",
+            curTab : currentTabGlobal,
+            prevTab : "no",
+            isPush : false
+        };
         shoutOut(cmdMsg);
 
-    });                
-    
+    });
+
     var status = document.getElementById("usernameBadge");
-    
+
     var register = function(state, klass, text) {
-        connection.on(state, function() {            
-            status.className = 'label label-' + klass;            
+        connection.on(state, function() {
+            status.className = 'label label-' + klass;
         });
     };
-    register('ok', 'success', 'Online');    
+    register('ok', 'success', 'Online');
     register('disconnected', 'important', 'Offline');
     register('stopped', 'important', 'Error');
-    
+
     $("#snippetnameBadge").tooltip({
         placement : "bottom",
         title : "Snippet Name"
-    });    
+    });
 }
 
 var _randomUsername = function(userId) {
-    if(userId == undefined) userId = "Anonymous";
+    if (userId == undefined)
+        userId = "Anonymous";
     return userId + Math.floor(Math.random() * 10001);
 }
-
 var _zodiacSigns = ["Aquarius", "Aries", "Cancer", "Capricorn", "Gemini", "Libra", "Lion", "Pisces", "Sagittarius", "Scorpio", "Taurus", "Virgo"];
 var _randomZodiac = function() {
     var index = Math.floor((Math.random() * 1719) % 12);
-    return _zodiacSigns[index];    
+    return _zodiacSigns[index];
 }
-
 var initApp = function() {
-    window.currentUser = {};    
-    currentUser.color = _randomColor();    
+    window.currentUser = {};
+    currentUser.color = _randomColor();
     currentUser.zodiac = _randomZodiac();
     currentUser.username = _randomUsername(currentUser.zodiac);
-    
+
     $("#usernameBadge").html(currentUser.username);
 
     var snippetId = window.location.hash.substring(1);
     sessionStorage.setItem("snippetId", snippetId);
 
-    //Initialize Editors
-    var elem = document.getElementById("htmlEditor");
-    createEditorMode(elem, "text/html", "html");
-    elem = document.getElementById("jsEditor");
+    //Initialize Editors    
+    var elem = document.getElementById("jsEditor");
     createEditorMode(elem, "text/javascript", "js");
     elem = document.getElementById("cssEditor");
     createEditorMode(elem, "text/css", "css");
@@ -605,6 +693,8 @@ var initApp = function() {
         json : true
     };
     createEditorMode(elem, _mode, "json");
+    var elem = document.getElementById("htmlEditor");
+    createEditorMode(elem, "text/html", "html");
 
     $("#shareButton").tooltip({
         placement : "bottom",
@@ -617,8 +707,7 @@ var initApp = function() {
     $("#editUsernameButton").tooltip({
         placement : "bottom",
         title : "Edit you name!"
-    });
-    window.myCodeMirror = editors["html"];
+    });    
 
     currentTabGlobal = "htmlTab";
 
@@ -627,8 +716,14 @@ var initApp = function() {
     $("li[data-id='" + currentTabGlobal + "']>a>div.notifTab").text(_incNum);
 }
 //TODO: Initializing user awareness
-var awareOthers = function(cm, cObj) {    
-    var cmdMsg = {cmd: "change", where: cObj.from.line, type: cObj.cType, user: currentUser, isPush: false};    
+var awareOthers = function(cm, cObj) {
+    var cmdMsg = {
+        cmd : "change",
+        where : cObj.from.line,
+        type : cObj.cType,
+        user : currentUser,
+        isPush : false
+    };
     shoutOut(cmdMsg);
 }
 var docs = {
@@ -650,6 +745,7 @@ var createEditorMode = function(elem, mode, type) {
         var idx = newDoc.name.split("-");
         var jType = idx[idx.length - 1];
         var _edtr = editors[jType];
+        myCodeMirror = _edtr;
 
         if (currentDoc !== null) {
             currentDoc.close();
@@ -665,13 +761,14 @@ var createEditorMode = function(elem, mode, type) {
         }
 
         currentDoc.attach_cm(_edtr);
-        _edtr.setOption("readOnly", false);
+        myCodeMirror.setOption("readOnly", false);
 
-        if (_isReady()) {            
+        if (_isReady()) {
             initCommunication();
             //Initialize Preview
             initializePreview();
-            setupLivePreview();                        
+            setupLivePreview();
+            myCodeMirror = editors.html;
         }
     });
 }
@@ -711,21 +808,90 @@ var changeEditorMode = function(type) {
 
 window.onload = function() {
     layout();
-    initApp();
+    initApp();       
 }
 
 window.onbeforeunload = function() {
     var cmdMsg;
     if (communicationDoc !== null) {
-        cmdMsg = {cmd: "off", msg: currentUser.username + " just left your snippet!", zodiac: currentUser.zodiac, username: currentUser.username, color: currentUser.color, isPush: true};        
+        cmdMsg = {
+            cmd : "off",
+            msg : currentUser.username + " just left your snippet!",
+            zodiac : currentUser.zodiac,
+            username : currentUser.username,
+            color : currentUser.color,
+            isPush : true
+        };
         shoutOut(cmdMsg);
         //communicationDoc.close();
-        cmdMsg = {cmd:"chTab", curTab:"no", prevTab: currentTabGlobal, isPush: false};
+        cmdMsg = {
+            cmd : "chTab",
+            curTab : "no",
+            prevTab : currentTabGlobal,
+            isPush : false
+        };
         shoutOut(cmdMsg);
-    }        
-    setTimeout(function() {}, 1000);
+    }
+    setTimeout(function() {
+    }, 1000);
 }
 var currentTabGlobal = "";
+
+var handleDragStart = function(e) {        
+        
+}
+
+var handleDragOver = function(e) {
+    e.stopPropagation();
+    e.preventDefault();
+    $(this).addClass("dropZone");        
+}
+
+var handleDragLeave = function(e) {
+    this.style.opacity = '0.4';    
+}
+
+var handleDrop = function(e) {
+    e.stopPropagation();
+    e.preventDefault();
+
+    editors.json.setOption('readOnly', 'nocursor');
+
+    var files = e.dataTransfer.files;
+    if(files[0].type != "text/csv" && files[0].type != "application/json" && files[0].type != "text/tab-separated-values") {
+        $(this).fadeOut(1000, function(){
+          $(this).css("display", "none");
+          return;  
+        });                        
+    }
+    else {
+        var json;
+        var reader = new FileReader();
+        reader.onload = (function(theFile) {
+            return function(e){
+                switch(theFile.type) {
+                    case 'text/csv':
+                    var _json = d3.csv.parseRows(e.target.result);  
+                    json = csv2json(_json);                                                                                         
+                    break;
+                    case 'application/json':
+                    var _json = e.target.result;
+                    json = _json;
+                    //var json = json2json(_json);                                        
+                    break;
+                    case 'text/tab-separated-values':
+                    var _json = d3.tsv.parseRows(e.target.result);
+                    json = tsv2json(_json);                                       
+                    break;            
+                }
+                editors.json.setValue(json);                                
+                editors.json.setOption('readOnly', false);
+                $(dropZone).removeClass("dropZone").css("opacity", "1");                
+            }            
+        })(files[0]);
+        reader.readAsText(files[0]);                
+    }
+}
 
 $(document).ready(function() {
 
@@ -734,10 +900,16 @@ $(document).ready(function() {
         if (currentTabGlobal === currentEditor) {
             return;
         }
-        var cmdMsg = {cmd:"chTab", curTab:currentEditor, prevTab: currentTabGlobal, isPush: false};
+        var cmdMsg = {
+            cmd : "chTab",
+            curTab : currentEditor,
+            prevTab : currentTabGlobal,
+            isPush : false
+        };
         shoutOut(cmdMsg);
         currentTabGlobal = currentEditor;
         changeEditorMode(currentEditor.substring(0, currentEditor.length - 3));
+        //$('.dropZone').height($(".tab-content").height() - 10);
     });
 
     $("#chatHide").click(function() {
@@ -750,7 +922,7 @@ $(document).ready(function() {
         $(".chatIcon").fadeIn("slow");
     });
 
-    var chatShake;
+    var chatShake;    
 
     setInterval(function() {
         var _numMsgs = parseInt($(".notification.badge.badge-warning").text());
@@ -785,11 +957,18 @@ $(document).ready(function() {
     });
 
     $(".chatInput>input").keyup(function(e) {
-        if (e.which == 13 && !e.shiftKey) {            
+        if (e.which == 13 && !e.shiftKey) {
             var msg = $(this).val();
             $(this).val('');
-            var cmdMsg = {cmd: "chat", zodiac: currentUser.zodiac, username: currentUser.username, color: currentUser.color, message: msg, isPush: false};
-            shoutOut(cmdMsg);            
+            var cmdMsg = {
+                cmd : "chat",
+                zodiac : currentUser.zodiac,
+                username : currentUser.username,
+                color : currentUser.color,
+                message : msg,
+                isPush : false
+            };
+            shoutOut(cmdMsg);
         }
     })
     var shareSnippet = function() {

@@ -1,7 +1,10 @@
 html,body{width:100%;height:100%;padding-left:0;padding-right:0;-webkit-user-select:none;-moz-user-select:none;background-image:url("../img/splash-bg.jpg") repeat}
 .span12{padding:15px}
 .tabbable:after,.tabbable:before{background:#f9f9f9;-webkit-box-shadow:0 0 4px rgba(0,0,0,0.2),inset 0 0 50px rgba(0,0,0,0.1);-moz-box-shadow:0 0 4px rgba(0,0,0,0.2),inset 0 0 50px rgba(0,0,0,0.1);box-shadow:0 0 5px rgba(0,0,0,0.2),inset 0 0 50px rgba(0,0,0,0.1);content:"";display:block;height:100%;left:-1px;position:absolute;width:100%}
-.tabbable:after{-webkit-transform:rotate(2deg);-moz-transform:rotate(2deg);-ms-transform:rotate(2deg);-o-transform:rotate(2deg);transform:rotate(2deg);top:0;z-index:-1}
+.tabbable:after{-webkit-transform:rotate(3deg);-moz-transform:rotate(2deg);-ms-transform:rotate(2deg);-o-transform:rotate(2deg);transform:rotate(2deg);top:0;z-index:-1}
+.dropZone{background:rgba(255,255,255,0.75);border:1px dashed rgba(0,0,0,0.8);opacity:1}
+.pin{top:65px;width:59px;height:45px;position:absolute;z-index:20}
+.pen{position:relative;z-index:20;-webkit-transform:rotate(-1deg)}
 .tabbable:before{-webkit-transform:rotate(-3deg);-moz-transform:rotate(-3deg);-ms-transform:rotate(-3deg);-o-transform:rotate(-3deg);transform:rotate(-3deg);top:0;z-index:-2}
 .noty_icon{display:inline-block;margin:2px;border:1px solid rgba(20,20,20,0.3);vertical-align:middle;width:16px;height:16px}
 .noty_message>img{width:16px;height:16px}
