@@ -885,7 +885,7 @@ var handleDrop = function(e) {
                     break;
                     case 'text/tab-separated-values':
                     var _json = d3.tsv.parseRows(e.target.result);
-                    json = tsv2json(_json);                                       
+                    json = csv2json(_json);                                       
                     break;            
                 }
                 editors.json.setValue(json);                                
