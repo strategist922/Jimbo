@@ -73,8 +73,14 @@ var _randomColor = function() {
 
 $(window).resize(function() {
     layout();
-    if ( typeof myCodeMirror !== 'undefined')
-        myCodeMirror.refresh();
+    var curEditor = null;
+    if(currentTabGlobal) 
+     {
+         var type = currentTabGlobal.substring(0, currentTabGlobal.length - 3);
+         curEditor = editors[type];
+     }
+    if (curEditor)
+        curEditor.refresh();
 });
 
 var libraries = {
@@ -163,6 +169,7 @@ var editorInit = function(elem, mode, type) {
         if (!editors.html) {
             _editor = createEditor(elem, mode, type);
             editors.html = _editor;
+            _editor.refresh();
         } else {
             _editor = editors.html;
         }
@@ -172,6 +179,7 @@ var editorInit = function(elem, mode, type) {
             //_editor.setOption("lintWith", CodeMirror.javascriptValidator);
             _editor.setOption("gutters", [/*"CodeMirror-lint-markers",*/"CodeMirror-remote-change"]);
             editors.js = _editor;
+            _editor.refresh();
         } else {
             _editor = editors.js;
         }
@@ -179,6 +187,7 @@ var editorInit = function(elem, mode, type) {
         if (!editors.css) {
             _editor = createEditor(elem, mode, type);
             editors.css = _editor;
+            _editor.refresh();
         } else {
             _editor = editors.css;
         }
@@ -193,6 +202,7 @@ var editorInit = function(elem, mode, type) {
             dropZone.addEventListener('dragleave', handleDragLeave, false);
             dropZone.addEventListener('drop', handleDrop, false);
             editors.json = _editor;
+            _editor.refresh();
         } else {
             _editor = editors.json;
         }
@@ -255,7 +265,7 @@ function shoutOut(cmdMsg) {
     communicationDoc.shout(cmdMsg);
 }
 
-function shoutHandler(cmdMsg) {
+var shoutHandler = function(cmdMsg) {
     var cmd = cmdMsg.cmd;
     var isPush = cmdMsg.isPush;
     var type;
@@ -317,45 +327,47 @@ function shoutHandler(cmdMsg) {
             case 'change':
                 var _user = cmdMsg.user;
                 var isAnimatingUp = false, isAnimatingDown = false;
-                if (!needAwareness)
+                if (!needAwareness || currentUser.username == _user.username)
                     return;
                 var line = cmdMsg.where;
                 var cType = cmdMsg.type;
                 if (cType != 'js' && !isWidgetOpen)
-                    break;
-                var cViewPort = {};
-                var scrollInfo = myCodeMirror.getScrollInfo();
-                cViewPort.from = myCodeMirror.coordsChar({
-                    top : scrollInfo.top,
-                    left : 0
-                }, "local").line;
-                cViewPort.to = myCodeMirror.coordsChar({
-                    top : scrollInfo.clientHeight,
-                    left : 0
-                }, "local").line;
+                    break;                
                 //console.log(cViewPort);
                 var sameTab = (currentTabGlobal.substring(0, currentTabGlobal.length - 3) === cType);
                 if (sameTab) {
+                    var cViewPort = {};
+                    var scrollInfo = editors[cType].getScrollInfo();
+                    cViewPort.from = editors[cType].coordsChar({
+                        top : scrollInfo.top,
+                        left : 0
+                    }, "local").line;
+                    cViewPort.to = editors[cType].coordsChar({
+                        top : scrollInfo.clientHeight,
+                        left : 0
+                    }, "local").line;
+                    
                     if (cViewPort.from <= line && cViewPort.to >= line) {
-                        //In editor
-                        $("<style type='text/css'> .remoteChange-line-" + _user.username + "{ background:" + _user.color + "; opacity: 0.8;} </style>").appendTo("head");
+                        //In editor                                     
+                        if($("style[data-id='"+ _user.username +"']").length > 0) $("style[data-id='"+ _user.username +"']").remove();                                                            
+                        $("<style type='text/css' data-id='" + _user.username + "'> .remoteChange-line-" + _user.username + "{ background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(245,246,246,1)), color-stop(21%,rgba(219,220,226,1)), color-stop(49%,rgba(184,186,198,1)), color-stop(80%,rgba(221,223,227,1)), color-stop(100%,rgba(245,246,246,1)));} </style>").appendTo("head");
                         var from = {
                             line : line,
                             ch : 0
                         };
                         var to = {
                             line : line,
-                            ch : myCodeMirror.doc.getLine(line).length
+                            ch : editors[cType].doc.getLine(line).length
                         };
-                        var cMarker = myCodeMirror.markText(from, to, {
+                        var cMarker = editors[cType].markText(from, to, {
                             className : "remoteChange-line-" + _user.username
                         });
                         var cGutterMarker = $("<div>").addClass('gutterIcon').css("background-color", _user.color).append($("<img>").attr("src", "../img/zodiac/" + _user.zodiac + ".png"));
-                        myCodeMirror.setGutterMarker(line, "CodeMirror-remote-change", cGutterMarker.get(0));
+                        editors[cType].setGutterMarker(line, "CodeMirror-remote-change", cGutterMarker.get(0));
                         //In gutter
                         setTimeout(function() {
                             cMarker.clear();
-                            myCodeMirror.clearGutter("CodeMirror-remote-change");
+                            editors[cType].clearGutter("CodeMirror-remote-change");
                         }, 1500);
 
                     } else if (cViewPort.from > line) {
@@ -377,16 +389,13 @@ function shoutHandler(cmdMsg) {
                     }
                 } else {
                     cTab = cType + "Tab";
-                    var cTabObj = $("ul#editorTabs>li[data-id='" + cTab + "']>a");
-                    cTabObj.animate({
-                        "background" : cmdMsg.color
-                    }, 'slow');
-
+                    var cTabObj = $("ul#editorTabs>li[data-id='" + cTab + "']>a");                                                            
+                    cTabObj.css({"background" : "-webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(184,225,252,1)), color-stop(10%,rgba(169,210,243,1)), color-stop(25%,rgba(144,186,228,1)), color-stop(37%,rgba(144,188,234,1)), color-stop(50%,rgba(144,191,240,1)), color-stop(51%,rgba(107,168,229,1)), color-stop(83%,rgba(162,218,245,1)), color-stop(100%,rgba(189,243,253,1)))"}); 
                     setTimeout(function() {
-                        cTabObj.animate({
+                        cTabObj.css({
                             "background" : "none"
-                        }, 500);
-                    }, 3000);
+                        });
+                    }, 5000);
                 }
                 break;
             case 'chat':
@@ -441,29 +450,17 @@ var loadSnippet = function(snippetId) {
     var modes = ["html", "json", "css", "js"];
     var req = [];
 
-    req[0] = $.get(url + "html", function(data) {
-        if (data.search('404') === -1)
-            snippetCodeObj.html = data;
-        else
-            snippetCodeObj.modes[iter] = null;
+    req[0] = $.get(url + "html", function(data) {        
+        snippetCodeObj.html = data;        
     });
-    req[1] = $.get(url + "js", function(data) {
-        if (data.search('404') === -1)
-            snippetCodeObj.js = data;
-        else
-            snippetCodeObj.js = null;
+    req[1] = $.get(url + "js", function(data) {        
+        snippetCodeObj.js = data;        
     });
-    req[2] = $.get(url + "css", function(data) {
-        if (data.search('404') === -1)
-            snippetCodeObj.css = data;
-        else
-            snippetCodeObj.css = null;
+    req[2] = $.get(url + "css", function(data) {        
+        snippetCodeObj.css = data;        
     });
-    req[3] = $.get(url + "json", function(data) {
-        if (data.search('404') === -1)
-            snippetCodeObj.json = data;
-        else
-            snippetCodeObj.json = null;
+    req[3] = $.get(url + "json", function(data) {        
+        snippetCodeObj.json = data;        
     });
 
     $.when(req[0], req[1], req[2], req[3]).done(function() {
@@ -474,7 +471,7 @@ var loadSnippet = function(snippetId) {
             var code = SnippetCode[prop];
             if (code === null) {
                 if (SnippetCode.js !== null)
-                    iframe.Jimbo.renderCode(SnippetCode.js);
+                    pIframe.Jimbo.renderCode(SnippetCode.js);
                 continue;
             }
             switch(prop) {
@@ -616,9 +613,13 @@ function initCommunication() {
             //Joined an existing snippet
             var _numC = _collaborators.split("$")[0];
             collaborators["htmlTab"] = parseInt(_numC.split(",")[0]);
+            $("li[data-id='htmlTab']>a>div.notifTab").text(collaborators["htmlTab"]);            
             collaborators["jsTab"] = parseInt(_numC.split(",")[1]);
+            $("li[data-id='jsTab']>a>div.notifTab").text(collaborators["jsTab"]);
             collaborators["cssTab"] = parseInt(_numC.split(",")[2]);
+            $("li[data-id='cssTab']>a>div.notifTab").text(collaborators["cssTab"]);
             collaborators["jsonTab"] = parseInt(_numC.split(",")[3]);
+            $("li[data-id='jsonTab']>a>div.notifTab").text(collaborators["jsonTab"]);            
         }
 
         communicationDoc.on('shout', function(s) {
@@ -642,6 +643,7 @@ function initCommunication() {
             isPush : false
         };
         shoutOut(cmdMsg);
+        //alert("done! 2");
 
     });
 
@@ -694,6 +696,7 @@ var initApp = function() {
         json : true
     };
     createEditorMode(elem, _mode, "json");
+    
     var elem = document.getElementById("htmlEditor");
     createEditorMode(elem, "text/html", "html");
 
@@ -723,7 +726,7 @@ var awareOthers = function(cm, cObj) {
         where : cObj.from.line,
         type : cObj.cType,
         user : currentUser,
-        isPush : false
+        isPush : false         
     };
     shoutOut(cmdMsg);
 }
@@ -745,15 +748,14 @@ var createEditorMode = function(elem, mode, type) {
     sharejs.open(docName, "text", function(error, newDoc) {
         var idx = newDoc.name.split("-");
         var jType = idx[idx.length - 1];
-        var _edtr = editors[jType];
-        myCodeMirror = _edtr;
+        var _edtr = editors[jType];        
 
-        if (currentDoc !== null) {
-            currentDoc.close();
-            currentDoc.detach_cm();
-        }
+        // if (currentDoc !== null) {
+            // currentDoc.close();
+            // currentDoc.detach_cm();
+        // }
 
-        currentDoc = newDoc;
+        //currentDoc = newDoc;
         docs[jType] = newDoc;
 
         if (error) {
@@ -761,15 +763,16 @@ var createEditorMode = function(elem, mode, type) {
             return;
         }
 
-        currentDoc.attach_cm(_edtr);
-        myCodeMirror.setOption("readOnly", false);
+        newDoc.attach_cm(_edtr);
+        _edtr.setOption("readOnly", false);
 
         if (_isReady()) {
             initCommunication();
             //Initialize Preview
             initializePreview();
             setupLivePreview();
-            myCodeMirror = editors.html;
+            //alert("done! 1");                        
+            //myCodeMirror = editors.html;
         }
     });
 }
@@ -910,7 +913,12 @@ $(document).ready(function() {
         };
         shoutOut(cmdMsg);
         currentTabGlobal = currentEditor;
-        changeEditorMode(currentEditor.substring(0, currentEditor.length - 3));
+        
+        var type = currentEditor.substring(0, currentEditor.length - 3);
+        setTimeout(function(){
+            editors[type].refresh();            
+        }, 10);        
+        //changeEditorMode(currentEditor.substring(0, currentEditor.length - 3));
         //$('.dropZone').height($(".tab-content").height() - 10);
     });
 

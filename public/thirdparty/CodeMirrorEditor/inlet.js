@@ -9,7 +9,7 @@ window.isWidgetOpen = false;
 var getTopPosition = function (cm, line)
 {    
     var lineHeight = cm.defaultTextHeight();
-    var scrollInfo = myCodeMirror.getScrollInfo();        
+    var scrollInfo = cm.getScrollInfo();        
     var from = cm.coordsChar({
         top : scrollInfo.top,
         left : 0
