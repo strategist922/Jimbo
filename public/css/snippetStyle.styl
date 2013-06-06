@@ -5,10 +5,26 @@ html, body
   padding-right: 0
   -webkit-user-select: none
   -moz-user-select: none  
-  background-image:url(../img/splash-bg.jpg) repeat
+  //background-image:url(../img/splash-bg.jpg)
+  //background-repeat: repeat
+  //background-size: contain
+  //z-index: -100  
+  
 
+.chatMessages::-webkit-scrollbar
+  background: rgba(0,0,0,0.2)
+  
+.chatMessages::-webkit-scrollbar-thumb:vertical
+  height: 10px
+  background-color: rgba(0,0,0,0.45)
+  
 .span12
-  padding: 15px  
+  padding: 15px
+
+.CodeMirror
+  -webkit-box-sizing: border-box
+  -moz-box-sizing: border-box
+  box-sizing: border-box  
 
 .tabbable:after,.tabbable:before
   background: #f9f9f9    
@@ -34,7 +50,7 @@ html, body
 
 .dropZone    
   background: rgba(255, 255, 255, 0.75)
-  border: 1px dashed rgba(0,0,0,0.8)    
+  border: 5px dashed rgba(0,0,0,0.8)    
   opacity: 1        
 
 .pin

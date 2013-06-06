@@ -36,7 +36,8 @@ html
               div.modal-footer  
           .nav
             .btn-group              
-              button.btn.btn-warning Libraries
+              a.btn.btn-warning(data-toggle="dropdown", href="#") Libraries
+              a.btn.btn-warning.dropdown-toggle(data-toggle="dropdown", href="#")
                 span.caret                   
               ul.dropdown-menu
                 li
@@ -98,7 +99,7 @@ html
                     img(src="../img/userIcon.png", style="margin-left:1px;")
                   .gutterIconDown
                     img(src="../img/userIcon.png", style="margin-left:1px;")
-            //img.pen(src="../img/pen.png")    
+            img.pen(src="../img/pen.png")    
     //script(type='text/javascript', charset='utf-8', src='thirdparty/colorpicker/Color.Picker.Classic.js')
     //script(type='text/javascript', charset='utf-8', src='thirdparty/colorpicker/Color.Space.js')
     script(type='text/javascript', charset='utf-8', src='http://nornagon.github.com/thistle/thistle.js')                                              
