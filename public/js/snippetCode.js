@@ -238,6 +238,7 @@ function shoutOut(cmdMsg) {
             var _body = $(".chatMessages div.chatMessage:last-child .chatMsg").html();
             _body = _body + "</br>" + cmdMsg.message;
             $(".chatMessages div.chatMessage:last-child .chatMsg").html(_body);
+            $(".chatMessages")[0].scrollTop = $(".chatMessages")[0].scrollHeight;
         } else {
             var message = $("<div>").addClass("chatMessage").attr("data-uid", cmdMsg.username).append($("<div>").addClass("chatSender").css({
                 "background-color" : cmdMsg.color
@@ -248,6 +249,7 @@ function shoutOut(cmdMsg) {
             var separator = $("<div>").addClass("chatSeparator");
             $(".chatMessages").append(separator);
             $(".chatMessages").append(message);
+            $(".chatMessages")[0].scrollTop = $(".chatMessages")[0].scrollHeight;
         }
     } else if (cmdMsg.cmd == "off") {
         //Remove user from file
@@ -330,12 +332,12 @@ var shoutHandler = function(cmdMsg) {
                 if (!needAwareness || currentUser.username == _user.username)
                     return;
                 var line = cmdMsg.where;
-                var cType = cmdMsg.type;
-                if (cType != 'js' && !isWidgetOpen)
-                    break;                
+                var cType = cmdMsg.type;                                
                 //console.log(cViewPort);
                 var sameTab = (currentTabGlobal.substring(0, currentTabGlobal.length - 3) === cType);
                 if (sameTab) {
+                    if (cType != 'js' && !isWidgetOpen)
+                        break;
                     var cViewPort = {};
                     var scrollInfo = editors[cType].getScrollInfo();
                     cViewPort.from = editors[cType].coordsChar({
@@ -409,6 +411,7 @@ var shoutHandler = function(cmdMsg) {
                     var _body = $(".chatMessages div.chatMessage:last-child .chatMsg").html();
                     _body = _body + "</br>" + cmdMsg.message;
                     $(".chatMessages div.chatMessage:last-child .chatMsg").html(_body);
+                    $(".chatMessages")[0].scrollTop = $(".chatMessages")[0].scrollHeight;
                 } else {
                     var message = $("<div>").addClass("chatMessage").attr("data-uid", _username).append($("<div>").addClass("chatSender").css({
                         "background-color" : _color
@@ -418,9 +421,9 @@ var shoutHandler = function(cmdMsg) {
                     }).html($("<img>").attr("src", "../img/zodiac/" + _zodiac + ".png"))).append($("<div>").addClass("chatMsg").html(_msg));
                     var separator = $("<div>").addClass("chatSeparator");
                     $(".chatMessages").append(separator);
-                    $(".chatMessages").append(message);
-                }
-                
+                    $(".chatMessages").append(message);                    
+                    $(".chatMessages")[0].scrollTop = $(".chatMessages")[0].scrollHeight;
+                }                                                        
                 if ($(".chatBox").css("opacity") == 0 || $(".chatBox").css("display") == "none") {                    
                     var unreadMsgs = parseInt($(".notification.badge.badge-warning").text());
                     $(".notification.badge.badge-warning").text(unreadMsgs + 1);
@@ -848,11 +851,11 @@ var handleDragStart = function(e) {
 var handleDragOver = function(e) {
     e.stopPropagation();
     e.preventDefault();
-    $(this).addClass("dropZone");        
+    $(this).addClass("dropZone").css("opacity", "1");        
 }
 
 var handleDragLeave = function(e) {
-    this.style.opacity = '0.4';    
+    $(dropZone).removeClass("dropZone").css("opacity", "1");    
 }
 
 var handleDrop = function(e) {
@@ -862,11 +865,8 @@ var handleDrop = function(e) {
     editors.json.setOption('readOnly', 'nocursor');
 
     var files = e.dataTransfer.files;
-    if(files[0].type != "text/csv" && files[0].type != "application/json" && files[0].type != "text/tab-separated-values") {
-        $(this).fadeOut(1000, function(){
-          $(this).css("display", "none");
-          return;  
-        });                        
+    if(files[0].type != "text/csv" && files[0].type != "application/json" && files[0].type != "text/tab-separated-values") {        
+      $(this).removeClass("dropZone").css("opacity", "1")                                
     }
     else {
         var json;
