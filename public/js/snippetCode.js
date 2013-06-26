@@ -1,3 +1,16 @@
+var getURL = function(url, c) {
+    var xhr = new XMLHttpRequest();
+    xhr.open("get", url, true);
+    xhr.send();
+    xhr.onreadystatechange = function() {
+        if (xhr.readyState != 4) return;
+        if (xhr.status < 400) return c(null, xhr.responseText);
+        var e = new Error(xhr.responseText || "No response");
+        e.status = xhr.status;
+        c(e);
+    };
+};
+
 var layout = function() {
     var _height = document.documentElement.clientHeight - $(".navbar").height() - 90;
     $("#mainView").height(_height);
@@ -18,7 +31,10 @@ var layout = function() {
 
     if (pIframe) {
         try {
-            var jsonCode = "", cssCode = "", jsCode = "", htmlCode = "";
+            var jsonCode = "",
+                cssCode = "",
+                jsCode = "",
+                htmlCode = "";
             if (editors.json)
                 jsonCode = editors.json.getValue();
             if (editors.html)
@@ -32,7 +48,7 @@ var layout = function() {
             $('#Jimbo-style', $('iframe').contents()).get(0).textContent = cssCode;
             pIframe.Jimbo.json = JSON.parse(jsonCode);
             pIframe.Jimbo.renderCode(jsCode);
-        } catch(err) {
+        } catch (err) {
             console.log(err);
         } finally {
 
@@ -43,17 +59,17 @@ var layout = function() {
 var csv2json = function(csv) {
     var titles = csv[0];
     var json = "{\n";
-    
-    for(var i = 1; i < csv.length; i++){
+
+    for (var i = 1; i < csv.length; i++) {
         var rec = csv[i];
         json += '  "data' + i + '": {'
-        for(var j = 0; j < rec.length; j++){
-            if(j != rec.length - 1)
+        for (var j = 0; j < rec.length; j++) {
+            if (j != rec.length - 1)
                 json += '"' + titles[j] + '": "' + rec[j] + '", '
             else
-                json += '"' + titles[j] + '": "' + rec[j] + '"';                            
-        }        
-        if(i != csv.length - 1)
+                json += '"' + titles[j] + '": "' + rec[j] + '"';
+        }
+        if (i != csv.length - 1)
             json += "},\n";
         else
             json += "}";
@@ -74,24 +90,23 @@ var _randomColor = function() {
 $(window).resize(function() {
     layout();
     var curEditor = null;
-    if(currentTabGlobal) 
-     {
-         var type = currentTabGlobal.substring(0, currentTabGlobal.length - 3);
-         curEditor = editors[type];
-     }
+    if (currentTabGlobal) {
+        var type = currentTabGlobal.substring(0, currentTabGlobal.length - 3);
+        curEditor = editors[type];
+    }
     if (curEditor)
         curEditor.refresh();
 });
 
 var libraries = {
-    d3 : {
-        src : "http://d3js.org/d3.v3.min.js"
+    d3: {
+        src: "http://d3js.org/d3.v3.min.js"
     },
-    jquery : {
-        src : "http://code.jquery.com/jquery-2.0.0.min.js"
+    jquery: {
+        src: "http://code.jquery.com/jquery-2.0.0.min.js"
     },
-    raphael : {
-        src : "https://raw.github.com/DmitryBaranovskiy/raphael/master/raphael.js"
+    raphael: {
+        src: "https://raw.github.com/DmitryBaranovskiy/raphael/master/raphael.js"
     }
 }
 
@@ -103,10 +118,10 @@ var addLibScriptTag = function(libs) {
 
 window.editors = {};
 window.collaborators = {
-    "htmlTab" : 0,
-    "jsTab" : 0,
-    "cssTab" : 0,
-    "jsonTab" : 0
+    "htmlTab": 0,
+    "jsTab": 0,
+    "cssTab": 0,
+    "jsonTab": 0
 };
 
 var syncCollaborators = function(curTab, prevTab) {
@@ -122,9 +137,7 @@ var syncCollaborators = function(curTab, prevTab) {
 var createEditor = function(elem, mode, type) {
     CodeMirror.commands.autocomplete = function(cm) {
         if (mode === "text/html")
-            CodeMirror.showHint(cm, CodeMirror.htmlHint);
-        else if (mode === "text/javascript")
-            CodeMirror.showHint(cm, CodeMirror.javascriptHint);
+            CodeMirror.showHint(cm, CodeMirror.htmlHint);        
     };
 
     var onDnD = false;
@@ -132,17 +145,14 @@ var createEditor = function(elem, mode, type) {
         onDnD = true;
 
     var _editor = CodeMirror.fromTextArea(elem, {
-        mode : mode,
-        lineNumbers : true,
-        dragDrop : onDnD,
-        lineWrapping : true,
-        extraKeys : {
-            "Ctrl-Space" : "autocomplete"
-        },
-        autoCloseTags : true,
-        matchBrackets : true,
-        autoCloseBrackets : true,
-        theme : "solarized light"
+        mode: mode,
+        lineNumbers: true,
+        dragDrop: onDnD,
+        lineWrapping: true,        
+        autoCloseTags: true,
+        matchBrackets: true,
+        autoCloseBrackets: true,
+        theme: "solarized light"
     });
     _editor.jimboType = type;
     if (type !== 'json')
@@ -151,13 +161,44 @@ var createEditor = function(elem, mode, type) {
     $(".picker").css('display', 'none');
     $(_editor.getWrapperElement()).attr("data-jimboType", type);
     _editor.setOption("readOnly", "nocursor");
-    
-    if(onDnD) {
+
+    var ternServer;
+    if(type == "js") {        
+        getURL("http://ternjs.net/defs/ecma5.json", function(err, code) {
+            if (err) throw new Error("Request for ecma5.json: " + err);
+            ternServer = new CodeMirror.TernServer({
+                defs: [JSON.parse(code)]
+            });
+            _editor.setOption("extraKeys", {
+                "Ctrl-Space": function(cm) {
+                    ternServer.complete(cm);
+                },
+                "Ctrl-I": function(cm) {
+                    ternServer.showType(cm);
+                },
+                "Alt-.": function(cm) {
+                    ternServer.jumpToDef(cm);
+                },
+                "Alt-,": function(cm) {
+                    ternServer.jumpBack(cm);
+                },
+                "Ctrl-Q": function(cm) {
+                    ternServer.rename(cm);
+                },
+            });
+            _editor.on("cursorActivity", function(cm) {
+                ternServer.updateArgHints(cm);
+            });
+        });
+    }
+    else {
+        _editor.setOption("extraKeys", {"Ctrl-Space": "autocomplete"});        
+    }
+    if (onDnD) {
         _editor.setOption("onDragEvent", function(cm, e) {
             return true;
         });
-    }   
-
+    }
     return _editor;
 }
 
@@ -177,7 +218,7 @@ var editorInit = function(elem, mode, type) {
         if (!editors.js) {
             _editor = createEditor(elem, mode, type);
             //_editor.setOption("lintWith", CodeMirror.javascriptValidator);
-            _editor.setOption("gutters", [/*"CodeMirror-lint-markers",*/"CodeMirror-remote-change"]);
+            _editor.setOption("gutters", [ /*"CodeMirror-lint-markers",*/ "CodeMirror-remote-change"]);
             editors.js = _editor;
             _editor.refresh();
         } else {
@@ -209,63 +250,64 @@ var editorInit = function(elem, mode, type) {
     }
     return _editor;
 }
-function shoutOut(cmdMsg) {
-    //var s = cmd + "$" + msg;
-    if (cmdMsg.cmd == "on") {
-        var _content = communicationDoc.getText().split("$");
-        var _square;
-        for (var i = 1; i < _content.length - 1; i++) {
-            var u = _content[i].split(".")[0];
-            var c = _content[i].split(".")[1];
-            var z = _content[i].split(".")[2];
 
-            _square = $("<div>").addClass("userSquare").css("background-color", c).attr("data-username", u).tooltip({
-                placement : "bottom",
-                title : u
-            }).append($("<img>").attr("src", "../img/zodiac/" + z + ".png"));
-            $(".nav.pull-right").prepend(_square);
+    function shoutOut(cmdMsg) {
+        //var s = cmd + "$" + msg;
+        if (cmdMsg.cmd == "on") {
+            var _content = communicationDoc.getText().split("$");
+            var _square;
+            for (var i = 1; i < _content.length - 1; i++) {
+                var u = _content[i].split(".")[0];
+                var c = _content[i].split(".")[1];
+                var z = _content[i].split(".")[2];
+
+                _square = $("<div>").addClass("userSquare").css("background-color", c).attr("data-username", u).tooltip({
+                    placement: "bottom",
+                    title: u
+                }).append($("<img>").attr("src", "../img/zodiac/" + z + ".png"));
+                $(".nav.pull-right").prepend(_square);
+            }
+        } else if (cmdMsg.cmd == "chTab") {
+            syncCollaborators(cmdMsg.curTab, cmdMsg.prevTab);
+            var _cols = communicationDoc.getText();
+            var _here = _cols.indexOf("$");
+            communicationDoc.del(0, _here);
+            communicationDoc.insert(0, collaborators["htmlTab"] + "," + collaborators["jsTab"] + "," + collaborators["cssTab"] + "," + collaborators["jsonTab"]);
+        } else if (cmdMsg.cmd == "chat") {
+            //Add chat messages localy on left
+            var lastChatUser = $(".chatMessages div.chatMessage:last-child").attr("data-uid");
+            if (lastChatUser == cmdMsg.username) {
+                var _body = $(".chatMessages div.chatMessage:last-child .chatMsg").html();
+                _body = _body + "</br>" + cmdMsg.message;
+                $(".chatMessages div.chatMessage:last-child .chatMsg").html(_body);
+                $(".chatMessages")[0].scrollTop = $(".chatMessages")[0].scrollHeight;
+            } else {
+                var message = $("<div>").addClass("chatMessage").attr("data-uid", cmdMsg.username).append($("<div>").addClass("chatSender").css({
+                    "background-color": cmdMsg.color
+                }).tooltip({
+                    title: cmdMsg.username,
+                    placement: "right"
+                }).html($("<img>").attr("src", "../img/zodiac/" + cmdMsg.zodiac + ".png"))).append($("<div>").addClass("chatMsg").html(cmdMsg.message));
+                var separator = $("<div>").addClass("chatSeparator");
+                $(".chatMessages").append(separator);
+                $(".chatMessages").append(message);
+                $(".chatMessages")[0].scrollTop = $(".chatMessages")[0].scrollHeight;
+            }
+        } else if (cmdMsg.cmd == "off") {
+            //Remove user from file
+            //break;
+            var _cols = communicationDoc.getText();
+            communicationDoc.del(0, communicationDoc.getText().length);
+            var _u = cmdMsg.username;
+            var _c = cmdMsg.color;
+            var _z = cmdMsg.zodiac;
+            var _u_c_z = _u + "." + _c + "." + _z + "$";
+            var _newCols = _cols.replace(_u_c_z, "");
+            communicationDoc.insert(0, _newCols);
+            $(".userSquare[data-username='" + _u + "']").remove();
         }
-    } else if (cmdMsg.cmd == "chTab") {
-        syncCollaborators(cmdMsg.curTab, cmdMsg.prevTab);
-        var _cols = communicationDoc.getText();
-        var _here = _cols.indexOf("$");
-        communicationDoc.del(0, _here);
-        communicationDoc.insert(0, collaborators["htmlTab"] + "," + collaborators["jsTab"] + "," + collaborators["cssTab"] + "," + collaborators["jsonTab"]);
-    } else if (cmdMsg.cmd == "chat") {
-        //Add chat messages localy on left
-        var lastChatUser = $(".chatMessages div.chatMessage:last-child").attr("data-uid");
-        if (lastChatUser == cmdMsg.username) {
-            var _body = $(".chatMessages div.chatMessage:last-child .chatMsg").html();
-            _body = _body + "</br>" + cmdMsg.message;
-            $(".chatMessages div.chatMessage:last-child .chatMsg").html(_body);
-            $(".chatMessages")[0].scrollTop = $(".chatMessages")[0].scrollHeight;
-        } else {
-            var message = $("<div>").addClass("chatMessage").attr("data-uid", cmdMsg.username).append($("<div>").addClass("chatSender").css({
-                "background-color" : cmdMsg.color
-            }).tooltip({
-                title : cmdMsg.username,
-                placement : "right"
-            }).html($("<img>").attr("src", "../img/zodiac/" + cmdMsg.zodiac + ".png"))).append($("<div>").addClass("chatMsg").html(cmdMsg.message));
-            var separator = $("<div>").addClass("chatSeparator");
-            $(".chatMessages").append(separator);
-            $(".chatMessages").append(message);
-            $(".chatMessages")[0].scrollTop = $(".chatMessages")[0].scrollHeight;
-        }
-    } else if (cmdMsg.cmd == "off") {
-        //Remove user from file
-        //break;
-        var _cols = communicationDoc.getText();
-        communicationDoc.del(0, communicationDoc.getText().length);
-        var _u = cmdMsg.username;
-        var _c = cmdMsg.color;
-        var _z = cmdMsg.zodiac;
-        var _u_c_z = _u + "." + _c + "." + _z + "$";
-        var _newCols = _cols.replace(_u_c_z, "");
-        communicationDoc.insert(0, _newCols);
-        $(".userSquare[data-username='" + _u + "']").remove();
+        communicationDoc.shout(cmdMsg);
     }
-    communicationDoc.shout(cmdMsg);
-}
 
 var shoutHandler = function(cmdMsg) {
     var cmd = cmdMsg.cmd;
@@ -273,7 +315,7 @@ var shoutHandler = function(cmdMsg) {
     var type;
     var _template = '<div class="noty_message"><span class="noty_text"></span><div class="noty_close"></div></div>';
     if (isPush) {
-        switch(cmd) {
+        switch (cmd) {
             case 'on':
                 var _msg = cmdMsg.msg;
                 var color = cmdMsg.color;
@@ -281,10 +323,9 @@ var shoutHandler = function(cmdMsg) {
                 var zodiac = cmdMsg.zodiac;
 
                 var _square = $("<div>").addClass("userSquare").css("background-color", color).attr("data-username", username).tooltip({
-                    placement : "bottom",
-                    title : username
-                }).append($("<img>").attr("src", "../img/zodiac/" + zodiac + ".png"));
-                ;
+                    placement: "bottom",
+                    title: username
+                }).append($("<img>").attr("src", "../img/zodiac/" + zodiac + ".png"));;
 
                 $(".nav.pull-right").prepend(_square);
                 type = 'success';
@@ -315,24 +356,25 @@ var shoutHandler = function(cmdMsg) {
                 break
         }
         noty({
-            text : cmdMsg.msg,
-            template : _template,
-            type : type,
-            dismissQueue : true,
-            layout : 'bottomLeft',
-            timeout : 2000,
-            closeWith : ['button'],
-            buttons : false
+            text: cmdMsg.msg,
+            template: _template,
+            type: type,
+            dismissQueue: true,
+            layout: 'bottomLeft',
+            timeout: 2000,
+            closeWith: ['button'],
+            buttons: false
         });
     } else {
-        switch(cmd) {
+        switch (cmd) {
             case 'change':
                 var _user = cmdMsg.user;
-                var isAnimatingUp = false, isAnimatingDown = false;
+                var isAnimatingUp = false,
+                    isAnimatingDown = false;
                 if (!needAwareness || currentUser.username == _user.username)
                     return;
                 var line = cmdMsg.where;
-                var cType = cmdMsg.type;                                
+                var cType = cmdMsg.type;
                 //console.log(cViewPort);
                 var sameTab = (currentTabGlobal.substring(0, currentTabGlobal.length - 3) === cType);
                 if (sameTab) {
@@ -341,28 +383,28 @@ var shoutHandler = function(cmdMsg) {
                     var cViewPort = {};
                     var scrollInfo = editors[cType].getScrollInfo();
                     cViewPort.from = editors[cType].coordsChar({
-                        top : scrollInfo.top,
-                        left : 0
+                        top: scrollInfo.top,
+                        left: 0
                     }, "local").line;
                     cViewPort.to = editors[cType].coordsChar({
-                        top : scrollInfo.clientHeight,
-                        left : 0
+                        top: scrollInfo.clientHeight,
+                        left: 0
                     }, "local").line;
-                    
+
                     if (cViewPort.from <= line && cViewPort.to >= line) {
                         //In editor                                     
-                        if($("style[data-id='"+ _user.username +"']").length > 0) $("style[data-id='"+ _user.username +"']").remove();                                                            
+                        if ($("style[data-id='" + _user.username + "']").length > 0) $("style[data-id='" + _user.username + "']").remove();
                         $("<style type='text/css' data-id='" + _user.username + "'> .remoteChange-line-" + _user.username + "{ background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(245,246,246,1)), color-stop(21%,rgba(219,220,226,1)), color-stop(49%,rgba(184,186,198,1)), color-stop(80%,rgba(221,223,227,1)), color-stop(100%,rgba(245,246,246,1)));} </style>").appendTo("head");
                         var from = {
-                            line : line,
-                            ch : 0
+                            line: line,
+                            ch: 0
                         };
                         var to = {
-                            line : line,
-                            ch : editors[cType].doc.getLine(line).length
+                            line: line,
+                            ch: editors[cType].doc.getLine(line).length
                         };
                         var cMarker = editors[cType].markText(from, to, {
-                            className : "remoteChange-line-" + _user.username
+                            className: "remoteChange-line-" + _user.username
                         });
                         var cGutterMarker = $("<div>").addClass('gutterIcon').css("background-color", _user.color).append($("<img>").attr("src", "../img/zodiac/" + _user.zodiac + ".png"));
                         editors[cType].setGutterMarker(line, "CodeMirror-remote-change", cGutterMarker.get(0));
@@ -391,11 +433,13 @@ var shoutHandler = function(cmdMsg) {
                     }
                 } else {
                     cTab = cType + "Tab";
-                    var cTabObj = $("ul#editorTabs>li[data-id='" + cTab + "']>a");                                                            
-                    cTabObj.css({"background" : "-webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(184,225,252,1)), color-stop(10%,rgba(169,210,243,1)), color-stop(25%,rgba(144,186,228,1)), color-stop(37%,rgba(144,188,234,1)), color-stop(50%,rgba(144,191,240,1)), color-stop(51%,rgba(107,168,229,1)), color-stop(83%,rgba(162,218,245,1)), color-stop(100%,rgba(189,243,253,1)))"}); 
+                    var cTabObj = $("ul#editorTabs>li[data-id='" + cTab + "']>a");
+                    cTabObj.css({
+                        "background": "-webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(184,225,252,1)), color-stop(10%,rgba(169,210,243,1)), color-stop(25%,rgba(144,186,228,1)), color-stop(37%,rgba(144,188,234,1)), color-stop(50%,rgba(144,191,240,1)), color-stop(51%,rgba(107,168,229,1)), color-stop(83%,rgba(162,218,245,1)), color-stop(100%,rgba(189,243,253,1)))"
+                    });
                     setTimeout(function() {
                         cTabObj.css({
-                            "background" : "none"
+                            "background": "none"
                         });
                     }, 5000);
                 }
@@ -414,17 +458,17 @@ var shoutHandler = function(cmdMsg) {
                     $(".chatMessages")[0].scrollTop = $(".chatMessages")[0].scrollHeight;
                 } else {
                     var message = $("<div>").addClass("chatMessage").attr("data-uid", _username).append($("<div>").addClass("chatSender").css({
-                        "background-color" : _color
+                        "background-color": _color
                     }).tooltip({
-                        title : _username,
-                        placement : "right"
+                        title: _username,
+                        placement: "right"
                     }).html($("<img>").attr("src", "../img/zodiac/" + _zodiac + ".png"))).append($("<div>").addClass("chatMsg").html(_msg));
                     var separator = $("<div>").addClass("chatSeparator");
                     $(".chatMessages").append(separator);
-                    $(".chatMessages").append(message);                    
+                    $(".chatMessages").append(message);
                     $(".chatMessages")[0].scrollTop = $(".chatMessages")[0].scrollHeight;
-                }                                                        
-                if ($(".chatBox").css("opacity") == 0 || $(".chatBox").css("display") == "none") {                    
+                }
+                if ($(".chatBox").css("opacity") == 0 || $(".chatBox").css("display") == "none") {
                     var unreadMsgs = parseInt($(".notification.badge.badge-warning").text());
                     $(".notification.badge.badge-warning").text(unreadMsgs + 1);
                 }
@@ -453,17 +497,17 @@ var loadSnippet = function(snippetId) {
     var modes = ["html", "json", "css", "js"];
     var req = [];
 
-    req[0] = $.get(url + "html", function(data) {        
-        snippetCodeObj.html = data;        
+    req[0] = $.get(url + "html", function(data) {
+        snippetCodeObj.html = data;
     });
-    req[1] = $.get(url + "js", function(data) {        
-        snippetCodeObj.js = data;        
+    req[1] = $.get(url + "js", function(data) {
+        snippetCodeObj.js = data;
     });
-    req[2] = $.get(url + "css", function(data) {        
-        snippetCodeObj.css = data;        
+    req[2] = $.get(url + "css", function(data) {
+        snippetCodeObj.css = data;
     });
-    req[3] = $.get(url + "json", function(data) {        
-        snippetCodeObj.json = data;        
+    req[3] = $.get(url + "json", function(data) {
+        snippetCodeObj.json = data;
     });
 
     $.when(req[0], req[1], req[2], req[3]).done(function() {
@@ -477,7 +521,7 @@ var loadSnippet = function(snippetId) {
                     pIframe.Jimbo.renderCode(SnippetCode.js);
                 continue;
             }
-            switch(prop) {
+            switch (prop) {
                 case 'html':
                     $('body #Jimbo-main', $('iframe').contents()).html(code);
                     break;
@@ -495,7 +539,7 @@ var loadSnippet = function(snippetId) {
                         //$('body #Jimbo-main', $('iframe').contents()).html(SnippetCode.html);
                         //$('#Jimbo-style', $('iframe').contents()).get(0).textContent = SnippetCode.css;
                         //pIframe.Jimbo.renderCode(SnippetCode.js);
-                    } catch(err) {
+                    } catch (err) {
                         console.log(err);
                     } finally {
 
@@ -525,10 +569,9 @@ var setupLivePreview = function() {
         if (editors.json && editors.json.getValue() != "")
             try {
                 pIframe.Jimbo.json = JSON.parse(editors.json.getValue());
-            }
-            catch(e) {
-                
-            }            
+        } catch (e) {
+
+        }
         if (editors.js)
             pIframe.Jimbo.renderCode(editors.js.getValue());
     });
@@ -546,10 +589,9 @@ var setupLivePreview = function() {
         if (editors.json && editors.json.getValue() != "")
             try {
                 pIframe.Jimbo.json = JSON.parse(editors.json.getValue());
-            }
-            catch(e) {
-                
-            }            
+        } catch (e) {
+
+        }
         pIframe.Jimbo.renderCode(code);
     });
 
@@ -565,10 +607,9 @@ var setupLivePreview = function() {
         if (editors.json && editors.json.getValue() != "")
             try {
                 pIframe.Jimbo.json = JSON.parse(editors.json.getValue());
-            }
-            catch(e) {
-                
-            }            
+        } catch (e) {
+
+        }
         if (editors.js)
             pIframe.Jimbo.renderCode(editors.js.getValue());
     });
@@ -583,12 +624,12 @@ var setupLivePreview = function() {
                 $('#Jimbo-style', $('iframe').contents()).get(0).textContent = editors.css.getValue();
             if (editors.js)
                 pIframe.Jimbo.renderCode(editors.js.getValue());
-        } catch(err) {
+        } catch (err) {
             console.log(err);
         } finally {
 
         }
-    });        
+    });
 }
 
 var con;
@@ -616,13 +657,13 @@ function initCommunication() {
             //Joined an existing snippet
             var _numC = _collaborators.split("$")[0];
             collaborators["htmlTab"] = parseInt(_numC.split(",")[0]);
-            $("li[data-id='htmlTab']>a>div.notifTab").text(collaborators["htmlTab"]);            
+            $("li[data-id='htmlTab']>a>div.notifTab").text(collaborators["htmlTab"]);
             collaborators["jsTab"] = parseInt(_numC.split(",")[1]);
             $("li[data-id='jsTab']>a>div.notifTab").text(collaborators["jsTab"]);
             collaborators["cssTab"] = parseInt(_numC.split(",")[2]);
             $("li[data-id='cssTab']>a>div.notifTab").text(collaborators["cssTab"]);
             collaborators["jsonTab"] = parseInt(_numC.split(",")[3]);
-            $("li[data-id='jsonTab']>a>div.notifTab").text(collaborators["jsonTab"]);            
+            $("li[data-id='jsonTab']>a>div.notifTab").text(collaborators["jsonTab"]);
         }
 
         communicationDoc.on('shout', function(s) {
@@ -630,20 +671,20 @@ function initCommunication() {
         });
 
         var cmdMsg = {
-            cmd : "on",
-            msg : currentUser.username + " just joined your snippet!",
-            zodiac : currentUser.zodiac,
-            username : currentUser.username,
-            color : currentUser.color,
-            isPush : true
+            cmd: "on",
+            msg: currentUser.username + " just joined your snippet!",
+            zodiac: currentUser.zodiac,
+            username: currentUser.username,
+            color: currentUser.color,
+            isPush: true
         };
         shoutOut(cmdMsg);
 
         cmdMsg = {
-            cmd : "chTab",
-            curTab : currentTabGlobal,
-            prevTab : "no",
-            isPush : false
+            cmd: "chTab",
+            curTab: currentTabGlobal,
+            prevTab: "no",
+            isPush: false
         };
         shoutOut(cmdMsg);
         //alert("done! 2");
@@ -662,8 +703,8 @@ function initCommunication() {
     register('stopped', 'important', 'Error');
 
     $("#snippetnameBadge").tooltip({
-        placement : "bottom",
-        title : "Snippet Name"
+        placement: "bottom",
+        title: "Snippet Name"
     });
 }
 
@@ -695,26 +736,26 @@ var initApp = function() {
     createEditorMode(elem, "text/css", "css");
     elem = document.getElementById("jsonEditor");
     var _mode = {
-        name : "javascript",
-        json : true
+        name: "javascript",
+        json: true
     };
     createEditorMode(elem, _mode, "json");
-    
+
     var elem = document.getElementById("htmlEditor");
     createEditorMode(elem, "text/html", "html");
 
     $("#shareButton").tooltip({
-        placement : "bottom",
-        title : "Share your snippet!"
+        placement: "bottom",
+        title: "Share your snippet!"
     });
     $("#editNameButton").tooltip({
-        placement : "bottom",
-        title : "Edit your snippet name!"
+        placement: "bottom",
+        title: "Edit your snippet name!"
     });
     $("#editUsernameButton").tooltip({
-        placement : "bottom",
-        title : "Edit you name!"
-    });    
+        placement: "bottom",
+        title: "Edit you name!"
+    });
 
     currentTabGlobal = "htmlTab";
 
@@ -725,19 +766,19 @@ var initApp = function() {
 //TODO: Initializing user awareness
 var awareOthers = function(cm, cObj) {
     var cmdMsg = {
-        cmd : "change",
-        where : cObj.from.line,
-        type : cObj.cType,
-        user : currentUser,
-        isPush : false         
+        cmd: "change",
+        where: cObj.from.line,
+        type: cObj.cType,
+        user: currentUser,
+        isPush: false
     };
     shoutOut(cmdMsg);
 }
 var docs = {
-    "html" : null,
-    "js" : null,
-    "css" : null,
-    "json" : null
+    "html": null,
+    "js": null,
+    "css": null,
+    "json": null
 };
 var currentDoc = null;
 
@@ -751,11 +792,11 @@ var createEditorMode = function(elem, mode, type) {
     sharejs.open(docName, "text", function(error, newDoc) {
         var idx = newDoc.name.split("-");
         var jType = idx[idx.length - 1];
-        var _edtr = editors[jType];        
+        var _edtr = editors[jType];
 
         // if (currentDoc !== null) {
-            // currentDoc.close();
-            // currentDoc.detach_cm();
+        // currentDoc.close();
+        // currentDoc.detach_cm();
         // }
 
         //currentDoc = newDoc;
@@ -815,47 +856,46 @@ var changeEditorMode = function(type) {
 
 window.onload = function() {
     layout();
-    initApp();       
+    initApp();
 }
 
 window.onbeforeunload = function() {
     var cmdMsg;
     if (communicationDoc !== null) {
         cmdMsg = {
-            cmd : "off",
-            msg : currentUser.username + " just left your snippet!",
-            zodiac : currentUser.zodiac,
-            username : currentUser.username,
-            color : currentUser.color,
-            isPush : true
+            cmd: "off",
+            msg: currentUser.username + " just left your snippet!",
+            zodiac: currentUser.zodiac,
+            username: currentUser.username,
+            color: currentUser.color,
+            isPush: true
         };
         shoutOut(cmdMsg);
         //communicationDoc.close();
         cmdMsg = {
-            cmd : "chTab",
-            curTab : "no",
-            prevTab : currentTabGlobal,
-            isPush : false
+            cmd: "chTab",
+            curTab: "no",
+            prevTab: currentTabGlobal,
+            isPush: false
         };
         shoutOut(cmdMsg);
     }
-    setTimeout(function() {
-    }, 1000);
+    setTimeout(function() {}, 1000);
 }
 var currentTabGlobal = "";
 
-var handleDragStart = function(e) {        
-        
+var handleDragStart = function(e) {
+
 }
 
 var handleDragOver = function(e) {
     e.stopPropagation();
     e.preventDefault();
-    $(this).addClass("dropZone").css("opacity", "1");        
+    $(this).addClass("dropZone").css("opacity", "1");
 }
 
 var handleDragLeave = function(e) {
-    $(dropZone).removeClass("dropZone").css("opacity", "1");    
+    $(dropZone).removeClass("dropZone").css("opacity", "1");
 }
 
 var handleDrop = function(e) {
@@ -865,59 +905,58 @@ var handleDrop = function(e) {
     editors.json.setOption('readOnly', 'nocursor');
 
     var files = e.dataTransfer.files;
-    if(files[0].type != "text/csv" && files[0].type != "application/json" && files[0].type != "text/tab-separated-values") {        
-      $(this).removeClass("dropZone").css("opacity", "1")                                
-    }
-    else {
+    if (files[0].type != "text/csv" && files[0].type != "application/json" && files[0].type != "text/tab-separated-values") {
+        $(this).removeClass("dropZone").css("opacity", "1")
+    } else {
         var json;
         var reader = new FileReader();
         reader.onload = (function(theFile) {
-            return function(e){
-                switch(theFile.type) {
+            return function(e) {
+                switch (theFile.type) {
                     case 'text/csv':
-                    var _json = d3.csv.parseRows(e.target.result);  
-                    json = csv2json(_json);                                                                                         
-                    break;
+                        var _json = d3.csv.parseRows(e.target.result);
+                        json = csv2json(_json);
+                        break;
                     case 'application/json':
-                    var _json = e.target.result;
-                    json = _json;
-                    //var json = json2json(_json);                                        
-                    break;
+                        var _json = e.target.result;
+                        json = _json;
+                        //var json = json2json(_json);                                        
+                        break;
                     case 'text/tab-separated-values':
-                    var _json = d3.tsv.parseRows(e.target.result);
-                    json = csv2json(_json);                                       
-                    break;            
+                        var _json = d3.tsv.parseRows(e.target.result);
+                        json = csv2json(_json);
+                        break;
                 }
-                editors.json.setValue(json);                                
+                editors.json.setValue(json);
                 editors.json.setOption('readOnly', false);
-                $(dropZone).removeClass("dropZone").css("opacity", "1");                
-            }            
+                $(dropZone).removeClass("dropZone").css("opacity", "1");
+            }
         })(files[0]);
-        reader.readAsText(files[0]);                
+        reader.readAsText(files[0]);
     }
 }
 
 var _isChatOpen = false;
 
-$(document).ready(function() {        
+$(document).ready(function() {
     $(".nav-tabs>li").on('click', function(e) {
         var currentEditor = e.currentTarget.dataset["id"];
         if (currentTabGlobal === currentEditor) {
             return;
         }
         var cmdMsg = {
-            cmd : "chTab",
-            curTab : currentEditor,
-            prevTab : currentTabGlobal,
-            isPush : false
+            cmd: "chTab",
+            curTab: currentEditor,
+            prevTab: currentTabGlobal,
+            isPush: false
         };
         shoutOut(cmdMsg);
         currentTabGlobal = currentEditor;
-        
+
         var type = currentEditor.substring(0, currentEditor.length - 3);
-        setTimeout(function(){
-            editors[type].refresh();            
-        }, 10);        
+        setTimeout(function() {
+            editors[type].refresh();
+        }, 10);
         //changeEditorMode(currentEditor.substring(0, currentEditor.length - 3));
         //$('.dropZone').height($(".tab-content").height() - 10);
     });
@@ -925,50 +964,48 @@ $(document).ready(function() {
     $("#chatHide").click(function() {
         $(".chatInput>input").hide();
         $(".chatBox").animate({
-            display : 'toggle',
-            bottom : [0, 'swing'],
-            opacity : 0
+            display: 'toggle',
+            bottom: [0, 'swing'],
+            opacity: 0
         }, "slow");
         $(".chatIcon").fadeIn("slow");
     });
 
-    var chatShake;    
+    var chatShake;
 
     setInterval(function() {
         var _numMsgs = parseInt($(".notification.badge.badge-warning").text());
         if (_numMsgs == 0) {
             clearInterval(chatShake);
             _isChatOpen = false;
-        }
-        else {
-            if(!_isChatOpen) {
+        } else {
+            if (!_isChatOpen) {
                 _isChatOpen = true;
                 chatShake = setInterval(function() {
-                var direction = ["up", "left", "right", "down"];
+                    var direction = ["up", "left", "right", "down"];
                     var gRand = Math.random() * 113;
                     var rand = Math.round(gRand % 4);
                     $(".notification.badge.badge-warning").effect("shake", {
-                        distance : 10,
-                        times : 3,
-                        direction : direction[rand]
+                        distance: 10,
+                        times: 3,
+                        direction: direction[rand]
                     });
                 }, 1000);
-            }            
+            }
         }
     }, 1000);
 
-    $(".chatIcon").click(function() {        
+    $(".chatIcon").click(function() {
         $(".notification.badge.badge-warning").text(0);
         $(".chatInput>input").show();
         $(".chatBox").animate({
-            display : 'toggle',
-            bottom : [195, 'swing'],
-            opacity : 1
+            display: 'toggle',
+            bottom: [195, 'swing'],
+            opacity: 1
         }, "slow");
         $(".chatInput>input").width($(".chatInput").width() - 10);
         $(".chatMessages").width($(".chatBox").width() - 20);
-        $(this).fadeOut("slow", function(){            
-        });
+        $(this).fadeOut("slow", function() {});
         clearInterval(chatShake);
     });
 
@@ -977,12 +1014,12 @@ $(document).ready(function() {
             var msg = $(this).val();
             $(this).val('');
             var cmdMsg = {
-                cmd : "chat",
-                zodiac : currentUser.zodiac,
-                username : currentUser.username,
-                color : currentUser.color,
-                message : msg,
-                isPush : false
+                cmd: "chat",
+                zodiac: currentUser.zodiac,
+                username: currentUser.username,
+                color: currentUser.color,
+                message: msg,
+                isPush: false
             };
             shoutOut(cmdMsg);
         }
@@ -1004,18 +1041,18 @@ $(document).ready(function() {
     }
 
     $("#usernameBadge").editable({
-        type : 'text',
-        name : "usernameBadge",
-        placement : 'bottom',
-        value : $("#usernameBadge").val()
+        type: 'text',
+        name: "usernameBadge",
+        placement: 'bottom',
+        value: $("#usernameBadge").val()
     });
 
     $("#snippetnameBadge").editable({
-        type : 'text',
-        autotext : "never",
-        name : "usernameBadge",
-        placement : 'bottom',
-        value : $("#snippetnameBadge").val()
+        type: 'text',
+        autotext: "never",
+        name: "usernameBadge",
+        placement: 'bottom',
+        value: $("#snippetnameBadge").val()
     });
 
     //Share snippet via email
