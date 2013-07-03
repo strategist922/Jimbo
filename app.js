@@ -12,7 +12,6 @@ express.limit('10mb');
 app.configure(function() {  
   app.set('views', __dirname + '/views');
   app.set('prject', __dirname + '/views/snippet');
-  app.set('prject', __dirname + '/views/account');
   app.set('view engine', 'jade');
   app.use(express.bodyParser());          
   app.use(express.cookieParser());
@@ -45,8 +44,8 @@ var options = {/*db: {type: 'redis'}*/}; // See docs for options. {type: 'redis'
 sharejs.attach(app, options);
 var server;
 exec('mongod --dbpath ~/Desktop/data/&', function(err, stdout, stderr) {
-  server = app.listen(2727);
-  console.log('Server running at http://127.0.0.1:2727/');  
+  server = app.listen(1337);
+  console.log('Server running at http://127.0.0.1:1337/');  
 });
 
 

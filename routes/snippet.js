@@ -1,4 +1,3 @@
-var hat = require("hat");
 var SP = require('../models/snippetProvider-redis');
 
 exports.newSnippet = function(req, res) {        

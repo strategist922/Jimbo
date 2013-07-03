@@ -1,0 +1,17 @@
+--- 
+applications: 
+  .: 
+    url: jimbo.ap01.aws.af.cm
+    name: jimbo
+    services: 
+      JimboDb: 
+        type: redis
+    mem: 128M
+    infra: ap-aws
+    framework: 
+      info: 
+        description: Node.js Application
+        exec: 
+        mem: 64M
+      name: node
+    instances: 1

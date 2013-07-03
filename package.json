@@ -1,27 +1,16 @@
 {
-  "name": "JIMBO",
-  "version": "1.0",
+  "name": "Jimbo",
+  "version": "1.0.0",
   "description": "COLLABORATIVE D3 CODE EDITOR WITH LIVE PREVIEW",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/hatpick/Jimbo.git"
-  },
-  "keywords": [
-    "Collaborate", "Code", "Editor", "Jimbo", "JimboEditor", "Live Preview"
-  ],
   "author": "hatpick <hatpick@gmail.com>",
   "license": "MIT",
   "dependencies": {
-    "share": "*",
+    "share": "0.6.0",
     "connect": "~1",
     "express": "3.x",
+    "mongodb": "*",
     "jade": "*",
     "stylus": "*",
-    "bcrypt": ">= 0.5.0",        
-    "mongodb": ">= 0.1.0",
-    "moment" : ">=1.6.2",        
-    "emailjs": ">= 0.2.9",     
-    "mongoose": "*",     
     "hat": ">=0.0.3",
     "acron": "*"
   }

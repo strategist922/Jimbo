@@ -1,5 +1,4 @@
-var account = require('./account'),
-    snippet = require('./snippet');    
+var snippet = require('./snippet');    
 
 
 
@@ -18,15 +17,9 @@ module.exports = function(app) {
   
   app.get('/', function(req, res){
     res.render('index', { title: 'Jimbo' });
-  });    
-                    
-  app.all('/login', account.login);                         
-  app.get('/logout', account.logout);
-  app.get('/snippet', snippet.newSnippet);
-  app.all('/signup', account.signup);
-  app.get('/snippetLoad', snippet.loadSnippet);  
-  app.get('/user', account.user);
-  app.get('/users/list', account.list);  
+  });                        
+  app.get('/snippet', snippet.newSnippet);  
+  app.get('/snippetLoad', snippet.loadSnippet);    
 }         
 
 

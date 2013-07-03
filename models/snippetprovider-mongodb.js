@@ -3,10 +3,7 @@ var Connection = require('mongodb').Connection;
 var Server = require('mongodb').Server;
 var BSON = require('mongodb').BSON;
 var ObjectID = require('mongodb').ObjectID;
-var logger = require('../modules/logger');
 var snippetProvider = undefined;       
-
-logger.debugLevel = 'info';
 
 SnippetProvider = function(host, port) { 
   if (process.env.MONGOHQ_URL) { // connect to mongoHQ
@@ -168,11 +165,9 @@ SnippetProvider.prototype.delete = function(name, data, callback) {
           var leaf = result.root;
           data.paths.shift();
           if (data.paths.length == 1) {
-            if (data.type == 'folder') {
-              logger.log('info', {info: 'inside'});
+            if (data.type == 'folder') {              
               removeElement(leaf);
-            } else {
-              logger.log('warn', {warn: leaf.files});
+            } else {              
               removeElement(leaf.files);
             }
           } else {
@@ -182,8 +177,7 @@ SnippetProvider.prototype.delete = function(name, data, callback) {
             }
             removeElement(leaf);
           } 
-        }
-        logger.log('info', {info: leaf});
+        }      
         snippet_collection.save(result);
       })
     }

@@ -1,7 +1,4 @@
-var logger = require('../modules/logger');
 var shareServer = require('share').server;
-
-logger.debugLevel = 'info';
 
 exports.snippetCode = function(snippetId, callback) {
     var editorTypes = ["html", "js", "css", "json"];
