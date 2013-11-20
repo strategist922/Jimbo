@@ -290,13 +290,24 @@ var Inlet = (function() {
 
             if (token.type === "number") {
                 var cursorOffset = editor.cursorCoords(true, "page");
+                var percentage = false, pixel = false;
+                if(token.string.indexOf("%") != -1) percentage = true;
+                else if(token.string.indexOf("px") != -1) pixel = true;
                 var value = parseFloat(token.string);
                 var sliderRange;
 
-                if (value === 0) {
-                    sliderRange = [-100, 100];
-                } else {
-                    sliderRange = [-value * 3, value * 5];
+                if(percentage) {
+                    sliderRange = [0,100];
+                }
+                else if(pixel) {
+                    sliderRange = [0, value * 5];
+                }
+                else {
+                    if (value === 0) {
+                        sliderRange = [-100, 100];
+                    } else {
+                        sliderRange = [-value * 3, value * 5];
+                    }
                 }
 
                 var slider_min = _.min(sliderRange);
@@ -323,15 +334,29 @@ var Inlet = (function() {
                 slider.slider('option', 'slide', function(event, ui) {
                     var mcursor = editor.getCursor(true);
                     var mtoken = editor.getTokenAt(cursor);
+
+                    var startT = mtoken.start;
+                    var endT = mtoken.end;
+                    var float = false;
+                    if(token.string.toLowerCase().indexOf("px") != -1){
+                        endT = endT - 2;
+                    } else if(token.string.toLowerCase().indexOf("%") != -1){
+                        endT = endT - 1;
+                    }
+
+                    if(ui.value.toFixed(2) < 5 && ui.value.toFixed(2) > -5) {
+                        float = true;
+                    }
+
                     var start = {
                         "line" : mcursor.line,
-                        "ch" : mtoken.start
+                        "ch" : startT
                     };
                     var end = {
                         "line" : mcursor.line,
-                        "ch" : mtoken.end
+                        "ch" : endT
                     };
-                    editor.replaceRange(String(ui.value.toFixed(2)), start, end);
+                    editor.replaceRange(String(ui.value.toFixed(float?2:0)), start, end);
                 });
 
                 slider.css('visibility', 'visible');

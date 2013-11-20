@@ -8,7 +8,40 @@ html, body
   //background-image:url(../img/splash-bg.jpg)
   //background-repeat: repeat
   //background-size: contain
-  //z-index: -100  
+  //z-index: -100
+
+.hidden
+  opacity: 0
+
+.loading-panel
+  position: fixed
+  left: 0px
+  top: 0px  
+  display: none  
+  background: #000000
+  -ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=60)"  
+  background: rgba(0, 0, 0, 0.6)
+  padding: 0.3em  
+  text-align: center
+  vertical-align: middle
+  height: 100%
+  width: 100%
+  z-index: 1300
+
+.inner-loading-panel  
+  -ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=80)"
+  background: #ffffff
+  background: rgba(255,255,255,0.8)
+  color: #000000
+  color: rgb(0, 0, 0)
+  font-family: 'Cabin Condensed', sans-serif !important
+  text-align: center !important
+  vertical-align: middle !important
+  margin: auto  
+  width: 200px
+  padding: 20px
+  border-radius: 5px
+  z-index: 1500
   
 
 .chatMessages::-webkit-scrollbar

@@ -1,3 +1,5 @@
+var firebaseDb = "https://jimbo-editor.firebaseio.com";
+
 var getURL = function(url, c) {
     var xhr = new XMLHttpRequest();
     xhr.open("get", url, true);
@@ -155,7 +157,7 @@ var createEditor = function(elem, mode, type) {
         theme: "solarized light"
     });
     _editor.jimboType = type;
-    if (type !== 'json')
+    if (type === 'css' || type === 'js')
         Inlet(_editor);
     $(".slider").css('display', 'none');
     $(".picker").css('display', 'none');
@@ -210,7 +212,9 @@ var editorInit = function(elem, mode, type) {
         if (!editors.html) {
             _editor = createEditor(elem, mode, type);
             editors.html = _editor;
-            _editor.refresh();
+            setTimeout(function(){
+                _editor.refresh();
+            }, 10);
         } else {
             _editor = editors.html;
         }
@@ -718,7 +722,7 @@ var _randomZodiac = function() {
     var index = Math.floor((Math.random() * 1719) % 12);
     return _zodiacSigns[index];
 }
-var initApp = function() {
+var initApp = function() {    
     window.currentUser = {};
     currentUser.color = _randomColor();
     currentUser.zodiac = _randomZodiac();
@@ -815,6 +819,8 @@ var createEditorMode = function(elem, mode, type) {
             //Initialize Preview
             initializePreview();
             setupLivePreview();
+            $(".loading-panel").hide();
+            $(".container-fluid").removeClass("hidden");
             //alert("done! 1");                        
             //myCodeMirror = editors.html;
         }
@@ -855,11 +861,12 @@ var changeEditorMode = function(type) {
 }
 
 window.onload = function() {
+    $(".loading-panel").show();
     layout();
     initApp();
 }
 
-window.onbeforeunload = function() {
+window.onbeforeunload = function(e) {
     var cmdMsg;
     if (communicationDoc !== null) {
         cmdMsg = {
@@ -879,8 +886,9 @@ window.onbeforeunload = function() {
             isPush: false
         };
         shoutOut(cmdMsg);
-    }
-    setTimeout(function() {}, 1000);
+    }    
+    console.log(e);
+    return "";
 }
 var currentTabGlobal = "";
 
@@ -939,6 +947,14 @@ var handleDrop = function(e) {
 var _isChatOpen = false;
 
 $(document).ready(function() {
+
+    Offline.options = {
+        checks: {
+            xhr: {url: 'http://google.com'}
+        },
+        active: 'xhr'
+    };
+
     $(".nav-tabs>li").on('click', function(e) {
         var currentEditor = e.currentTarget.dataset["id"];
         if (currentTabGlobal === currentEditor) {
@@ -956,7 +972,7 @@ $(document).ready(function() {
         var type = currentEditor.substring(0, currentEditor.length - 3);
         setTimeout(function() {
             editors[type].refresh();
-        }, 10);
+        }, 100);
         //changeEditorMode(currentEditor.substring(0, currentEditor.length - 3));
         //$('.dropZone').height($(".tab-content").height() - 10);
     });

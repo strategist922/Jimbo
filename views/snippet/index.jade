@@ -18,6 +18,7 @@ html
     link(rel='stylesheet', href='thirdparty/CodeMirrorEditor/addon/lint/lint.css', type='text/css', media='screen', charset='utf-8')
     link(rel='stylesheet', href='thirdparty/CodeMirrorEditor/addon/tern/tern.css', type='text/css', media='screen', charset='utf-8')                       
     link(rel='stylesheet', href='thirdparty/Bootstrap/addon/DataTable/DT_bootstrap.css', type='text/css', media='screen', charset='utf-8')            
+    link(rel='stylesheet', href='css/offline.css', type='text/css', media='screen', charset='utf-8')
     link(rel='stylesheet', href='css/snippetStyle.css', type='text/css', media='screen', charset='utf-8')         
     script(type='text/javascript', charset='utf-8', src='http://code.jquery.com/jquery-2.0.0.min.js')
     script(type='text/javascript', charset='utf-8', src='http://code.jquery.com/ui/1.10.3/jquery-ui.js')                  
@@ -25,7 +26,7 @@ html
     script(type='text/javascript', charset='utf-8', src='http://d3js.org/d3.v3.min.js')        
     script(type='text/javascript', charset='utf-8', src='//cdnjs.cloudflare.com/ajax/libs/x-editable/1.4.4/bootstrap-editable/js/bootstrap-editable.min.js')                      
   body(style='overflow: hidden;')
-    .container-fluid
+    .container-fluid.hidden
       .navbar
         .navbar-inner
           a.brand(href='JavaScript:void(0);', muse_scanned='true')
@@ -100,7 +101,13 @@ html
                     img(src="../img/userIcon.png", style="margin-left:1px;")
                   .gutterIconDown
                     img(src="../img/userIcon.png", style="margin-left:1px;")
-            img.pen(src="../img/pen.png")    
+            img.pen(src="../img/pen.png")
+    div.loading-panel
+      table(width="100%", style="height:100%")
+        tr(align="center")
+          td(valign="middle")
+            div.inner-loading-panel
+              h6 Loading...
     //script(type='text/javascript', charset='utf-8', src='thirdparty/colorpicker/Color.Picker.Classic.js')
     //script(type='text/javascript', charset='utf-8', src='thirdparty/colorpicker/Color.Space.js')
     script(type='text/javascript', charset='utf-8', src='http://nornagon.github.com/thistle/thistle.js')                                              
@@ -136,11 +143,13 @@ html
     script(type='text/javascript', charset='utf-8', src='thirdparty/ternjs/lib/infer.js')
     script(type='text/javascript', charset='utf-8', src='thirdparty/ternjs/plugin/doc_comment.js')
     script(type='text/javascript', charset='utf-8', src='thirdparty/Noty/jquery.noty.js')    
+    script(type='text/javascript', charset='utf-8', src='thirdparty/Noty/offline.min.js')    
     script(type='text/javascript', charset='utf-8', src='thirdparty/Noty/layouts/bottomLeft.js')
     script(type='text/javascript', charset='utf-8', src='thirdparty/Noty/themes/default.js')    
     script(type='text/javascript', src='/channel/bcsocket.js')
     script(type='text/javascript', src='/share/share.uncompressed.js')    
     script(type='text/javascript', src='/share/cm.js')
+    script(type='text/javascript', src='https://cdn.firebase.com/v0/firebase.js')      
     script(type='text/javascript', src='thirdparty/Bootstrap/addon/DataTable/jquery.dataTables.js')
     script(type='text/javascript', src='thirdparty/Bootstrap/addon/DataTable/DT_bootstrap.js')        
     script(type='text/javascript', src='thirdparty/uuid/uuid.js')
