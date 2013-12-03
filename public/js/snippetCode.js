@@ -375,6 +375,8 @@ var shoutHandler = function(cmdMsg) {
                 var _user = cmdMsg.user;
                 var isAnimatingUp = false,
                     isAnimatingDown = false;
+                console.log(_user.username);
+                console.log(currentUser.username);
                 if (!needAwareness || currentUser.username == _user.username)
                     return;
                 var line = cmdMsg.where;
@@ -947,14 +949,6 @@ var handleDrop = function(e) {
 var _isChatOpen = false;
 
 $(document).ready(function() {
-
-    Offline.options = {
-        checks: {
-            xhr: {url: 'http://google.com'}
-        },
-        active: 'xhr'
-    };
-
     $(".nav-tabs>li").on('click', function(e) {
         var currentEditor = e.currentTarget.dataset["id"];
         if (currentTabGlobal === currentEditor) {
