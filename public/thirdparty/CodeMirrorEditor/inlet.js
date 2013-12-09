@@ -306,17 +306,19 @@ var Inlet = (function() {
                     if (value === 0) {
                         sliderRange = [-100, 100];
                     } else {
-                        sliderRange = [-value * 3, value * 5];
+                        sliderRange = [value - 200, value + 200];
                     }
                 }
 
                 var slider_min = _.min(sliderRange);
                 var slider_max = _.max(sliderRange);
+                console.log(slider_max);
+                console.log(slider_min);
                 slider.slider('option', 'min', slider_min);
                 slider.slider('option', 'max', slider_max);
 
-                if ((slider_max - slider_min) > 20) {
-                    slider.slider('option', 'step', 1);
+                if ((slider_max - slider_min) < 200) {
+                    slider.slider('option', 'step', 5);
                 } else {
                     slider.slider('option', 'step', (slider_max - slider_min) / 200);
                 }
@@ -344,9 +346,9 @@ var Inlet = (function() {
                         endT = endT - 1;
                     }
 
-                    if(ui.value.toFixed(2) < 5 && ui.value.toFixed(2) > -5) {
-                        float = true;
-                    }
+                    // if((ui.value.toFixed(2) < 1 && ui.value.toFixed(2) > 0) || (ui.value.toFixed(2) > -1 && ui.value.toFixed(2) < 0)) {
+                    //     float = true;
+                    // }
 
                     var start = {
                         "line" : mcursor.line,

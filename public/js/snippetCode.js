@@ -375,8 +375,6 @@ var shoutHandler = function(cmdMsg) {
                 var _user = cmdMsg.user;
                 var isAnimatingUp = false,
                     isAnimatingDown = false;
-                console.log(_user.username);
-                console.log(currentUser.username);
                 if (!needAwareness || currentUser.username == _user.username)
                     return;
                 var line = cmdMsg.where;
@@ -400,7 +398,7 @@ var shoutHandler = function(cmdMsg) {
                     if (cViewPort.from <= line && cViewPort.to >= line) {
                         //In editor                                     
                         if ($("style[data-id='" + _user.username + "']").length > 0) $("style[data-id='" + _user.username + "']").remove();
-                        $("<style type='text/css' data-id='" + _user.username + "'> .remoteChange-line-" + _user.username + "{ background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(245,246,246,1)), color-stop(21%,rgba(219,220,226,1)), color-stop(49%,rgba(184,186,198,1)), color-stop(80%,rgba(221,223,227,1)), color-stop(100%,rgba(245,246,246,1)));} </style>").appendTo("head");
+                        $("<style type='text/css' data-id='" + _user.username + "'> .remoteChange-line-" + _user.username + "{ background: #FFFF66;} </style>").appendTo("head");
                         var from = {
                             line: line,
                             ch: 0
@@ -561,11 +559,19 @@ var initializePreview = function() {
     loadSnippet(snippetId);
 };
 
+var inletChange = function(token) {
+    if(!isNaN(parseInt(token, 10)) || token.match(/#+(([a-fA-F0-9]){3}){1,2}/) != null)
+        return true;
+    return false;
+}
+
 var setupLivePreview = function() {
     //Html
     editors.html.on("beforeChange", function(cm, cObj) {
         cObj.cType = "html";
-        awareOthers(editors.html, cObj);
+        if(typeof cObj.origin != "undefined"){
+            awareOthers(editors.html, cObj);
+        }
     });
     editors.html.on("change", function(cm, cObj) {
         var code = cm.getValue();
@@ -583,9 +589,12 @@ var setupLivePreview = function() {
     });
 
     //Javascript
+    var changes = {};
     editors.js.on("beforeChange", function(cm, cObj) {
         cObj.cType = "js";
-        awareOthers(editors.js, cObj);
+        if(typeof cObj.origin != "undefined"){
+            awareOthers(editors.js, cObj);
+        }
     });
     editors.js.on("change", function(cm, cObj) {
         var code = cm.getValue();
@@ -604,7 +613,9 @@ var setupLivePreview = function() {
     //Css
     editors.css.on("beforeChange", function(cm, cObj) {
         cObj.cType = "css";
-        awareOthers(editors.css, cObj);
+        if(typeof cObj.origin != "undefined"){
+            awareOthers(editors.css, cObj);
+        }
     });
     editors.css.on("change", function(cm, cObj) {
         var code = cm.getValue();
