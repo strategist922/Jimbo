@@ -1,5 +1,3 @@
-var firebaseDb = "https://jimbo-editor.firebaseio.com";
-
 var getURL = function(url, c) {
     var xhr = new XMLHttpRequest();
     xhr.open("get", url, true);
@@ -186,7 +184,7 @@ var createEditor = function(elem, mode, type) {
                 },
                 "Ctrl-Q": function(cm) {
                     ternServer.rename(cm);
-                },
+                }
             });
             _editor.on("cursorActivity", function(cm) {
                 ternServer.updateArgHints(cm);
