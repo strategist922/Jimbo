@@ -44,7 +44,7 @@ var options = {/*db: {type: 'redis'}*/}; // See docs for options. {type: 'redis'
 sharejs.attach(app, options);
 var server;
 exec('mongod --dbpath ~/Desktop/data/&', function(err, stdout, stderr) {
-  server = app.listen(process.env.VCAP_APP_PORT || 1337);
+  server = app.listen(env.VCAP_APP_PORT || 1337);
   console.log('Server running at http://127.0.0.1:1337/');  
 });
 
