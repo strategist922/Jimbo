@@ -43,9 +43,8 @@ var options = {/*db: {type: 'redis'}*/}; // See docs for options. {type: 'redis'
 // Attach the sharejs REST and Socket.io interfaces to the server
 sharejs.attach(app, options);
 var server;
-exec('mongod --dbpath ~/Desktop/data/&', function(err, stdout, stderr) {
-  server = app.listen(env.VCAP_APP_PORT || 1337);
-  console.log('Server running at http://127.0.0.1:1337/');  
-});
+
+server = app.listen(1337);
+console.log('Server running at http://127.0.0.1:1337/');
 
 

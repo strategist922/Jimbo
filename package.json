@@ -8,10 +8,8 @@
     "share": "0.6.0",
     "connect": "~1",
     "express": "3.x",
-    "mongodb": "*",
     "jade": "*",
     "stylus": "*",
-    "hat": ">=0.0.3",
-    "acron": "*"    
+    "hat": ">=0.0.3"    
   }
 }
