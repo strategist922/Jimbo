@@ -897,9 +897,7 @@ window.onbeforeunload = function(e) {
             isPush: false
         };
         shoutOut(cmdMsg);
-    }    
-    console.log(e);
-    return "";
+    }
 }
 var currentTabGlobal = "";
 

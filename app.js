@@ -2,14 +2,13 @@
 
 var express = require('express')
   , sharejs = require('share').server
-  , exec = require('child_process').exec
-  , SnippetProvider = require(__dirname + '/models/snippetprovider-mongodb').SnippetProvider;
+  , exec = require('child_process').exec;
 
 var app = express();
 app.disable('quiet');
 
 express.limit('10mb');
-app.configure(function() {  
+app.configure(function() {
   app.set('views', __dirname + '/views');
   app.set('prject', __dirname + '/views/snippet');
   app.set('view engine', 'jade');
@@ -36,7 +35,7 @@ require('./routes/index')(app)
 
 var options = {/*db: {type: 'redis'}*/}; // See docs for options. {type: 'redis'} to enable persistance.
   options.db = {type: 'redis'};
-  options.auth = function(agent, action) {  
+  options.auth = function(agent, action) {
   action.accept();
 };
 
@@ -46,5 +45,3 @@ var server;
 
 server = app.listen(1337);
 console.log('Server running at http://127.0.0.1:1337/');
-
-
