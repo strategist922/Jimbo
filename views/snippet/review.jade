@@ -1,0 +1,39 @@
+doctype html
+html
+  head
+    meta(http-equiv='Content-type', content='text/html; charset=utf-8')
+    title
+      | Jimbo Code Review
+    link(rel='icon', href='img/icon.png')
+    link(rel='stylesheet', href='http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css', type='text/css', media='screen', charset='utf-8')
+    link(rel='stylesheet', href='thirdparty/Bootstrap/css/bootstrap.min.css', type='text/css', media='screen', charset='utf-8')
+    link(rel='stylesheet', href='thirdparty/CodeMirrorEditor/lib/codemirror.css', type='text/css', media='screen', charset='utf-8')
+    link(rel='stylesheet', href='thirdparty/CodeMirrorEditor/theme/solarized.css', type='text/css', media='screen', charset='utf-8')
+    link(rel='stylesheet', href='css/snippetStyle.css', type='text/css', media='screen', charset='utf-8')
+    script(type='text/javascript', charset='utf-8', src='http://code.jquery.com/jquery-2.0.0.min.js')
+    script(type='text/javascript', charset='utf-8', src='http://code.jquery.com/ui/1.10.3/jquery-ui.js')
+    script(type='text/javascript', charset='utf-8', src='thirdparty/Bootstrap/js/bootstrap.min.js')
+  body(style='overflow: hidden;')
+    .navbar
+      .navbar-inner
+        a.brand(href='JavaScript:void(0);', muse_scanned='true')
+          img(src='../img/icon.png', style='width:20px; height:20px;')
+          |      Jimbo
+        .nav.pull-right
+    .container-fluid.hidden
+      .row-fluid
+        .reviewArea.span12
+          textarea#editorTextArea(disabled)
+    div.loading-panel
+      table(width="100%", style="height:100%")
+        tr(align="center")
+          td(valign="middle")
+            div.inner-loading-panel
+              h6 Loading...
+    script(type='text/javascript', charset='utf-8', src='thirdparty/CodeMirrorEditor/lib/codemirror.js')
+    script(type='text/javascript', charset='utf-8', src='thirdparty/CodeMirrorEditor/mode/xml/xml.js')
+    script(type='text/javascript', charset='utf-8', src='thirdparty/CodeMirrorEditor/mode/javascript/javascript.js')
+    script(type='text/javascript', charset='utf-8', src='thirdparty/CodeMirrorEditor/mode/css/css.js')
+    script(type='text/javascript', charset='utf-8', src='thirdparty/CodeMirrorEditor/mode/htmlmixed/htmlmixed.js')
+    script(type='text/javascript', src='js/reviewCode.js')
+

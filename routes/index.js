@@ -18,7 +18,9 @@ module.exports = function(app) {
   app.get('/', function(req, res){
     res.render('index', { title: 'Jimbo' });
   });                        
-  app.get('/snippet', snippet.newSnippet);  
+  app.get('/snippet', snippet.newSnippet);
+  app.get('/reviewCode', snippet.reviewCode);
+  app.post('/getOps', snippet.getOps);
   app.get('/snippetLoad', snippet.loadSnippet);    
 }         
 

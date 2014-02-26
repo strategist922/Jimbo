@@ -808,6 +808,12 @@ var createEditorMode = function(elem, mode, type) {
         var idx = newDoc.name.split("-");
         var jType = idx[idx.length - 1];
         var _edtr = editors[jType];
+        if(jType != "json")
+            $(".CodeMirror[data-jimbotype='" + jType + "']").append("<a target='_blank' href='reviewCode#" + newDoc.name + "' class='btn btn-default btn-review'><i class='icon-eye-open'></i> Review</a>");
+        if(!currentUser[newDoc.connection.id]){
+            currentUser[newDoc.connection.id] = currentUser.username;
+            sessionStorage.setItem("userObj", JSON.stringify(currentUser));
+        }
 
         // if (currentDoc !== null) {
         // currentDoc.close();
