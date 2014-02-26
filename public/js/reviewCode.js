@@ -72,12 +72,8 @@ $(document).ready(function(){
 					        var firstOp = ar.op[0];
 					        var pos = xxxEditor.posFromIndex(firstOp.p)
 					        if (firstOp.hasOwnProperty("i")) {
-					        	var toPos = xxxEditor.posFromIndex(firstOp.p + firstOp.i.length);
+					        	var toPos = {line: pos.line, ch: pos.ch + firstOp.i.length};
 					            xxxEditor.doc.replaceRange(firstOp.i, pos)
-					            console.log("pos");
-					            console.log(pos);
-					            console.log("toPos");
-					            console.log(toPos);
 					            var mark = xxxEditor.doc.markText(pos, toPos, {className:userClass});
 					        } else if (firstOp.hasOwnProperty("d")) {
 					            var toPos = xxxEditor.posFromIndex(firstOp.p + firstOp.d.length);
