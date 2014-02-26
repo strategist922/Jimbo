@@ -19,7 +19,7 @@ $(document).ready(function(){
 
 	var createStyle = function(name, color) {
 		$('style').remove();
-	    $('head').append('<style type="text/css">.' + name +' {background: ' + color + ';}</style>');
+	    $('head').append('<style type="text/css">.' + name +' {background: green;}</style>');
 	}
 
 	var initView = function(){
@@ -77,6 +77,7 @@ $(document).ready(function(){
 					        	toPos.ch = pos.ch + firstOp.i.length;
 					            xxxEditor.doc.replaceRange(firstOp.i, pos, toPos)
 					            var mark = xxxEditor.doc.markText(pos, toPos, {className:userClass});
+					            console.log(mark);
 					        } else if (firstOp.hasOwnProperty("d")) {
 					            var toPos = xxxEditor.posFromIndex(firstOp.p + firstOp.d.length);
 					            xxxEditor.doc.replaceRange("", pos, toPos)
