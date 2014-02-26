@@ -59,8 +59,8 @@ $(document).ready(function(){
 					    	for(var j = 0; j < ar.op.length; j++){
 					    		var pos = xxxEditor.posFromIndex(ar.op[j].p);
 						    	if (ar.op[j].hasOwnProperty("i")) {
-						            toPos = xxxEditor.posFromIndex(ar.op[j].p + ar.op[j].i.length);
 						            xxxEditor.doc.replaceRange(ar.op[j].i, pos);
+						            toPos = xxxEditor.posFromIndex(ar.op[j].p + ar.op[j].i.length);
 						            var mark = xxxEditor.doc.markText(pos, toPos, {className:userClass});
 						        } else if (ar.op[j].hasOwnProperty("d")) {
 						            toPos = xxxEditor.posFromIndex(ar.op[j].p + ar.op[j].d.length);
