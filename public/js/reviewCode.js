@@ -19,7 +19,7 @@ $(document).ready(function(){
 
 	var createStyle = function(name, color) {
 		$('style').remove();
-	    $('head').append('<style type="text/css">.' + name +' {background: green;}</style>');
+	    $('head').append('<style type="text/css">.' + name +' {background: ' + color + ';}</style>');
 	}
 
 	var initView = function(){
