@@ -20,7 +20,7 @@ module.exports = function(app) {
   });                        
   app.get('/snippet', snippet.newSnippet);
   app.get('/reviewCode', snippet.reviewCode);
-  app.post('/getOps', snippet.getOps);
+  app.all('/getOps/:id', snippet.getOps);
   app.get('/snippetLoad', snippet.loadSnippet);    
 }         
 

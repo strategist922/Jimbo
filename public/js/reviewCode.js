@@ -43,9 +43,8 @@ $(document).ready(function(){
 	initView();
 	var getOps = function(name) {
 		$.ajax({
-		  	type: "POST",
-		  	url: "/getOps",
-		  	data: {"docName":name},
+		  	type: "GET",
+		  	url: "/getOps/" + name,
 		  	success: function(data){
 		  		if(!data.error){
 		  			$(".loading-panel").hide();
@@ -57,28 +56,28 @@ $(document).ready(function(){
 					    var currentUser = JSON.parse(sessionStorage["userObj"]);
 					    var userClass = currentUser[ar.meta.source];
 					    if (ar.op.length > 1) {
-					        pos = xxxEditor.posFromIndex(ar.op[0].p);
-					        if (ar.op[1].hasOwnProperty("i")) {
-					            toPos = xxxEditor.posFromIndex(ar.op[0].p + ar.op[1].i.length);
-					            xxxEditor.doc.replaceRange(ar.op[1].i, pos, toPos)
-					            xxxEditor.doc.markText(pos, toPos, {className:userClass});
-					        } else if (ar.op[1].hasOwnProperty("d")) {
-					            toPos = xxxEditor.posFromIndex(ar.op[0].p + ar.op[1].d.length);
-					            xxxEditor.doc.replaceRange("", pos, toPos)
-					        }
-
+					    	for(var j = 0; j < ar.op.length; j++){
+					    		var pos = xxxEditor.posFromIndex(ar.op[j].p);
+						    	if (ar.op[j].hasOwnProperty("i")) {
+						            toPos = xxxEditor.posFromIndex(ar.op[j].p + ar.op[j].i.length);
+						            xxxEditor.doc.replaceRange(ar.op[j].i, pos, toPos);
+						            xxxEditor.doc.markText(pos, toPos, {className:userClass});
+						        } else if (ar.op[j].hasOwnProperty("d")) {
+						            toPos = xxxEditor.posFromIndex(ar.op[j].p + ar.op[j].d.length);
+						            xxxEditor.doc.replaceRange("", pos, toPos);
+						        }
+					    	}
 					    } else {
 					        var firstOp = ar.op[0];
-					        pos = xxxEditor.posFromIndex(firstOp.p)
+					        var pos = xxxEditor.posFromIndex(firstOp.p)
 					        if (firstOp.hasOwnProperty("i")) {
-					        	toPos = xxxEditor.posFromIndex(firstOp.p + firstOp.i.length);
+					        	var toPos = xxxEditor.posFromIndex(firstOp.p + firstOp.i.length);
 					            xxxEditor.doc.replaceRange(firstOp.i, pos)
 					            xxxEditor.doc.markText(pos, toPos, {className:userClass});
 					        } else if (firstOp.hasOwnProperty("d")) {
-					            toPos = xxxEditor.posFromIndex(firstOp.p + firstOp.d.length);
+					            var toPos = xxxEditor.posFromIndex(firstOp.p + firstOp.d.length);
 					            xxxEditor.doc.replaceRange("", pos, toPos)
 					        }
-
 					    }
 					    i++;
 					    if (i < ops.length)
