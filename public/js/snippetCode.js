@@ -149,9 +149,9 @@ var createEditor = function(elem, mode, type) {
         lineNumbers: true,
         dragDrop: onDnD,
         lineWrapping: true,        
-        autoCloseTags: true,
-        matchBrackets: true,
-        autoCloseBrackets: true,
+        autoCloseTags: false,
+        matchBrackets: false,
+        autoCloseBrackets: false,
         theme: "solarized light"
     });
     _editor.jimboType = type;

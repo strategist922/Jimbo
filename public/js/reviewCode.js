@@ -1,4 +1,4 @@
-var SPEED = 150;
+var SPEED = 80;
 $(document).ready(function(){
 	var snippetId = window.location.hash.split("#")[1];
 
@@ -19,7 +19,7 @@ $(document).ready(function(){
 
 	var createStyle = function(name, color) {
 		$('style').remove();
-	    $('head').append('<style type="text/css">.' + name +' {background: hsl(220,68%,81%);}</style>');
+	    $('head').append('<style type="text/css">.' + name +' {background: ' + color + ';}</style>');
 	}
 
 	var initView = function(){
@@ -61,7 +61,7 @@ $(document).ready(function(){
 						    	if (ar.op[j].hasOwnProperty("i")) {
 						            toPos = xxxEditor.posFromIndex(ar.op[j].p + ar.op[j].i.length);
 						            xxxEditor.doc.replaceRange(ar.op[j].i, pos, toPos);
-						            xxxEditor.doc.markText(pos, toPos, {className:userClass});
+						            var mark = xxxEditor.doc.markText(pos, toPos, {className:userClass});
 						        } else if (ar.op[j].hasOwnProperty("d")) {
 						            toPos = xxxEditor.posFromIndex(ar.op[j].p + ar.op[j].d.length);
 						            xxxEditor.doc.replaceRange("", pos, toPos);
@@ -73,7 +73,7 @@ $(document).ready(function(){
 					        if (firstOp.hasOwnProperty("i")) {
 					        	var toPos = xxxEditor.posFromIndex(firstOp.p + firstOp.i.length);
 					            xxxEditor.doc.replaceRange(firstOp.i, pos)
-					            xxxEditor.doc.markText(pos, toPos, {className:userClass});
+					            var mark = xxxEditor.doc.markText(pos, toPos, {className:userClass});
 					        } else if (firstOp.hasOwnProperty("d")) {
 					            var toPos = xxxEditor.posFromIndex(firstOp.p + firstOp.d.length);
 					            xxxEditor.doc.replaceRange("", pos, toPos)
