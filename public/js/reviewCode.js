@@ -74,7 +74,7 @@ $(document).ready(function(){
 					        if (firstOp.hasOwnProperty("i")) {
 					        	var toPos = xxxEditor.posFromIndex(firstOp.p + firstOp.i.length);
 					            xxxEditor.doc.replaceRange(firstOp.i, pos)
-					            toPos = xxxEditor.posFromIndex(ar.op[j].p + ar.op[j].i.length);
+					            var toPos = xxxEditor.posFromIndex(firstOp.p + firstOp.i.length);
 					            var mark = xxxEditor.doc.markText(pos, toPos, {className:userClass});
 					        } else if (firstOp.hasOwnProperty("d")) {
 					            var toPos = xxxEditor.posFromIndex(firstOp.p + firstOp.d.length);
