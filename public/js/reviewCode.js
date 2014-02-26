@@ -32,7 +32,8 @@ $(document).ready(function(){
 		var editor = CodeMirror.fromTextArea(elem, {
 			mode: "text/" + mode,
 			lineNumbers: true,
-			theme: "solarized light"
+			theme: "solarized light",
+			readonly: "nocursor"
 		});
 	    $(editor.getWrapperElement()).height($(".reviewArea").height() - 30).css("font-size","1.1em !important");
 	    window.xxxEditor = editor;
