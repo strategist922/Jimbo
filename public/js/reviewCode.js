@@ -61,7 +61,6 @@ $(document).ready(function(){
 						    	if (ar.op[j].hasOwnProperty("i")) {
 						            toPos = xxxEditor.posFromIndex(ar.op[j].p + ar.op[j].i.length);
 						            xxxEditor.doc.replaceRange(ar.op[j].i, pos, toPos);
-						            toPos = xxxEditor.posFromIndex(ar.op[j].p + ar.op[j].i.length);
 						            var mark = xxxEditor.doc.markText(pos, toPos, {className:userClass});
 						        } else if (ar.op[j].hasOwnProperty("d")) {
 						            toPos = xxxEditor.posFromIndex(ar.op[j].p + ar.op[j].d.length);
@@ -75,7 +74,7 @@ $(document).ready(function(){
 					        	var toPos = new Object();
 					        	toPos.line = pos.line;
 					        	toPos.ch = pos.ch + firstOp.i.length;
-					            xxxEditor.doc.replaceRange(firstOp.i, pos, toPos)
+					            xxxEditor.doc.replaceRange(firstOp.i, pos);
 					            var mark = xxxEditor.doc.markText(pos, toPos, {className:userClass});
 					            console.log(mark);
 					        } else if (firstOp.hasOwnProperty("d")) {
