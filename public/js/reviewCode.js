@@ -36,7 +36,8 @@ $(document).ready(function(){
 			theme: "solarized light",
 			readonly: "nocursor"
 		});
-	    $(editor.getWrapperElement()).height($(".reviewArea").height() - $(".timelineSlider").height() - 30).css("font-size","1.1em !important");
+		$(".CodeMirror").css("border","1px solid #ccc");
+	    $(editor.getWrapperElement()).height($(".reviewArea").height() - $(".timelineSlider").height() - 50).css("font-size","1.1em !important");
 	    window.xxxEditor = editor;
 	    setTimeout(function(){
             editor.refresh();
@@ -54,12 +55,14 @@ $(document).ready(function(){
 		  			window.ops = data.ops;
 		  			$(".timelineSlider").slider({min:0, max: ops.length, step:1});
 		  			$(".timelineSlider").slider('disable');
+
 				    var i = 0;
 					function replayCode() {
 					    ar = JSON.parse(ops[i]);
 					    var currentUser = JSON.parse(sessionStorage["userObj"]);
 					    var userClass = currentUser[ar.meta.source];
 					    $("." + userClass).tooltip({title:currentUser.username});
+
 					    if (ar.op.length > 1) {
 					    	for(var j = 0; j < ar.op.length; j++){
 					    		var pos = xxxEditor.posFromIndex(ar.op[j].p);

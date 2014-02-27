@@ -43,5 +43,5 @@ var options = {/*db: {type: 'redis'}*/}; // See docs for options. {type: 'redis'
 sharejs.attach(app, options);
 var server;
 
-server = app.listen(80);
+server = app.listen(1337);
 console.log('Server running at http://127.0.0.1:1337/');
