@@ -2,7 +2,7 @@
 
 var express = require('express')
   , sharejs = require('share').server
-  , exec = require('child_process').exec,
+  , exec = require('child_process').exec
   , passport = require('passport')
   , util = require('util')
   , GitHubStrategy = require('passport-github').Strategy;
