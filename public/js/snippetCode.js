@@ -737,9 +737,7 @@ var initApp = function() {
     window.currentUser = {};
     currentUser.color = _randomColor();
     currentUser.zodiac = _randomZodiac();
-    currentUser.username = _randomUsername(currentUser.zodiac);
-
-    $("#usernameBadge").html(currentUser.username);
+    currentUser.username = $("#usernameBadge").attr("data-username");
 
     var snippetId = window.location.hash.substring(1);
     sessionStorage.setItem("snippetId", snippetId);
@@ -1063,17 +1061,10 @@ $(document).ready(function() {
         $("#dialog").modal("show");
     }
 
-    $("#usernameBadge").editable({
-        type: 'text',
-        name: "usernameBadge",
-        placement: 'bottom',
-        value: $("#usernameBadge").val()
-    });
-
     $("#snippetnameBadge").editable({
         type: 'text',
         autotext: "never",
-        name: "usernameBadge",
+        name: "snippetnameBadge",
         placement: 'bottom',
         value: $("#snippetnameBadge").val()
     });

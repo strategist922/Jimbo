@@ -2,7 +2,33 @@
 
 var express = require('express')
   , sharejs = require('share').server
-  , exec = require('child_process').exec;
+  , exec = require('child_process').exec,
+  , passport = require('passport')
+  , util = require('util')
+  , GitHubStrategy = require('passport-github').Strategy;
+
+var GITHUB_CLIENT_ID = "4205dc2703361fad3d91";
+var GITHUB_CLIENT_SECRET = "a1e9e46293ffe3cabc6413cff705a14e4e39b451";
+
+passport.serializeUser(function(user, done) {
+    done(null, user);
+});
+
+passport.deserializeUser(function(obj, done) {
+    done(null, obj);
+});
+
+passport.use(new GitHubStrategy({
+      clientID: GITHUB_CLIENT_ID,
+      clientSecret: GITHUB_CLIENT_SECRET,
+      callbackURL: "http://www.jimbojs.com/auth/github/callback"
+    },
+    function(accessToken, refreshToken, profile, done) {
+  process.nextTick(function () {
+        return done(null, profile);
+    });
+  }
+));
 
 var app = express();
 app.disable('quiet');
@@ -16,6 +42,8 @@ app.configure(function() {
   app.use(express.cookieParser());
   app.use(express.session({ secret: 'osu-dwiz-jimbo' }));
   app.use(express.methodOverride());
+  app.use(passport.initialize());
+  app.use(passport.session());
   app.use(require('stylus').middleware({
     src: __dirname + '/public',
     compress: true

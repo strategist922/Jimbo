@@ -3,7 +3,7 @@ var SP = require('../models/snippetProvider-redis');
 var redis = require("redis"),
 client = redis.createClient();
 exports.newSnippet = function(req, res) {        
-    res.render("snippet/index");
+    res.render("snippet/index", { user: req.user });
 };
 
 exports.reviewCode = function(req, res) {
