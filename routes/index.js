@@ -32,6 +32,7 @@ module.exports = function(app) {
   });
 
   app.get('/auth/github/callback', passport.authenticate('github', { failureRedirect: '/login' }), function(req, res) {
+    console.log(req.user);
     if(req.session.retUrl)
       res.redirect('/snippet#' + req.session.retUrl);
     else
