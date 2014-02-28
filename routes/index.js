@@ -5,7 +5,7 @@ var snippet = require('./snippet')
 module.exports = function(app) {  
   function ensureAuthenticated(req, res, next) {
   if (req.isAuthenticated()) { return next(); }
-    res.redirect('/hashUrl');
+    res.redirect('/redirect');
   }
 
   // app.all('/snippet/*', requireAuthentication);
@@ -18,7 +18,12 @@ module.exports = function(app) {
     res.render('index', { title: 'Jimbo' , user: req.user});
   });
 
+  app.get('/redirect', function(req, res){
+      res.render('hashUrl', { user: req.user });
+  });
+
   app.get('/login', function(req, res){
+      req.session.retUrl = req.query.retUrl;
       res.render('login', { user: req.user });
   });
 
@@ -27,8 +32,10 @@ module.exports = function(app) {
   });
 
   app.get('/auth/github/callback', passport.authenticate('github', { failureRedirect: '/login' }), function(req, res) {
-    console.log(req);
-    res.redirect('/home');
+    if(req.session.retUrl)
+      res.redirect('/snippet#' + req.session.retUrl);
+    else
+      res.redirect('/home');
   });
 
   app.get('/logout', function(req, res){

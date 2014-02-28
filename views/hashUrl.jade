@@ -1,6 +1,9 @@
-script
-  var hash = window.location.hash;
-  if(hash.length > 30)
-  	window.location.href = "login&returnUrl=snippet" + hash;
-  else
-  	window.location.href = "login";
+doctype html
+html
+  head
+    script(type='text/javascript', charset='utf-8', src='http://code.jquery.com/jquery-2.0.0.min.js')
+    script(type='text/javascript', src='/js/hashUrl.js')
+  body
+    .container.text-center
+      .span4.offset4
+        Rediricting to login page
