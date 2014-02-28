@@ -24,19 +24,26 @@ passport.use(new GitHubStrategy({
       callbackURL: "http://www.jimbojs.com/auth/github/callback"
     },
     function(accessToken, refreshToken, profile, done) {
-  process.nextTick(function () {
+      console.log(accessToken);
+      process.nextTick(function () {
         return done(null, profile);
-    });
+      });
   }
 ));
 
 var app = express();
+var DEF_PORT = 80;
 app.disable('quiet');
 
 express.limit('10mb');
 app.configure(function() {
   app.set('views', __dirname + '/views');
   app.set('prject', __dirname + '/views/snippet');
+  app.use(require('stylus').middleware({
+    src: __dirname + '/public',
+    compress: true
+  }));
+  app.use(express.static(__dirname + '/public'));
   app.set('view engine', 'jade');
   app.use(express.bodyParser());          
   app.use(express.cookieParser());
@@ -44,11 +51,6 @@ app.configure(function() {
   app.use(express.methodOverride());
   app.use(passport.initialize());
   app.use(passport.session());
-  app.use(require('stylus').middleware({
-    src: __dirname + '/public',
-    compress: true
-  }));
-  app.use(express.static(__dirname + '/public'));
 });
    
 app.configure('development', function(){
@@ -71,5 +73,5 @@ var options = {/*db: {type: 'redis'}*/}; // See docs for options. {type: 'redis'
 sharejs.attach(app, options);
 var server;
 
-server = app.listen(80);
-console.log('Server running at http://127.0.0.1:1337/');
+server = app.listen(DEF_PORT);
+console.log('Jimbo is on port ' + DEF_PORT);

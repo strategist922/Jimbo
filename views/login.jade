@@ -1,1 +1,9 @@
-a(href="/auth/github") Login with GitHub
+extends layout
+
+block content
+  .container
+    .span4.offset4
+      h2 #{title}
+      a.btn.btn-primary.btn(href='/auth/github')
+        i.icon.icon-orange.icon-github
+        |   Login with Github

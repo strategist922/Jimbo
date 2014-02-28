@@ -10,13 +10,12 @@ module.exports = function(app) {
 
   // app.all('/snippet/*', requireAuthentication);
   // app.all('/snippet', requireAuthentication);
-  
-  app.get('/', function(req, res){
-    res.render('index', { title: 'Jimbo' });
+  app.get('/login', function(req, res){
+    res.render('login', { title: 'Jimbo - Login' });
   });
 
-  app.get('/account', ensureAuthenticated, function(req, res){
-    res.render('snippet/account', { user: req.user });
+  app.get('/home', ensureAuthenticated, function(req, res){
+    res.render('index', { title: 'Jimbo' });
   });
 
   app.get('/login', function(req, res){
