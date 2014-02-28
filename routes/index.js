@@ -5,6 +5,8 @@ var snippet = require('./snippet')
 module.exports = function(app) {  
   function ensureAuthenticated(req, res, next) {
   if (req.isAuthenticated()) { return next(); }
+    console.log(req);
+    req.session.returnUrl = "";
     res.redirect('/login')
   }
 
