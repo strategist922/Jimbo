@@ -665,12 +665,11 @@ function initCommunication() {
         communicationDoc.del(0, _here);
         var userAvatar = btoa(currentUser.zodiac);
 
-        var userContent = currentUser.username;
-        if(communicationDoc.getText().indexOf(userContent) > 0) {
+        if(communicationDoc.getText().indexOf(currentUser.username) > 0) {
             window.location.href = "/oops";
             return
         }
-        communicationDoc.insert(communicationDoc.getText().length, userContent);
+        communicationDoc.insert(communicationDoc.getText().length, currentUser.username + "." + currentUser.color + "." + userAvatar + "$");
 
         if (_collaborators.length == 0) {
             //First time access
