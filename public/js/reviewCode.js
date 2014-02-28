@@ -7,7 +7,7 @@ $(document).ready(function(){
 		_square = $("<div>").addClass("userSquare").css("background-color", user.color).attr("data-username", user.username).tooltip({
             placement: "bottom",
             title: user.username
-        }).append($("<img>").attr("src", "../img/zodiac/" + user.zodiac + ".png"));
+        }).append($("<img>").attr("src", user.zodiac));
         $(".nav.pull-right").prepend(_square);
     }
 	var layout = function() {
