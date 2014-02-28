@@ -53,7 +53,7 @@ html
                 li
                   a(data-libName='underscore', href='#') Underscore                                                                                                                                                                            
           .nav.pull-right            
-            a.label#usernameBadge(data-username="#{user.displayName}") #{user.displayName}
+            a.label#usernameBadge(data-avatar="#{user.avatar}", data-username="#{user.username}") #{user.displayName}
             a.badge.badge-warning#snippetnameBadge(data-original-title="Edit your snippet name", style="margin-left: 5px") Not assigned                
             a.btn.btn-small.btn-warning#shareButton(data-action='shareButton')
               i.icon-share                          

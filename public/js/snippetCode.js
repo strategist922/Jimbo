@@ -266,7 +266,7 @@ var editorInit = function(elem, mode, type) {
                 _square = $("<div>").addClass("userSquare").css("background-color", c).attr("data-username", u).tooltip({
                     placement: "bottom",
                     title: u
-                }).append($("<img>").attr("src", "../img/zodiac/" + z + ".png"));
+                }).append($("<img>").attr("src", z));
                 $(".nav.pull-right").prepend(_square);
             }
         } else if (cmdMsg.cmd == "chTab") {
@@ -289,7 +289,7 @@ var editorInit = function(elem, mode, type) {
                 }).tooltip({
                     title: cmdMsg.username,
                     placement: "right"
-                }).html($("<img>").attr("src", "../img/zodiac/" + cmdMsg.zodiac + ".png"))).append($("<div>").addClass("chatMsg").html(cmdMsg.message));
+                }).html($("<img>").attr("src", cmdMsg.zodiac))).append($("<div>").addClass("chatMsg").html(cmdMsg.message));
                 var separator = $("<div>").addClass("chatSeparator");
                 $(".chatMessages").append(separator);
                 $(".chatMessages").append(message);
@@ -327,11 +327,11 @@ var shoutHandler = function(cmdMsg) {
                 var _square = $("<div>").addClass("userSquare").css("background-color", color).attr("data-username", username).tooltip({
                     placement: "bottom",
                     title: username
-                }).append($("<img>").attr("src", "../img/zodiac/" + zodiac + ".png"));;
+                }).append($("<img>").attr("src", zodiac));;
 
                 $(".nav.pull-right").prepend(_square);
                 type = 'success';
-                _template = '<div class="noty_message"><div class="noty_icon" style="background:' + cmdMsg.color + '"><img src="../img/zodiac/' + cmdMsg.zodiac + '.png"></img></div><span class="noty_text" style="margin-left: 5px"></span><div class="noty_close"></div></div>';
+                _template = '<div class="noty_message"><div class="noty_icon" style="background:' + cmdMsg.color + '"><img src="' + cmdMsg.zodiac + '"></img></div><span class="noty_text" style="margin-left: 5px"></span><div class="noty_close"></div></div>';
                 break;
             case 'eu':
                 var _msg = msg;
@@ -345,7 +345,7 @@ var shoutHandler = function(cmdMsg) {
                 var _msg = cmdMsg.msg;
                 var color = cmdMsg.color;
                 var username = cmdMsg.username;
-                _template = '<div class="noty_message"><div class="noty_icon" style="background:' + cmdMsg.color + '"><img src="../img/zodiac/' + cmdMsg.zodiac + '.png"></img></div><span class="noty_text" style="margin-left: 5px"></span><div class="noty_close"></div></div>';
+                _template = '<div class="noty_message"><div class="noty_icon" style="background:' + cmdMsg.color + '"><img src="' + cmdMsg.zodiac + '"></img></div><span class="noty_text" style="margin-left: 5px"></span><div class="noty_close"></div></div>';
                 $(".userSquare[data-username='" + username + "']").remove();
                 type = 'error';
                 break;
@@ -408,7 +408,7 @@ var shoutHandler = function(cmdMsg) {
                         var cMarker = editors[cType].markText(from, to, {
                             className: "remoteChange-line-" + _user.username
                         });
-                        var cGutterMarker = $("<div>").addClass('gutterIcon').css("background-color", _user.color).append($("<img>").attr("src", "../img/zodiac/" + _user.zodiac + ".png"));
+                        var cGutterMarker = $("<div>").addClass('gutterIcon').css("background-color", _user.color).append($("<img>").attr("src", _user.zodiac));
                         editors[cType].setGutterMarker(line, "CodeMirror-remote-change", cGutterMarker.get(0));
                         //In gutter
                         setTimeout(function() {
@@ -464,7 +464,7 @@ var shoutHandler = function(cmdMsg) {
                     }).tooltip({
                         title: _username,
                         placement: "right"
-                    }).html($("<img>").attr("src", "../img/zodiac/" + _zodiac + ".png"))).append($("<div>").addClass("chatMsg").html(_msg));
+                    }).html($("<img>").attr("src", _zodiac))).append($("<div>").addClass("chatMsg").html(_msg));
                     var separator = $("<div>").addClass("chatSeparator");
                     $(".chatMessages").append(separator);
                     $(".chatMessages").append(message);
@@ -736,7 +736,7 @@ var _randomZodiac = function() {
 var initApp = function() {    
     window.currentUser = {};
     currentUser.color = _randomColor();
-    currentUser.zodiac = _randomZodiac();
+    currentUser.zodiac = $("#usernameBadge").attr("data-avatar");
     currentUser.username = $("#usernameBadge").attr("data-username");
 
     var snippetId = window.location.hash.substring(1);
