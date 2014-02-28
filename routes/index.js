@@ -14,7 +14,7 @@ module.exports = function(app) {
     res.render('login', { title: 'Jimbo - Login', user: req.user});
   });
 
-  app.get('/oops', function(req, res){
+  app.get('/oops', ensureAuthenticated, function(req, res){
     res.render('snippet/oops', { title: 'Jimbo - You are already in that snippet!', user: req.user});
   });
 
