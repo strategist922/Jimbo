@@ -658,11 +658,11 @@ function initCommunication() {
             return;
         }
         communicationDoc = comDoc;
-        if(communicationDoc.getText().indexOf(currentUser.username) > 0) {
-            window.location.href = "/oops";
-            window.reason = "oops";
-            return
-        }
+        // if(communicationDoc.getText().indexOf(currentUser.username) > 0) {
+        //     window.location.href = "/oops";
+        //     window.reason = "oops";
+        //     return
+        // }
 
         var _collaborators = communicationDoc.getText();
         var _here = _collaborators.indexOf("$");
