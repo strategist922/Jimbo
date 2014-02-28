@@ -666,7 +666,7 @@ function initCommunication() {
         var userAvatar = btoa(currentUser.zodiac);
 
         var userContent = currentUser.username + "." + currentUser.color + "." + userAvatar + "$";
-        if(communicationDoc.indexOf(userContent) > 0) {
+        if(communicationDoc.getText().indexOf(userContent) > 0) {
             window.location.href = "/oops";
             return
         }
