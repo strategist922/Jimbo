@@ -660,6 +660,7 @@ function initCommunication() {
         communicationDoc = comDoc;
         if(communicationDoc.getText().indexOf(currentUser.username) > 0) {
             window.location.href = "/oops";
+            window.reason = "oops";
             return
         }
 
@@ -886,25 +887,27 @@ window.onload = function() {
 }
 
 window.onbeforeunload = function(e) {
-    var cmdMsg;
-    if (communicationDoc !== null) {
-        cmdMsg = {
-            cmd: "off",
-            msg: currentUser.username + " just left your snippet!",
-            zodiac: currentUser.zodiac,
-            username: currentUser.username,
-            color: currentUser.color,
-            isPush: true
-        };
-        shoutOut(cmdMsg);
-        //communicationDoc.close();
-        cmdMsg = {
-            cmd: "chTab",
-            curTab: "no",
-            prevTab: currentTabGlobal,
-            isPush: false
-        };
-        shoutOut(cmdMsg);
+    if(window.reason != "oops") {
+        var cmdMsg;
+        if (communicationDoc !== null) {
+            cmdMsg = {
+                cmd: "off",
+                msg: currentUser.username + " just left your snippet!",
+                zodiac: currentUser.zodiac,
+                username: currentUser.username,
+                color: currentUser.color,
+                isPush: true
+            };
+            shoutOut(cmdMsg);
+            //communicationDoc.close();
+            cmdMsg = {
+                cmd: "chTab",
+                curTab: "no",
+                prevTab: currentTabGlobal,
+                isPush: false
+            };
+            shoutOut(cmdMsg);
+        }
     }
 }
 var currentTabGlobal = "";
