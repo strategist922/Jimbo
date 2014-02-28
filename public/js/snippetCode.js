@@ -657,18 +657,16 @@ function initCommunication() {
             console.log("communication " + error);
             return;
         }
-
         communicationDoc = comDoc;
+        if(communicationDoc.getText().indexOf(currentUser.username) > 0) {
+            window.location.href = "/oops";
+            return
+        }
 
         var _collaborators = communicationDoc.getText();
         var _here = _collaborators.indexOf("$");
         communicationDoc.del(0, _here);
         var userAvatar = btoa(currentUser.zodiac);
-
-        if(communicationDoc.getText().indexOf(currentUser.username) > 0) {
-            window.location.href = "/oops";
-            return
-        }
         communicationDoc.insert(communicationDoc.getText().length, currentUser.username + "." + currentUser.color + "." + userAvatar + "$");
 
         if (_collaborators.length == 0) {
