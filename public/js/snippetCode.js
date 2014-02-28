@@ -266,7 +266,7 @@ var editorInit = function(elem, mode, type) {
                 _square = $("<div>").addClass("userSquare").css("background-color", c).attr("data-username", u).tooltip({
                     placement: "bottom",
                     title: u
-                }).append($("<img>").attr("src", z));
+                }).append($("<img>").attr("src", atob(z));
                 $(".nav.pull-right").prepend(_square);
             }
         } else if (cmdMsg.cmd == "chTab") {
@@ -663,7 +663,7 @@ function initCommunication() {
         var _collaborators = communicationDoc.getText();
         var _here = _collaborators.indexOf("$");
         communicationDoc.del(0, _here);
-        communicationDoc.insert(communicationDoc.getText().length, currentUser.username + "." + currentUser.color + "." + currentUser.zodiac + "$");
+        communicationDoc.insert(communicationDoc.getText().length, currentUser.username + "." + currentUser.color + "." + btoa(currentUser.zodiac) + "$");
 
         if (_collaborators.length == 0) {
             //First time access
