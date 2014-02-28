@@ -32,7 +32,6 @@ module.exports = function(app) {
   });
 
   app.all('/logout', function(req, res){
-      req.session.retUrl = null;
       req.logout();
       res.redirect('/');
   });
