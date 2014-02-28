@@ -266,7 +266,7 @@ var editorInit = function(elem, mode, type) {
                 _square = $("<div>").addClass("userSquare").css("background-color", c).attr("data-username", u).tooltip({
                     placement: "bottom",
                     title: u
-                }).append($("<img>").attr("src", zz);
+                }).append($("<img>").attr("src", zz));
                 $(".nav.pull-right").prepend(_square);
             }
         } else if (cmdMsg.cmd == "chTab") {
