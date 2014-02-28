@@ -262,11 +262,11 @@ var editorInit = function(elem, mode, type) {
                 var u = _content[i].split(".")[0];
                 var c = _content[i].split(".")[1];
                 var z = _content[i].split(".")[2];
-
+                var zz = atob(z);
                 _square = $("<div>").addClass("userSquare").css("background-color", c).attr("data-username", u).tooltip({
                     placement: "bottom",
                     title: u
-                }).append($("<img>").attr("src", z);
+                }).append($("<img>").attr("src", zz);
                 $(".nav.pull-right").prepend(_square);
             }
         } else if (cmdMsg.cmd == "chTab") {
@@ -663,8 +663,8 @@ function initCommunication() {
         var _collaborators = communicationDoc.getText();
         var _here = _collaborators.indexOf("$");
         communicationDoc.del(0, _here);
-
-        communicationDoc.insert(communicationDoc.getText().length, currentUser.username + "." + currentUser.color + "." + currentUser.zodiac + "$");
+        var userAvatar = btoa(currentUser.zodiac);
+        communicationDoc.insert(communicationDoc.getText().length, currentUser.username + "." + currentUser.color + "." + userAvatar + "$");
 
         if (_collaborators.length == 0) {
             //First time access
