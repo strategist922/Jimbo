@@ -15,7 +15,7 @@ module.exports = function(app) {
   });
 
   app.get('/home', ensureAuthenticated, function(req, res){
-    res.render('index', { title: 'Jimbo' });
+    res.render('index', { title: 'Jimbo' , user: req.user});
   });
 
   app.get('/login', function(req, res){
