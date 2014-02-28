@@ -31,6 +31,11 @@ module.exports = function(app) {
       res.render('login', { user: req.user });
   });
 
+  app.all('/logout', function(req, res){
+      req.session.retUrl = null;
+      res.render('login');
+  });
+
   app.get('/auth/github', passport.authenticate('github'), function(req, res){
 
   });
