@@ -15,7 +15,7 @@ module.exports = function(app) {
   });
 
   app.get('/oops', ensureAuthenticated, function(req, res){
-    res.render('snippet/oops', { title: 'Dear' + req.user.username + ', You are already in that snippet!', user: req.user});
+    res.render('snippet/oops', { title: 'Dear <strong>' + req.user.username + '</strong>, You are already in that snippet!', user: req.user});
   });
 
   app.get('/home', ensureAuthenticated, function(req, res){
