@@ -21,10 +21,9 @@ passport.deserializeUser(function(obj, done) {
 passport.use(new GitHubStrategy({
       clientID: GITHUB_CLIENT_ID,
       clientSecret: GITHUB_CLIENT_SECRET,
-      callbackURL: "http://www.jimbojs.com/auth/github/callback"
+      callbackURL: "http://128.193.39.9/auth/github/callback"
     },
     function(accessToken, refreshToken, profile, done) {
-      console.log(accessToken);
       process.nextTick(function () {
         return done(null, profile);
       });
