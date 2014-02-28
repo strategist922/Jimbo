@@ -10,8 +10,8 @@ module.exports = function(app) {
 
   // app.all('/snippet/*', requireAuthentication);
   // app.all('/snippet', requireAuthentication);
-  app.get('/login', function(req, res){
-    res.render('login', { title: 'Jimbo - Login' });
+  app.get('/', function(req, res){
+    res.render('login', { title: 'Jimbo - Login', user: req.user});
   });
 
   app.get('/home', ensureAuthenticated, function(req, res){
@@ -27,12 +27,12 @@ module.exports = function(app) {
   });
 
   app.get('/auth/github/callback', passport.authenticate('github', { failureRedirect: '/login' }), function(req, res) {
-    res.redirect('/');
+    res.redirect('/home');
   });
 
   app.get('/logout', function(req, res){
       req.logout();
-      res.redirect('/');
+      res.redirect('/login');
   });
 
   app.get('/snippet', ensureAuthenticated, snippet.newSnippet);
