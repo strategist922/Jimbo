@@ -1,5 +1,5 @@
-var snippet = require('./snippet');    
-
+var snippet = require('./snippet')
+  , passport = require('passport');
 
 
 module.exports = function(app) {  
