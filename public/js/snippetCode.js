@@ -664,7 +664,13 @@ function initCommunication() {
         var _here = _collaborators.indexOf("$");
         communicationDoc.del(0, _here);
         var userAvatar = btoa(currentUser.zodiac);
-        communicationDoc.insert(communicationDoc.getText().length, currentUser.username + "." + currentUser.color + "." + userAvatar + "$");
+
+        var userContent = currentUser.username + "." + currentUser.color + "." + userAvatar + "$";
+        if(communicationDoc.indexOf(userContent) > 0) {
+            window.location.href = "/oops";
+            return
+        }
+        communicationDoc.insert(communicationDoc.getText().length, userContent);
 
         if (_collaborators.length == 0) {
             //First time access
