@@ -5,9 +5,7 @@ var snippet = require('./snippet')
 module.exports = function(app) {  
   function ensureAuthenticated(req, res, next) {
   if (req.isAuthenticated()) { return next(); }
-    console.log(req);
-    req.session.returnUrl = "";
-    res.redirect('/login')
+    res.redirect('/hashUrl');
   }
 
   // app.all('/snippet/*', requireAuthentication);
@@ -29,6 +27,7 @@ module.exports = function(app) {
   });
 
   app.get('/auth/github/callback', passport.authenticate('github', { failureRedirect: '/login' }), function(req, res) {
+    console.log(req);
     res.redirect('/home');
   });
 

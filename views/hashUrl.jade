@@ -1,0 +1,6 @@
+script
+  var hash = window.location.hash;
+  if(hash.length > 30)
+  	window.location.href = "login&returnUrl=snippet" + hash;
+  else
+  	window.location.href = "login";
