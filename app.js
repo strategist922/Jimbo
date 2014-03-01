@@ -21,7 +21,7 @@ passport.deserializeUser(function(obj, done) {
 passport.use(new GitHubStrategy({
       clientID: GITHUB_CLIENT_ID,
       clientSecret: GITHUB_CLIENT_SECRET,
-      callbackURL: "http://localhost:3000/auth/github/callback"
+      callbackURL: "http://128.193.39.9/auth/github/callback"
     },
     function(accessToken, refreshToken, profile, done) {
       process.nextTick(function () {
@@ -31,7 +31,7 @@ passport.use(new GitHubStrategy({
 ));
 
 var app = express();
-var DEF_PORT = 3000;
+var DEF_PORT = 80;
 app.disable('quiet');
 
 express.limit('10mb');
