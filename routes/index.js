@@ -31,6 +31,11 @@ module.exports = function(app) {
       res.render('login', { user: req.user });
   });
 
+  app.all('/clean', function(req, res){
+      req.session.retUrl = null;
+      res.redirect('/');
+  });
+
   app.all('/logout', function(req, res){
       req.logout();
       res.redirect('/');
@@ -41,7 +46,6 @@ module.exports = function(app) {
   });
 
   app.get('/auth/github/callback', passport.authenticate('github', { failureRedirect: '/login' }), function(req, res) {
-    console.log(req.user);
     if(req.session.retUrl)
       res.redirect('/snippet#' + req.session.retUrl);
     else

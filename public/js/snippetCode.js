@@ -11,12 +11,12 @@ var getURL = function(url, c) {
     };
 };
 
-var logout = function() {
+var cleanUp = function() {
     $.ajax({
-        url:"/logout",
+        url:"/clean",
         type: "GET",
         success:function(){
-            alert("Thanks!");
+
         }, error: function(err){
             console.log(err);
         }
@@ -314,7 +314,7 @@ var editorInit = function(elem, mode, type) {
             communicationDoc.del(0, communicationDoc.getText().length);
             var _u = cmdMsg.username;
             var _c = cmdMsg.color;
-            var _z = cmdMsg.zodiac;
+            var _z = btoa(cmdMsg.zodiac);
             var _u_c_z = _u + "." + _c + "." + _z + "$";
             var _newCols = _cols.replace(_u_c_z, "");
             communicationDoc.insert(0, _newCols);
@@ -920,7 +920,7 @@ window.onbeforeunload = function(e) {
         };
         shoutOut(cmdMsg);
     }
-    logout();
+    cleanUp();
 }
 var currentTabGlobal = "";
 
