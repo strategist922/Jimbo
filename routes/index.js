@@ -33,7 +33,7 @@ module.exports = function(app) {
 
   app.all('/clean', function(req, res){
       req.session.retUrl = null;
-      res.redirect('/');
+      res.render('index', { title: 'Jimbo' , user: req.user});
   });
 
   app.all('/logout', function(req, res){
