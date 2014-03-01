@@ -842,7 +842,7 @@ var createEditorMode = function(elem, mode, type) {
             console.error(error);
             return;
         }
-
+        _edtr.username = currentUser.username;
         newDoc.attach_cm(_edtr);
         _edtr.setOption("readOnly", false);
 
