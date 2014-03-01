@@ -73,7 +73,7 @@ $(document).ready(function(){
 		  				var op = tempOp.op[0];
 
 		  				var owner = op.owner;
-		  				if(contributers.indexOf(owner) < 0){
+		  				if(owner != undefined && contributers.indexOf(owner) < 0){
 		  					if($(".userSquare[data-username='" + owner+ "']").length == 0){
 		  						var user = {username: owner, color:_randomColor()}
 		  						addUser(user);
@@ -144,14 +144,13 @@ $(document).ready(function(){
 			{slide:function(event, ui){
 				var step = ui.value;
 				xxxEditor.setValue("");
-			    var currentUser = JSON.parse(sessionStorage["userObj"]);
 			    for(var i = 0 ; i < step; i++){
 			    	ar = JSON.parse(ops[i]);
-			    	var userClass = currentUser[ar.meta.source];
 				    if (ar.op.length > 1) {
 				    	for(var j = 0; j < ar.op.length; j++){
 				    		var pos = xxxEditor.posFromIndex(ar.op[j].p);
 					    	if (ar.op[j].hasOwnProperty("i")) {
+					    		var userClass = ar.op[j].owner;
 					            xxxEditor.doc.replaceRange(ar.op[j].i, pos);
 					            toPos = xxxEditor.posFromIndex(ar.op[j].p + ar.op[j].i.length);
 				            	var mark = xxxEditor.doc.markText(pos, toPos, {className:userClass});
@@ -164,6 +163,7 @@ $(document).ready(function(){
 				        var firstOp = ar.op[0];
 				        var pos = xxxEditor.posFromIndex(firstOp.p)
 				        if (firstOp.hasOwnProperty("i")) {
+				        	var userClass = firstOp.owner;
 				        	var toPos = new Object();
 				        	toPos.line = pos.line;
 				        	toPos.ch = pos.ch + firstOp.i.length;
