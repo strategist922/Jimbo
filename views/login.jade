@@ -1,9 +1,15 @@
 extends layout
 
 block content
-  .container
-    .span4.offset4(style="margin-top: 30%")
-      h2 #{title}
-      a.btn.btn-primary.btn(href='/auth/github')
-        i.fa.fa-github
-        |   Login with Github
+  .main-container
+    .row.login-container
+      .logo.text-center
+        img(src="../img/icon.png",alt="Logo")
+        | Welcome to
+        h3 JimboJS
+      .login
+        .text-center
+          a.btn.btn-default.btn-login(href="/auth/github")
+            i.fa.fa-lg.fa-github
+            |&nbsp;Login with Github
+      .arrow-left
