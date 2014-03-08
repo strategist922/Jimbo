@@ -57,43 +57,46 @@ $(document).ready(function(){
         }, 10);
 	}
 	initView();
-	window.cleanOps = function() {
+	var cleanOps = function() {
 		final = [];
 		tempIns = {ops:[]};
 		tempDel = {ops:[]};
 		for(i=0;i<ops.length;i++){
-		 op = JSON.parse(ops[i]);
-		 if(op.op[0].hasOwnProperty("i")){
-		   tempIns.ops.push(op);
-		   for(j=i+1;j<ops.length;j++){
-		     opCon = JSON.parse(ops[j]);
-		     if(opCon.op[0].hasOwnProperty("i")){
-		       tempIns.ops.push(opCon);
-		     }
-		     else {
-		       final.push(tempIns);
-		       tempIns = {ops:[]};
-		       i = j-1;
-		       break;
-		     }
-		   }
-		  } else if(op.op[0].hasOwnProperty("d")){
-		   tempDel.ops.push(op);
-		   for(j=i+1;j<ops.length;j++){
-		     opCon = JSON.parse(ops[j]);
-		     if(opCon.op[0].hasOwnProperty("d")){
-		       tempDel.ops.push(opCon);
-		     }
-		     else {
-		       final.push(tempDel);
-		       tempDel = {ops:[]};
-		       i = j-1;
-		       break;
-		     }
-		   }
-		  }
+			op = JSON.parse(ops[i]);
+		 	if(op.op[0].hasOwnProperty("i")){
+		   		tempIns.ops.push(op);
+		   		for(j=i+1;j<ops.length;j++){
+		     		opCon = JSON.parse(ops[j]);
+		     		if(opCon.op[0].hasOwnProperty("i")){
+		       			tempIns.ops.push(opCon);
+		     		}
+		     		else {
+		       			final.push(tempIns);
+		       			tempIns = {ops:[]};
+		       			i = j-1;
+		       			break;
+		     		}
+		   		}
+		  	}
+		  	else if(op.op[0].hasOwnProperty("d")){
+		   		tempDel.ops.push(op);
+		   		for(j=i+1;j<ops.length;j++){
+		     		opCon = JSON.parse(ops[j]);
+		     		if(opCon.op[0].hasOwnProperty("d")){
+		       		tempDel.ops.push(opCon);
+		     		}
+		     		else {
+		       			final.push(tempDel);
+		       			tempDel = {ops:[]};
+		       			i = j-1;
+		       			break;
+		     		}
+		   		}
+		  	}
 		}
+		return final;
 	}
+
 	var getOps = function(name) {
 		$.ajax({
 		  	type: "GET",
@@ -103,7 +106,8 @@ $(document).ready(function(){
 		  			$(".loading-panel").hide();
 		  			$(".container").removeClass("hidden");
 		  			window.ops = data.ops;
-		  			$(".timelineSlider").slider({min:0, max: ops.length, step:1});
+		  			window.finalOps = cleanOps();
+		  			$(".timelineSlider").slider({min:0, max: finalOps.length, step:1});
 		  			$(".timelineSlider").slider('disable');
 		  			for(var j = 0; j < ops.length; j++) {
 		  				var tempOp = JSON.parse(ops[j]);
