@@ -188,7 +188,7 @@ $(document).ready(function(){
 			    for(var i = 0 ; i < step; i++){
 			    	stepOps = finalOps[i];
 			    	for(var j = 0 ; j < stepOps.ops.length; j++){
-			    		ar = JSON.parse(stepOps.ops[j]);
+			    		ar = stepOps.ops[j];
 					    if (ar.op.length > 1) {
 					    	for(var k = 0; k < ar.op.length; k++){
 					    		var pos = xxxEditor.posFromIndex(ar.op[k].p);
