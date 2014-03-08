@@ -73,7 +73,7 @@ $(document).ready(function(){
 		     else {
 		       final.push(tempIns);
 		       tempIns.ops = [];
-		       j = ops.length + 1;
+		       break;
 		     }
 		   }
 		  } else if(op.op[0].hasOwnProperty("d")){
@@ -86,7 +86,7 @@ $(document).ready(function(){
 		     else {
 		       final.push(tempDel);
 		       tempDel.ops = [];
-		       j = ops.length + 1;
+		       break;
 		     }
 		   }
 		  }
