@@ -57,7 +57,7 @@ $(document).ready(function(){
         }, 10);
 	}
 	initView();
-	var cleanOps = function() {
+	window.cleanOps = function() {
 		final = [];
 		tempIns = {ops:[]};
 		tempDel = {ops:[]};
