@@ -73,6 +73,7 @@ $(document).ready(function(){
 		     else {
 		       final.push(tempIns);
 		       tempIns.ops = [];
+		       continue;
 		     }
 		   }
 		  } else if(op.op[0].hasOwnProperty("d")){
@@ -85,6 +86,7 @@ $(document).ready(function(){
 		     else {
 		       final.push(tempDel);
 		       tempDel.ops = [];
+		       continue;
 		     }
 		   }
 		  }
