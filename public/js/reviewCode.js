@@ -69,6 +69,11 @@ $(document).ready(function(){
 		     		opCon = JSON.parse(ops[j]);
 		     		if(opCon.op[0].hasOwnProperty("i")){
 		       			tempIns.ops.push(opCon);
+		       			if(j == ops.length){
+		       				final.push(tempIns);
+		       				tempIns = {ops:[]};
+		       				i = j-1;
+		       			}
 		     		}
 		     		else {
 		       			final.push(tempIns);
@@ -83,7 +88,12 @@ $(document).ready(function(){
 		   		for(j=i+1;j<ops.length;j++){
 		     		opCon = JSON.parse(ops[j]);
 		     		if(opCon.op[0].hasOwnProperty("d")){
-		       		tempDel.ops.push(opCon);
+		       			tempDel.ops.push(opCon);
+		       			if(j == ops.length){
+		       				final.push(tempDel);
+			       			tempDel = {ops:[]};
+			       			i = j-1;
+		       			}
 		     		}
 		     		else {
 		       			final.push(tempDel);
