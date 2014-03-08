@@ -180,7 +180,7 @@ $(document).ready(function(){
 			        }
 			    }
 	    	}
-	    	i++;
+	    	i = i + 1;
 		    $(".timelineSlider").slider("value", i);
 		    if (i < finalOps.length);
 		        setTimeout(replayCode, SPEED);
