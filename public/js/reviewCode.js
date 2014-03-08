@@ -57,6 +57,39 @@ $(document).ready(function(){
         }, 10);
 	}
 	initView();
+	var cleanOps = function() {
+		final = [];
+		tempIns = {ops:[]};
+		tempDel = {ops:[]};
+		for(i=0;i<ops.length;i++){
+		 op = JSON.parse(ops[i]);
+		 if(op.op[0].hasOwnProperty("i")){
+		   tempIns.ops.push(op);
+		   for(j=i+1;j<ops.length;j++){
+		     opCon = JSON.parse(ops[j]);
+		     if(opCon.op[0].hasOwnProperty("i")){
+		       tempIns.ops.push(opCon);
+		     }
+		     else {
+		       final.push(tempIns);
+		       tempIns.ops = [];
+		     }
+		   }
+		  } else if(op.op[0].hasOwnProperty("d")){
+		   tempDel.ops.push(op);
+		   for(j=i+1;j<ops.length;j++){
+		     opCon = JSON.parse(ops[j]);
+		     if(opCon.op[0].hasOwnProperty("d")){
+		       tempDel.ops.push(opCon);
+		     }
+		     else {
+		       final.push(tempDel);
+		       tempDel.ops = [];
+		     }
+		   }
+		  }
+		}
+	}
 	var getOps = function(name) {
 		$.ajax({
 		  	type: "GET",
