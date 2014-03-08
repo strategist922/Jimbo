@@ -182,7 +182,7 @@ $(document).ready(function(){
 	    	}
 	    	i = i + 1;
 		    $(".timelineSlider").slider("value", i);
-		    if (i < finalOps.length);
+		    if (i < finalOps.length)
 		        setTimeout(replayCode, SPEED);
 		    else
 		    	$(".timelineSlider").slider('enable');
