@@ -73,7 +73,7 @@ $(document).ready(function(){
 		     else {
 		       final.push(tempIns);
 		       tempIns.ops = [];
-		       i = j;
+		       i = j-1;
 		       break;
 		     }
 		   }
@@ -87,7 +87,7 @@ $(document).ready(function(){
 		     else {
 		       final.push(tempDel);
 		       tempDel.ops = [];
-		       i = j;
+		       i = j-1;
 		       break;
 		     }
 		   }
