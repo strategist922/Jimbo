@@ -1,4 +1,4 @@
-var SPEED = 80;
+var SPEED = 50;
 $(document).ready(function(){
 	var snippetId = window.location.hash.split("#")[1];
 	var contributers = [];
@@ -183,7 +183,7 @@ $(document).ready(function(){
 	    	i = i + 1;
 		    $(".timelineSlider").slider("value", i);
 		    if (i < finalOps.length)
-		        setTimeout(replayCode, SPEED);
+		        setTimeout(replayCode, SPEED * stepOps.ops.length);
 		    else
 		    	$(".timelineSlider").slider('enable');
 		}
