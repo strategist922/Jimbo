@@ -148,36 +148,38 @@ $(document).ready(function(){
 		    ar = JSON.parse(ops[i]);
 		    var currentUser = JSON.parse(sessionStorage["userObj"]);
 		    $("." + userClass).tooltip({title:currentUser.username});
-
-		    if (ar.op.length > 1) {
-		    	for(var j = 0; j < ar.op.length; j++){
-		    		var userClass = ar.op[j].owner;
-		    		var pos = xxxEditor.posFromIndex(ar.op[j].p);
-			    	if (ar.op[j].hasOwnProperty("i")) {
-			            xxxEditor.doc.replaceRange(ar.op[j].i, pos);
-			            toPos = xxxEditor.posFromIndex(ar.op[j].p + ar.op[j].i.length);
+	    	var stepOps = finalOps[i];
+	    	for(var j = 0 ; j < stepOps.ops.length; j++){
+	    		ar = stepOps.ops[j];
+			    if (ar.op.length > 1) {
+			    	for(var k = 0; k < ar.op.length; k++){
+			    		var pos = xxxEditor.posFromIndex(ar.op[k].p);
+				    	if (ar.op[k].hasOwnProperty("i")) {
+				    		var userClass = ar.op[k].owner;
+				            xxxEditor.doc.replaceRange(ar.op[k].i, pos);
+				            toPos = xxxEditor.posFromIndex(ar.op[k].p + ar.op[k].i.length);
+			            	var mark = xxxEditor.doc.markText(pos, toPos, {className:userClass});
+				        } else if (ar.op[k].hasOwnProperty("d")) {
+				            toPos = xxxEditor.posFromIndex(ar.op[k].p + ar.op[k].d.length);
+				            xxxEditor.doc.replaceRange("", pos, toPos);
+				        }
+			    	}
+			    } else {
+			        var firstOp = ar.op[0];
+			        var pos = xxxEditor.posFromIndex(firstOp.p)
+			        if (firstOp.hasOwnProperty("i")) {
+			        	var userClass = firstOp.owner;
+			        	var toPos = new Object();
+			        	toPos.line = pos.line;
+			        	toPos.ch = pos.ch + firstOp.i.length;
+			            xxxEditor.doc.replaceRange(firstOp.i, pos);
 			            var mark = xxxEditor.doc.markText(pos, toPos, {className:userClass});
-			        } else if (ar.op[j].hasOwnProperty("d")) {
-			            toPos = xxxEditor.posFromIndex(ar.op[j].p + ar.op[j].d.length);
-			            xxxEditor.doc.replaceRange("", pos, toPos);
+			        } else if (firstOp.hasOwnProperty("d")) {
+			            var toPos = xxxEditor.posFromIndex(firstOp.p + firstOp.d.length);
+			            xxxEditor.doc.replaceRange("", pos, toPos)
 			        }
-		    	}
-		    } else {
-		        var firstOp = ar.op[0];
-		        var userClass = firstOp.owner;
-		        var pos = xxxEditor.posFromIndex(firstOp.p)
-		        if (firstOp.hasOwnProperty("i")) {
-		        	var toPos = new Object();
-		        	toPos.line = pos.line;
-		        	toPos.ch = pos.ch + firstOp.i.length;
-		            xxxEditor.doc.replaceRange(firstOp.i, pos);
-		            var mark = xxxEditor.doc.markText(pos, toPos, {className:userClass});
-		        } else if (firstOp.hasOwnProperty("d")) {
-		            var toPos = xxxEditor.posFromIndex(firstOp.p + firstOp.d.length);
-		            xxxEditor.doc.replaceRange("", pos, toPos)
-		        }
-		    }
-		    i++;
+			    }
+	    	}
 		    $(".timelineSlider").slider("value", i);
 		    if (i < ops.length)
 		        setTimeout(replayCode, SPEED);
@@ -228,7 +230,7 @@ $(document).ready(function(){
 					        }
 					    }
 			    	}
-				};
+				}
 			}
 		})
 	}
