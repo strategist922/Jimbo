@@ -69,7 +69,7 @@ $(document).ready(function(){
 		     		opCon = JSON.parse(ops[j]);
 		     		if(opCon.op[0].hasOwnProperty("i")){
 		       			tempIns.ops.push(opCon);
-		       			if(j == ops.length){
+		       			if(j == ops.length - 1){
 		       				final.push(tempIns);
 		       				tempIns = {ops:[]};
 		       				i = j-1;
@@ -89,7 +89,7 @@ $(document).ready(function(){
 		     		opCon = JSON.parse(ops[j]);
 		     		if(opCon.op[0].hasOwnProperty("d")){
 		       			tempDel.ops.push(opCon);
-		       			if(j == ops.length){
+		       			if(j == ops.length - 1){
 		       				final.push(tempDel);
 			       			tempDel = {ops:[]};
 			       			i = j-1;
