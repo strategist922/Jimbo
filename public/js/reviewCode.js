@@ -18,7 +18,7 @@ $(document).ready(function(){
 		_square = $("<div>").addClass("userSquare").attr("data-username", user.username).tooltip({
             placement: "bottom",
             title: user.username
-        }).append().append($("<div>").css({"background":user.color, "height":"5px", "margin":"0 -1px"}));
+        }).append(zodiac).append($("<div>").css({"background":user.color, "height":"5px", "margin":"0 -1px"}));
         $(".nav.pull-right").prepend(_square);
         createStyle(user.username, user.color);
     }
