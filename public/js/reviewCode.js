@@ -14,10 +14,11 @@ $(document).ready(function(){
 
 	//add users list to the top of page with their colors
 	var addUser = function(user) {
+		var zodiac = (user.zodiac != undefined)?$("<img>").attr("src", user.zodiac):$("<i>").addClass("icon icon-user");
 		_square = $("<div>").addClass("userSquare").attr("data-username", user.username).tooltip({
             placement: "bottom",
             title: user.username
-        }).append($("<img>").attr("src", user.zodiac)).append($("<div>").css({"background":user.color, "height":"5px", "margin":"0 -1px"}));
+        }).append().append($("<div>").css({"background":user.color, "height":"5px", "margin":"0 -1px"}));
         $(".nav.pull-right").prepend(_square);
         createStyle(user.username, user.color);
     }
@@ -57,20 +58,25 @@ $(document).ready(function(){
 	initView();
 	var cleanOps = function() {
 		final = [];
-		tempIns = {ops:[]};
-		tempDel = {ops:[]};
-		for(i=0;i<ops.length;i++){
-			op = JSON.parse(ops[i]);
+		var tempIns = {ops:[]};
+		var tempDel = {ops:[]};
+		for(var i=0;i<ops.length;i++){
+			var op = JSON.parse(ops[i]);
 		 	if(op.op[0].hasOwnProperty("i")){
 		   		tempIns.ops.push(op);
-		   		for(j=i+1;j<ops.length;j++){
-		     		opCon = JSON.parse(ops[j]);
+		   		for(var j=i+1;;j++){
+		   			if(j >= ops.length){
+		   				final.push(tempIns);
+		   				break;
+		   			}
+		     		var opCon = JSON.parse(ops[j]);
 		     		if(opCon.op[0].hasOwnProperty("i")){
 		       			tempIns.ops.push(opCon);
 		       			if(j == ops.length - 1){
 		       				final.push(tempIns);
 		       				tempIns = {ops:[]};
 		       				i = j-1;
+		       				break;
 		       			}
 		     		}
 		     		else {
@@ -83,14 +89,19 @@ $(document).ready(function(){
 		  	}
 		  	else if(op.op[0].hasOwnProperty("d")){
 		   		tempDel.ops.push(op);
-		   		for(j=i+1;j<ops.length;j++){
-		     		opCon = JSON.parse(ops[j]);
+		   		for(var j=i+1;;j++){
+		   			if(j >= ops.length){
+		   				final.push(tempIns);
+		   				break;
+		   			}
+		     		var opCon = JSON.parse(ops[j]);
 		     		if(opCon.op[0].hasOwnProperty("d")){
 		       			tempDel.ops.push(opCon);
 		       			if(j == ops.length - 1){
 		       				final.push(tempDel);
 			       			tempDel = {ops:[]};
 			       			i = j-1;
+			       			break;
 		       			}
 		     		}
 		     		else {
