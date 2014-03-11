@@ -275,10 +275,10 @@ var editorInit = function(elem, mode, type) {
                 var c = _content[i].split(".")[1];
                 var z = _content[i].split(".")[2];
                 var zz = atob(z);
-                _square = $("<div>").addClass("userSquare").css("background-color", c).attr("data-username", u).tooltip({
+                _square = $("<div>").addClass("userSquare").attr("data-username", u).tooltip({
                     placement: "bottom",
                     title: u
-                }).append($("<img>").attr("src", zz));
+                }).append($("<img>").attr("src", zz)).append($("<div>").css({"background":c, "height":"5px", "margin":"0 -1px"}));
                 $(".nav.pull-right").prepend(_square);
             }
         } else if (cmdMsg.cmd == "chTab") {
@@ -308,16 +308,16 @@ var editorInit = function(elem, mode, type) {
                 $(".chatMessages")[0].scrollTop = $(".chatMessages")[0].scrollHeight;
             }
         } else if (cmdMsg.cmd == "off") {
-            //Remove user from file
-            //break;
-            var _cols = communicationDoc.getText();
-            communicationDoc.del(0, communicationDoc.getText().length);
-            var _u = cmdMsg.username;
-            var _c = cmdMsg.color;
-            var _z = btoa(cmdMsg.zodiac);
-            var _u_c_z = _u + "." + _c + "." + _z + "$";
-            var _newCols = _cols.replace(_u_c_z, "");
-            communicationDoc.insert(0, _newCols);
+            setTimeout(function(){
+                var _cols = communicationDoc.getText();
+                communicationDoc.del(0, communicationDoc.getText().length);
+                var _u = cmdMsg.username;
+                var _c = cmdMsg.color;
+                var _z = btoa(cmdMsg.zodiac);
+                var _u_c_z = _u + "." + _c + "." + _z + "$";
+                var _newCols = _cols.replace(_u_c_z, "");
+                communicationDoc.insert(0, _newCols);
+            }, 10);
             $(".userSquare[data-username='" + _u + "']").remove();
         }
         communicationDoc.shout(cmdMsg);
@@ -354,6 +354,7 @@ var shoutHandler = function(cmdMsg) {
                 type = 'warning';
                 break;
             case 'off':
+                if(currentUser && currentUser.username == cmdMsg.username) break;
                 var _msg = cmdMsg.msg;
                 var color = cmdMsg.color;
                 var username = cmdMsg.username;
@@ -901,7 +902,7 @@ window.onload = function() {
 window.onbeforeunload = function(e) {
 
     var cmdMsg;
-    if (communicationDoc !== null) {
+    if (communicationDoc != null) {
         cmdMsg = {
             cmd: "off",
             msg: currentUser.username + " just left your snippet!",

@@ -14,12 +14,10 @@ $(document).ready(function(){
 
 	//add users list to the top of page with their colors
 	var addUser = function(user) {
-		_square = $("<div>").addClass("userSquare").css("background-color", user.color).attr("data-username", user.username).tooltip({
+		_square = $("<div>").addClass("userSquare").attr("data-username", user.username).tooltip({
             placement: "bottom",
             title: user.username
-        });
-        if(user.zodiac)
-        	_square.append($("<img>").attr("src", user.zodiac));
+        }).append($("<img>").attr("src", user.zodiac)).append($("<div>").css({"background":user.color, "height":"5px", "margin":"0 -1px"}));
         $(".nav.pull-right").prepend(_square);
         createStyle(user.username, user.color);
     }
