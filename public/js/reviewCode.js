@@ -91,7 +91,7 @@ $(document).ready(function(){
 		   		tempDel.ops.push(op);
 		   		for(var j=i+1;;j++){
 		   			if(j >= ops.length){
-		   				final.push(tempIns);
+		   				final.push(tempDel);
 		   				break;
 		   			}
 		     		var opCon = JSON.parse(ops[j]);
