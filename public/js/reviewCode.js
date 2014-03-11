@@ -46,7 +46,7 @@ $(document).ready(function(){
 			mode: "text/" + mode,
 			lineNumbers: true,
 			theme: "solarized light",
-			readonly: "nocursor"
+			readOnly: "nocursor"
 		});
 		$(".CodeMirror").css("border","1px solid #ccc");
 	    $(editor.getWrapperElement()).height($(".reviewArea").height() - $(".timelineSlider").height() - 50).css("font-size","1.1em !important");
