@@ -336,10 +336,10 @@ var shoutHandler = function(cmdMsg) {
                 var username = cmdMsg.username;
                 var zodiac = cmdMsg.zodiac;
 
-                var _square = $("<div>").addClass("userSquare").css("background-color", color).attr("data-username", username).tooltip({
+                var _square = $("<div>").addClass("userSquare").attr("data-username", username).tooltip({
                     placement: "bottom",
                     title: username
-                }).append($("<img>").attr("src", zodiac));;
+                }).append($("<img>").attr("src", zodiac)).append($("<div>").css({"background":color, "height":"5px", "margin":"0 -1px"}));
 
                 $(".nav.pull-right").prepend(_square);
                 type = 'success';
