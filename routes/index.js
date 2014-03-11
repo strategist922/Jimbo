@@ -11,7 +11,7 @@ module.exports = function(app) {
   // app.all('/snippet/*', requireAuthentication);
   // app.all('/snippet', requireAuthentication);
   app.get('/', function(req, res){
-    if(!user)
+    if(!req.user)
       res.render('login', { title: 'Jimbo - Login', user: req.user});
     else
       res.redirect('/home');
