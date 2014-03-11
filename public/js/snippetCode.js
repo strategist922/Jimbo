@@ -11,10 +11,11 @@ var getURL = function(url, c) {
     };
 };
 
-var cleanUp = function() {
+var cleanUp = function(cmdMsg) {
     $.ajax({
         url:"/clean",
-        type: "GET",
+        type: "POST",
+        data: cmdMsg
         success:function(){
 
         }, error: function(err){
@@ -349,13 +350,15 @@ var shoutHandler = function(cmdMsg) {
                 var username = cmdMsg.username;
                 var _z = btoa(cmdMsg.zodiac);
 
+                //TODO: cleanUp up this on server
                 var _cols = communicationDoc.getText();
                 communicationDoc.del(0, communicationDoc.getText().length);
                 var _u_c_z = username + "." + color + "." + _z + "$";
                 var _newCols = _cols.replace(_u_c_z, "");
                 communicationDoc.insert(0, _newCols);
+
                 type = 'error';
-                _template = '<div class="noty_message"><div class="noty_icon" style="background:' + cmdMsg.color + '"><img src="' + cmdMsg.zodiac + '"></img></div><span class="noty_text" style="margin-left: 5px"></span><div class="noty_close"></div></div>';
+                _template = '<div class="noty_message"><div class="noty_icon" style="background:' + color + '"><img src="' + zodiac + '"></img></div><span class="noty_text" style="margin-left: 5px"></span><div class="noty_close"></div></div>';
                 $(".userSquare[data-username='" + username + "']").remove();
                 break;
             case 'lock':
@@ -908,6 +911,7 @@ window.onbeforeunload = function(e) {
             isPush: true
         };
         shoutOut(cmdMsg);
+        cleanUp(cmdMsg);
         //communicationDoc.close();
         cmdMsg = {
             cmd: "chTab",
@@ -917,7 +921,6 @@ window.onbeforeunload = function(e) {
         };
         shoutOut(cmdMsg);
     }
-    cleanUp();
 }
 var currentTabGlobal = "";
 
