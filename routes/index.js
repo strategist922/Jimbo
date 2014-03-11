@@ -11,7 +11,10 @@ module.exports = function(app) {
   // app.all('/snippet/*', requireAuthentication);
   // app.all('/snippet', requireAuthentication);
   app.get('/', function(req, res){
-    res.render('login', { title: 'Jimbo - Login', user: req.user});
+    if(!user)
+      res.render('login', { title: 'Jimbo - Login', user: req.user});
+    else
+      res.redirect('/home');
   });
 
   app.get('/oops', ensureAuthenticated, function(req, res){
