@@ -307,19 +307,8 @@ var editorInit = function(elem, mode, type) {
                 $(".chatMessages").append(message);
                 $(".chatMessages")[0].scrollTop = $(".chatMessages")[0].scrollHeight;
             }
-        } else if (cmdMsg.cmd == "off") {
-            setTimeout(function(){
-                var _cols = communicationDoc.getText();
-                communicationDoc.del(0, communicationDoc.getText().length);
-                var _u = cmdMsg.username;
-                var _c = cmdMsg.color;
-                var _z = btoa(cmdMsg.zodiac);
-                var _u_c_z = _u + "." + _c + "." + _z + "$";
-                var _newCols = _cols.replace(_u_c_z, "");
-                communicationDoc.insert(0, _newCols);
-            }, 10);
-            $(".userSquare[data-username='" + _u + "']").remove();
         }
+
         communicationDoc.shout(cmdMsg);
     }
 
@@ -358,9 +347,16 @@ var shoutHandler = function(cmdMsg) {
                 var _msg = cmdMsg.msg;
                 var color = cmdMsg.color;
                 var username = cmdMsg.username;
+                var _z = btoa(cmdMsg.zodiac);
+
+                var _cols = communicationDoc.getText();
+                communicationDoc.del(0, communicationDoc.getText().length);
+                var _u_c_z = username + "." + color + "." + _z + "$";
+                var _newCols = _cols.replace(_u_c_z, "");
+                communicationDoc.insert(0, _newCols);
+                type = 'error';
                 _template = '<div class="noty_message"><div class="noty_icon" style="background:' + cmdMsg.color + '"><img src="' + cmdMsg.zodiac + '"></img></div><span class="noty_text" style="margin-left: 5px"></span><div class="noty_close"></div></div>';
                 $(".userSquare[data-username='" + username + "']").remove();
-                type = 'error';
                 break;
             case 'lock':
                 type = 'information';
