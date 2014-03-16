@@ -366,7 +366,7 @@ var Inlet = (function() {
                         "ch" : endT
                     };
                     var val = negative? "-" : "";
-                    editor.replaceRange(val + String(ui.value.toFixed(float?2:0)), start-1, end);
+                    editor.replaceRange(val + String(ui.value.toFixed(float?2:0)), negative?start:start-1, end);
                 });
 
                 slider.css('visibility', 'visible');
