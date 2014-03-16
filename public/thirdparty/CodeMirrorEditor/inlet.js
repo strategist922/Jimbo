@@ -342,7 +342,7 @@ var Inlet = (function() {
                     var ncursor = {"line": mcursor.line, "ch": startT};
                     var negative = false;
                     var ntoken = editor.getTokenAt(ncursor);
-                    if(ntoken == "-")
+                    if(ntoken.string == "-")
                         negative = true;
 
                     var endT = mtoken.end;
