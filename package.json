@@ -13,7 +13,6 @@
     "hat": ">=0.0.3",
     "redis": "*",
     "passport": "= 0.2.0",
-    "passport-github": "= 0.1.5",
-    "btoa":"= 1.1.1"
+    "passport-github": "= 0.1.5"
   }
 }

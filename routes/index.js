@@ -1,7 +1,5 @@
 var snippet = require('./snippet')
-  , passport = require('passport')
-  , btoa = require('btoa')
-  , sharejs = require("share").client;
+  , passport = require('passport');
 
 
 module.exports = function(app) {  
@@ -37,23 +35,8 @@ module.exports = function(app) {
   });
 
   app.all('/clean', function(req, res){
-    var cmdMsg = req.cmdMsg;
-    var color = cmdMsg.color;
-    var username = cmdMsg.username;
-    var _z = btoa(cmdMsg.zodiac);
-
-    // sharejs.open(req.session.retUrl, "text", "http://localhost/channel", fucntion(error, doc){
-    //   if(!error) {
-    //     var _cols = doc.getText();
-    //     doc.del(0, doc.getLength());
-    //     var _u_c_z = username + "." + color + "." + _z + "$";
-    //     var _newCols = _cols.replace(_u_c_z, "");
-    //     communicationDoc.insert(0, _newCols);
-    //   }
-    // })
-
-    req.session.retUrl = null;
-    res.render('index', { title: 'Jimbo' , user: req.user});
+      req.session.retUrl = null;
+      res.render('index', { title: 'Jimbo' , user: req.user});
   });
 
   app.all('/logout', function(req, res){
