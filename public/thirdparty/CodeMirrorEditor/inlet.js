@@ -298,7 +298,7 @@ var Inlet = (function() {
                 var sliderRange;
 
                 if(value < 1) {
-                    sliderRange = [0,1];
+                    sliderRange = [-1,1];
                 }
                 else if(percentage) {
                     sliderRange = [0,100];
