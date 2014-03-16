@@ -304,13 +304,13 @@ var Inlet = (function() {
                     sliderRange = [0,100];
                 }
                 else if(pixel) {
-                    sliderRange = [0, value * 5];
+                    sliderRange = [0, value * 10];
                 }
                 else if(emp){
                     sliderRange = [0, value * 5];
                 }
                 else {
-                    sliderRange = [0, value * 5];
+                    sliderRange = [-value * 10 , value * 10];
                 }
 
                 var slider_min = _.min(sliderRange);
@@ -325,7 +325,7 @@ var Inlet = (function() {
                 else if ((slider_max - slider_min) < 50) {
                     slider.slider('option', 'step', 1);
                 } else {
-                    slider.slider('option', 'step', 2);
+                    slider.slider('option', 'step', parseInt((slider_max - slider_min)/50));
                 }
                 slider.slider('option', 'value', value);
 
@@ -362,7 +362,8 @@ var Inlet = (function() {
                         "line" : mcursor.line,
                         "ch" : endT
                     };
-                    editor.replaceRange(String(ui.value.toFixed(float?2:0)), start, end);
+                    var finalVal = Math.abs(ui.value.toFixed(float?2:0));
+                    editor.replaceRange(String(finalVal), start, end);
                 });
 
                 slider.css('visibility', 'visible');
