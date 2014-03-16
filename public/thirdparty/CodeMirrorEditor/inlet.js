@@ -290,7 +290,7 @@ var Inlet = (function() {
 
             if (token.type === "number") {
                 var cursorOffset = editor.cursorCoords(true, "page");
-                var percentage = false, pixel = false;
+                var percentage = false, pixel = false, emp = false;
                 if(token.string.indexOf("%") != -1) percentage = true;
                 else if(token.string.indexOf("px") != -1) pixel = true;
                 else if(token.string.indexOf("em") != -1) emp = true;
