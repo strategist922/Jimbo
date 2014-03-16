@@ -298,7 +298,7 @@ var Inlet = (function() {
                 var sliderRange;
 
                 if(value < 1) {
-                    sliderRange = [-1,1];
+                    sliderRange = [0,1];
                 }
                 else if(percentage) {
                     sliderRange = [0,100];
@@ -310,7 +310,7 @@ var Inlet = (function() {
                     sliderRange = [0, value * 5];
                 }
                 else {
-                    sliderRange = [-value * 10 , value * 10];
+                    sliderRange = [0 , value * 10];
                 }
 
                 var slider_min = _.min(sliderRange);
@@ -362,7 +362,7 @@ var Inlet = (function() {
                         "line" : mcursor.line,
                         "ch" : endT
                     };
-                    var finalVal = Math.abs(ui.value.toFixed(float?2:0));
+                    var finalVal = ui.value.toFixed(float ? 2 : 0);
                     editor.replaceRange(String(finalVal), start, end);
                 });
 
