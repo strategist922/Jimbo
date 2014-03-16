@@ -297,7 +297,10 @@ var Inlet = (function() {
                 var value = parseFloat(token.string);
                 var sliderRange;
 
-                if(percentage) {
+                if(value < 1) {
+                    sliderRange = [0,1];
+                }
+                else if(percentage) {
                     sliderRange = [0,100];
                 }
                 else if(pixel) {
@@ -316,7 +319,10 @@ var Inlet = (function() {
                 slider.slider('option', 'min', slider_min);
                 slider.slider('option', 'max', slider_max);
 
-                if ((slider_max - slider_min) < 50) {
+                if((slider_max - slider_min) <= 1) {
+                    slider.slider('option', 'step', 0.01);
+                }
+                else if ((slider_max - slider_min) < 50) {
                     slider.slider('option', 'step', 1);
                 } else {
                     slider.slider('option', 'step', 2);
