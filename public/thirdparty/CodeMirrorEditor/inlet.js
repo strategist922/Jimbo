@@ -293,6 +293,7 @@ var Inlet = (function() {
                 var percentage = false, pixel = false;
                 if(token.string.indexOf("%") != -1) percentage = true;
                 else if(token.string.indexOf("px") != -1) pixel = true;
+                else if(token.string.indexOf("em") != -1) emp = true;
                 var value = parseFloat(token.string);
                 var sliderRange;
 
@@ -302,25 +303,23 @@ var Inlet = (function() {
                 else if(pixel) {
                     sliderRange = [0, value * 5];
                 }
+                else if(emp){
+                    sliderRange = [0, value * 5];
+                }
                 else {
-                    if (value === 0) {
-                        sliderRange = [-100, 100];
-                    } else {
-                        sliderRange = [value - 200, value + 200];
-                    }
+                    sliderRange = [0, value * 5];
                 }
 
                 var slider_min = _.min(sliderRange);
                 var slider_max = _.max(sliderRange);
-                console.log(slider_max);
-                console.log(slider_min);
+
                 slider.slider('option', 'min', slider_min);
                 slider.slider('option', 'max', slider_max);
 
-                if ((slider_max - slider_min) < 200) {
-                    slider.slider('option', 'step', 5);
+                if ((slider_max - slider_min) < 50) {
+                    slider.slider('option', 'step', 1);
                 } else {
-                    slider.slider('option', 'step', (slider_max - slider_min) / 200);
+                    slider.slider('option', 'step', 2);
                 }
                 slider.slider('option', 'value', value);
 
@@ -339,12 +338,6 @@ var Inlet = (function() {
 
 
                     var startT = mtoken.start;
-                    var ncursor = {"line": mcursor.line, "ch": startT};
-                    var negative = false;
-                    var ntoken = editor.getTokenAt(ncursor);
-                    if(ntoken.string == "-")
-                        negative = true;
-
                     var endT = mtoken.end;
                     var float = false;
                     if(token.string.toLowerCase().indexOf("px") != -1){
@@ -352,10 +345,6 @@ var Inlet = (function() {
                     } else if(token.string.toLowerCase().indexOf("%") != -1){
                         endT = endT - 1;
                     }
-
-                    // if((ui.value.toFixed(2) < 1 && ui.value.toFixed(2) > 0) || (ui.value.toFixed(2) > -1 && ui.value.toFixed(2) < 0)) {
-                    //     float = true;
-                    // }
 
                     var start = {
                         "line" : mcursor.line,
@@ -365,8 +354,7 @@ var Inlet = (function() {
                         "line" : mcursor.line,
                         "ch" : endT
                     };
-                    var val = negative? "-" : "";
-                    editor.replaceRange(val + String(ui.value.toFixed(float?2:0)), negative?start:start-1, end);
+                    editor.replaceRange(String(ui.value.toFixed(float?2:0)), start, end);
                 });
 
                 slider.css('visibility', 'visible');
