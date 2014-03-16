@@ -346,11 +346,13 @@ var Inlet = (function() {
                     var startT = mtoken.start;
                     var endT = mtoken.end;
                     var float = false;
-                    if(token.string.toLowerCase().indexOf("px") != -1){
+                    if(token.string.toLowerCase().indexOf("px") != -1 || token.string.toLowerCase().indexOf("em") != -1){
                         endT = endT - 2;
                     } else if(token.string.toLowerCase().indexOf("%") != -1){
                         endT = endT - 1;
                     }
+
+                    if(ui.value != parseInt(ui.value)) float = true;
 
                     var start = {
                         "line" : mcursor.line,
