@@ -337,7 +337,14 @@ var Inlet = (function() {
                     var mcursor = editor.getCursor(true);
                     var mtoken = editor.getTokenAt(cursor);
 
+
                     var startT = mtoken.start;
+                    var ncursor = {"line": mcursor.line, "ch": startT};
+                    var negative = false;
+                    var ntoken = editor.getTokenAt(ncursor);
+                    if(ntoken == "-")
+                        negative = true;
+
                     var endT = mtoken.end;
                     var float = false;
                     if(token.string.toLowerCase().indexOf("px") != -1){
@@ -358,7 +365,7 @@ var Inlet = (function() {
                         "line" : mcursor.line,
                         "ch" : endT
                     };
-                    editor.replaceRange(String(ui.value.toFixed(float?2:0)), start, end);
+                    editor.replaceRange(negativeString(ui.value.toFixed(float?2:0)), negative?start-1:start, end);
                 });
 
                 slider.css('visibility', 'visible');
