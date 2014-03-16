@@ -320,7 +320,7 @@ var Inlet = (function() {
                 slider.slider('option', 'max', slider_max);
 
                 if((slider_max - slider_min) <= 1) {
-                    slider.slider('option', 'step', 0.1);
+                    slider.slider('option', 'step', 0.01);
                 }
                 else if ((slider_max - slider_min) < 50) {
                     slider.slider('option', 'step', 1);
