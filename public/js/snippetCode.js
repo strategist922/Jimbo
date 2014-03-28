@@ -677,7 +677,6 @@ function initCommunication() {
         var _here = _collaborators.indexOf("$");
         communicationDoc.del(0, _here);
         var userAvatar = btoa(currentUser.zodiac);
-        communicationDoc.insert(communicationDoc.getText().length, currentUser.username + "." + currentUser.color + "." + userAvatar + "$");
 
         if (_collaborators.length == 0) {
             //First time access
@@ -695,13 +694,18 @@ function initCommunication() {
             $("li[data-id='jsonTab']>a>div.notifTab").text(collaborators["jsonTab"]);
         }
 
-        communicationDoc.on('shout', function(s) {
-            shoutHandler(s);
-        });
+        var customMsg;
+
+        if(_collaborators.indexOf(currentUser.username + ".hsl") != -1){
+            communicationDoc.insert(communicationDoc.getText().length, currentUser.username + "." + currentUser.color + "." + userAvatar + "$");
+            customMsg = " just joined your snippet!"
+        } else {
+            customMsg = " got online!";
+        }
 
         var cmdMsg = {
             cmd: "on",
-            msg: currentUser.username + " just joined your snippet!",
+            msg: currentUser.username + customMsg,
             zodiac: currentUser.zodiac,
             username: currentUser.username,
             color: currentUser.color,
@@ -716,8 +720,10 @@ function initCommunication() {
             isPush: false
         };
         shoutOut(cmdMsg);
-        //alert("done! 2");
 
+        communicationDoc.on('shout', function(s) {
+            shoutHandler(s);
+        });
     });
 
     var status = document.getElementById("usernameBadge");
@@ -901,7 +907,7 @@ window.onbeforeunload = function(e) {
     if (communicationDoc != null) {
         cmdMsg = {
             cmd: "off",
-            msg: currentUser.username + " just left your snippet!",
+            msg: currentUser.username + " got offline!",
             zodiac: currentUser.zodiac,
             username: currentUser.username,
             color: currentUser.color,
