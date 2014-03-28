@@ -275,7 +275,7 @@ var editorInit = function(elem, mode, type) {
                 var c = _content[i].split(".")[1];
                 var z = _content[i].split(".")[2];
                 var zz = atob(z);
-                _square = $("<div>").addClass("userSquare").attr("data-username", u).tooltip({
+                _square = $("<div>").addClass("userSquare").attr("data-color", c).tooltip({
                     placement: "bottom",
                     title: u
                 }).append($("<img>").attr("src", zz)).append($("<div>").css({"background":c, "height":"5px", "margin":"0 -1px"}));
@@ -325,7 +325,7 @@ var shoutHandler = function(cmdMsg) {
                 var username = cmdMsg.username;
                 var zodiac = cmdMsg.zodiac;
 
-                var _square = $("<div>").addClass("userSquare").attr("data-username", username).tooltip({
+                var _square = $("<div>").addClass("userSquare").attr("data-color", color).tooltip({
                     placement: "bottom",
                     title: username
                 }).append($("<img>").attr("src", zodiac)).append($("<div>").css({"background":color, "height":"5px", "margin":"0 -1px"}));
@@ -356,7 +356,7 @@ var shoutHandler = function(cmdMsg) {
                 communicationDoc.insert(0, _newCols);
                 type = 'error';
                 _template = '<div class="noty_message"><div class="noty_icon" style="background:' + cmdMsg.color + '"><img src="' + cmdMsg.zodiac + '"></img></div><span class="noty_text" style="margin-left: 5px"></span><div class="noty_close"></div></div>';
-                $(".userSquare[data-username='" + username + "']").remove();
+                $(".userSquare[data-color='" + color + "']").remove();
                 break;
             case 'lock':
                 type = 'information';
