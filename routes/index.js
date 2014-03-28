@@ -35,6 +35,7 @@ module.exports = function(app) {
   });
 
   app.all('/clean', function(req, res){
+      console.log("Something!");
       req.session.retUrl = null;
       res.render('index', { title: 'Jimbo' , user: req.user});
   });

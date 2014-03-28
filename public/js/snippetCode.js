@@ -325,14 +325,12 @@ var shoutHandler = function(cmdMsg) {
                 var username = cmdMsg.username;
                 var zodiac = cmdMsg.zodiac;
 
-                if(!cmdMsg.sameBrowser){
-                    var _square = $("<div>").addClass("userSquare").attr("data-username", username).tooltip({
-                        placement: "bottom",
-                        title: username
-                    }).append($("<img>").attr("src", zodiac)).append($("<div>").css({"background":color, "height":"5px", "margin":"0 -1px"}));
+                var _square = $("<div>").addClass("userSquare").attr("data-username", username).tooltip({
+                    placement: "bottom",
+                    title: username
+                }).append($("<img>").attr("src", zodiac)).append($("<div>").css({"background":color, "height":"5px", "margin":"0 -1px"}));
 
-                    $(".nav.pull-right").prepend(_square);
-                }
+                $(".nav.pull-right").prepend(_square);
                 type = 'success';
                 _template = '<div class="noty_message"><div class="noty_icon" style="background:' + cmdMsg.color + '"><img src="' + cmdMsg.zodiac + '"></img></div><span class="noty_text" style="margin-left: 5px"></span><div class="noty_close"></div></div>';
                 break;
@@ -696,20 +694,13 @@ function initCommunication() {
             $("li[data-id='jsonTab']>a>div.notifTab").text(collaborators["jsonTab"]);
         }
 
-        var customMsg, sameBrowser;
+        var customMsg;
 
-        if(_collaborators.indexOf(currentUser.username + ".hsl") == -1){
-            communicationDoc.insert(communicationDoc.getText().length, currentUser.username + "." + currentUser.color + "." + userAvatar + "$");
-            customMsg = " just joined your snippet!"
-            sameBrowser = false;
-        } else {
-            customMsg = " got online!";
-            sameBrowser = true;
-        }
+        communicationDoc.insert(communicationDoc.getText().length, currentUser.username + "." + currentUser.color + "." + userAvatar + "$");
 
         var cmdMsg = {
             cmd: "on",
-            msg: currentUser.username + customMsg,
+            msg: currentUser.username + " just joined your snippet!",
             zodiac: currentUser.zodiac,
             username: currentUser.username,
             color: currentUser.color,
@@ -912,6 +903,7 @@ window.onbeforeunload = function(e) {
     if (communicationDoc != null) {
         cmdMsg = {
             cmd: "off",
+            snippetId: sessionStorage["snippetId"],
             msg: currentUser.username + " got offline!",
             zodiac: currentUser.zodiac,
             username: currentUser.username,
