@@ -343,7 +343,7 @@ var shoutHandler = function(cmdMsg) {
                 type = 'warning';
                 break;
             case 'off':
-                if(currentUser && currentUser.username == cmdMsg.username) break;
+                if(currentUser && currentUser.username == cmdMsg.username && currentUser.color == cmdMsg.color) break;
                 var _msg = cmdMsg.msg;
                 var color = cmdMsg.color;
                 var username = cmdMsg.username;
