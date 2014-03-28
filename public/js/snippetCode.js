@@ -696,7 +696,7 @@ function initCommunication() {
 
         var customMsg;
 
-        if(_collaborators.indexOf(currentUser.username + ".hsl") != -1){
+        if(_collaborators.indexOf(currentUser.username + ".hsl") == -1){
             communicationDoc.insert(communicationDoc.getText().length, currentUser.username + "." + currentUser.color + "." + userAvatar + "$");
             customMsg = " just joined your snippet!"
         } else {
