@@ -704,8 +704,7 @@ function initCommunication() {
             zodiac: currentUser.zodiac,
             username: currentUser.username,
             color: currentUser.color,
-            isPush: true,
-            sameBrowser: sameBrowser
+            isPush: true
         };
         shoutOut(cmdMsg);
 
