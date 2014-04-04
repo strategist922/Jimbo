@@ -259,8 +259,8 @@ var editorInit = function(elem, mode, type) {
             dropZone.addEventListener('dragover', handleDragOver, false);
             dropZone.addEventListener('dragleave', handleDragLeave, false);
             dropZone.addEventListener('drop', handleDrop, false);
-            // _editor.setOption("gutters", [ "CodeMirror-lint-markers"]);
-            // _editor.setOption("lint", true);
+            _editor.setOption("gutters", [ "CodeMirror-lint-markers"]);
+            _editor.setOption("lint", true);
             editors.json = _editor;
             _editor.refresh();
         } else {
