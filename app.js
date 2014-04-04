@@ -31,7 +31,7 @@ passport.use(new GitHubStrategy({
 ));
 
 var app = express();
-var DEF_PORT = 80;
+var DEF_PORT = 8000;
 app.disable('quiet');
 
 express.limit('10mb');
