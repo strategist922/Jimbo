@@ -242,8 +242,8 @@ var editorInit = function(elem, mode, type) {
     } else if (type === 'css') {
         if (!editors.css) {
             _editor = createEditor(elem, mode, type);
-            _editor.setOption("gutters", [ "CodeMirror-lint-markers"]);
-            _editor.setOption("lint", true);
+            // _editor.setOption("gutters", [ "CodeMirror-lint-markers"]);
+            // _editor.setOption("lint", true);
             editors.css = _editor;
             _editor.refresh();
         } else {

@@ -2221,7 +2221,7 @@ Parser.prototype = function(){
                     selector    = [],
                     nextSelector = null,
                     combinator  = null,
-                    wss          = null;
+                    ws          = null;
 
                 //if there's no simple selector, then there's no selector
                 nextSelector = this._simple_selector_sequence();
@@ -2254,7 +2254,7 @@ Parser.prototype = function(){
                         if (this._readWhitespace()){
 
                             //add whitespace separator
-                            wss = new Combinator(tokenStream.token().value, tokenStream.token().startLine, tokenStream.token().startCol);
+                            ws = new Combinator(tokenStream.token().value, tokenStream.token().startLine, tokenStream.token().startCol);
 
                             //combinator is not required
                             combinator = this._combinator();
@@ -2270,7 +2270,7 @@ Parser.prototype = function(){
                                 if (combinator !== null){
                                     selector.push(combinator);
                                 } else {
-                                    selector.push(wss);
+                                    selector.push(ws);
                                 }
 
                                 selector.push(nextSelector);
@@ -3359,13 +3359,13 @@ Parser.prototype = function(){
             _readWhitespace: function(){
 
                 var tokenStream = this._tokenStream,
-                    wss = "";
+                    ws = "";
 
                 while(tokenStream.match(Tokens.S)){
-                    wss += tokenStream.token().value;
+                    ws += tokenStream.token().value;
                 }
 
-                return wss;
+                return ws;
             },
 
 
@@ -5640,7 +5640,7 @@ var Tokens  = [
     { name: "CDC"},
 
     //ignorables
-    { name: "S", whitespace: true/*, channel: "wss"*/},
+    { name: "S", whitespace: true/*, channel: "ws"*/},
     { name: "COMMENT", comment: true, hide: true, channel: "comment" },
 
     //attribute equality
