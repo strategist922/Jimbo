@@ -45,6 +45,7 @@ $(document).ready(function(){
 		var editor = CodeMirror.fromTextArea(elem, {
 			mode: "text/" + mode,
 			lineNumbers: true,
+			lineWrapping: true,
 			theme: "solarized light",
 			readOnly: "nocursor"
 		});
@@ -192,7 +193,7 @@ $(document).ready(function(){
 	    	i = i + 1;
 		    $(".timelineSlider").slider("value", i);
 		    if (i < finalOps.length)
-		        setTimeout(replayCode, SPEED * stepOps.ops.length);
+		        setTimeout(replayCode, SPEED);
 		    else
 		    	$(".timelineSlider").slider('enable');
 		}
