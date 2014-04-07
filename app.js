@@ -63,7 +63,7 @@ app.configure('production', function(){
 require('./routes/index')(app)
 
 var options = {/*db: {type: 'redis'}*/}; // See docs for options. {type: 'redis'} to enable persistance.
-  options.db = {type: 'redis', prefix: 'UserStudy'};
+  options.db = {type: 'redis', prefix: 'DataVisStudy:'};
   options.auth = function(agent, action) {
   action.accept();
 };
