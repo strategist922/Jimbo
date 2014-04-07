@@ -64,6 +64,7 @@ require('./routes/index')(app)
 
 var options = {/*db: {type: 'redis'}*/}; // See docs for options. {type: 'redis'} to enable persistance.
   options.db = {type: 'redis'};
+  options.prefix = "UserStudy";
   options.auth = function(agent, action) {
   action.accept();
 };
